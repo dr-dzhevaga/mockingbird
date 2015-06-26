@@ -1,4 +1,4 @@
-package mb.http;
+package org.mb.http;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.

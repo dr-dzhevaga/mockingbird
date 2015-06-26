@@ -1,10 +1,8 @@
-package mb.http;
+package org.mb.binding;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.SetMultimap;
-
+import com.google.common.collect.*;
+import org.mb.http.HTTPMethod;
+import org.mb.http.HTTPRequest;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +21,7 @@ public class HTTPRequestPattern {
 
     private HTTPRequestPattern() {
         this.uriPattern = Pattern.compile(DEFAULT_URI_PATTERN);
-        this.methods = new HashSet<HTTPMethod>();
+        this.methods = Sets.newHashSet();
         this.queryParameters = ArrayListMultimap.create();
         this.headers = HashMultimap.create();
         this.contentParameters = HashMultimap.create();
@@ -46,8 +44,20 @@ public class HTTPRequestPattern {
             return this;
         }
 
+        public RequestPatternBuilder addMethod(String method) {
+            addMethod(HTTPMethod.fromString(method));
+            return this;
+        }
+
         public RequestPatternBuilder addMethods(Collection<HTTPMethod> methods) {
             requestPattern.methods.addAll(methods);
+            return this;
+        }
+
+        public RequestPatternBuilder addMethodsAsStrings(Collection<String> methods) {
+            for(String method : methods) {
+                addMethod(method);
+            }
             return this;
         }
 
@@ -56,13 +66,28 @@ public class HTTPRequestPattern {
             return this;
         }
 
+        public RequestPatternBuilder addQueryParameters(Multimap<String, String> parameters) {
+            requestPattern.queryParameters.putAll(parameters);
+            return this;
+        }
+
         public RequestPatternBuilder addHeader(String name, String value) {
             requestPattern.headers.put(name, value);
             return this;
         }
 
+        public RequestPatternBuilder addHeaders(Multimap<String, String> parameters) {
+            requestPattern.headers.putAll(parameters);
+            return this;
+        }
+
         public RequestPatternBuilder addContentParameter(String name, String value) {
             requestPattern.contentParameters.put(name, value);
+            return this;
+        }
+
+        public RequestPatternBuilder addContentParameters(Multimap<String, String> parameters) {
+            requestPattern.contentParameters.putAll(parameters);
             return this;
         }
 
@@ -83,34 +108,34 @@ public class HTTPRequestPattern {
             }
         }
 
-        if(!matches(this.queryParameters, request.getQueryParameters())) {
+        if(!multimapMatchesMultimap(request.getQueryParameters(), this.queryParameters)) {
             return false;
         }
 
-        if(!matches(this.headers, request.getHeaders())) {
+        if(!multimapMatchesMap(this.headers, request.getHeaders())) {
             return false;
         }
 
-        if(!matches(this.contentParameters, requestContentParameters)) {
+        if(!multimapMatchesMap(this.contentParameters, requestContentParameters)) {
             return false;
         }
 
         return true;
     }
 
-    private <T1, T2> boolean matches(SetMultimap<T1, T2> er, Map<T1, T2> ar) {
-        if(er.isEmpty()) return true;
-        for (T1 key : er.keySet()) {
-            if(!er.get(key).contains(ar.get(key)))
+    private <T1, T2> boolean multimapMatchesMap(Multimap<T1, T2> multimap, Map<T1, T2> map) {
+        if(multimap.isEmpty()) return true;
+        for (T1 key : multimap.keySet()) {
+            if(!multimap.get(key).contains(map.get(key)))
                 return false;
         }
         return true;
     }
 
-    private <T1, T2> boolean matches(ListMultimap<T1, T2> er, ListMultimap<T1, T2> ar) {
+    private <T1, T2> boolean multimapMatchesMultimap(Multimap<T1, T2> ar, Multimap<T1, T2> er) {
         if(er.isEmpty()) return true;
         for (T1 key : er.keySet()) {
-            if(!(er.get(key).containsAll(ar.get(key)) && er.get(key).containsAll(ar.get(key))))
+            if(!(er.get(key).containsAll(ar.get(key)) && ar.get(key).containsAll(er.get(key))))
                 return false;
         }
         return true;

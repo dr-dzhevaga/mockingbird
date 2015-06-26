@@ -1,0 +1,12 @@
+- request:
+   method: POST
+   url: /test/post
+   header:
+    Content-Type: text/plain
+  response:
+   content: Hello POST
+- request:
+   method: GET
+   url: /test/get
+  response:
+   content: Hello GET

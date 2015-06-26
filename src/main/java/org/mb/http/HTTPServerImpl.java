@@ -1,4 +1,4 @@
-package mb.http;
+package org.mb.http;
 
 
 import com.google.common.base.Optional;

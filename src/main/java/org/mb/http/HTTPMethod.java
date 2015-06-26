@@ -1,4 +1,4 @@
-package mb.http;
+package org.mb.http;
 
 import java.util.HashMap;
 import java.util.Map;

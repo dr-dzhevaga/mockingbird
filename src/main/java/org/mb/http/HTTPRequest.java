@@ -1,11 +1,7 @@
-package mb.http;
+package org.mb.http;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Maps;
-
+import com.google.common.collect.*;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -21,8 +17,8 @@ public class HTTPRequest {
     public HTTPRequest(String uri, HTTPMethod method, ListMultimap<String, String> queryParameters, Map<String, String> headers, String content) {
         this.uri = uri;
         this.method = method;
-        this.queryParameters = ArrayListMultimap.create(queryParameters);
-        this.headers = Maps.newHashMap(headers);
+        this.queryParameters = Multimaps.unmodifiableListMultimap(queryParameters);
+        this.headers = Collections.unmodifiableMap(headers);
         this.content = content;
     }
 
