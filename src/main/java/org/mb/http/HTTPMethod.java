@@ -1,5 +1,7 @@
 package org.mb.http;
 
+import com.google.common.collect.Maps;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,7 +19,7 @@ public enum HTTPMethod {
     CONNECT("CONNECT");
 
     private final String string;
-    private static final Map<String, HTTPMethod> stringToEnum = new HashMap<String, HTTPMethod>();
+    private static final Map<String, HTTPMethod> stringToEnum = Maps.newHashMap();
 
     static {
         for(HTTPMethod method : values()) {
@@ -37,7 +39,7 @@ public enum HTTPMethod {
     public static HTTPMethod fromString(String string) throws IllegalArgumentException {
         HTTPMethod method = stringToEnum.get(string.toLowerCase());
         if(method == null) {
-            throw new IllegalArgumentException("Unknown HTTP Method: " + string);
+            throw new IllegalArgumentException("Unknown HTTP method: " + string);
         }
         return method;
     }

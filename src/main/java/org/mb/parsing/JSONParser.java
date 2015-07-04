@@ -6,7 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 
 /**
- * Created by Альфия on 27.06.2015.
+ * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
 public class JSONParser implements Parser {
 
@@ -21,4 +21,3 @@ public class JSONParser implements Parser {
         return parser.fromJson(inputFile, Object.class);
     }
 }
-

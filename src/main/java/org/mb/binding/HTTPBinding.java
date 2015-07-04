@@ -13,14 +13,15 @@ import java.util.Map;
 public class HTTPBinding {
     public static int DEFAULT_STATUS_CODE = 404;
     public static String DEFAULT_CONTENT = "Not found";
-    private Map<HTTPRequestPattern, HTTPResponse> binding = new LinkedHashMap<HTTPRequestPattern, HTTPResponse>();
+
     private HTTPResponse defaultResponse;
+    private Map<HTTPRequestPattern, HTTPResponse> binding = new LinkedHashMap<HTTPRequestPattern, HTTPResponse>();
 
     public HTTPBinding() {
-        HTTPResponse.HTTPResponseBuilder builder = HTTPResponse.getBuilder();
-        builder.setStatusCode(DEFAULT_STATUS_CODE);
-        builder.setContent(DEFAULT_CONTENT);
-        defaultResponse = builder.build();
+        defaultResponse = HTTPResponse.getBuilder().
+                setStatusCode(DEFAULT_STATUS_CODE).
+                setContent(DEFAULT_CONTENT).
+                build();
     }
 
     public void addBinding(HTTPRequestPattern requestPattern, HTTPResponse response) {
