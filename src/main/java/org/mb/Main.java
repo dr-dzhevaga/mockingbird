@@ -17,22 +17,23 @@ import static org.mb.cli.ArgumentsImpl.*;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        Arguments arguments = ArgumentsImpl.getInstance(args);
-        boolean printHelp = arguments.hasOption(HELP_SHORT);
-        int serverPort = Integer.valueOf(arguments.getOptionValue(SERVER_PORT_SHORT));
-        String bindingsFilePath = arguments.getOptionValue(BINDINGS_PATH_SHORT);
-        InputFormat bindingsFileFormat = InputFormat.fromString(arguments.getOptionValue(BINDINGS_FORMAT_SHORT));
+        final Arguments arguments = ArgumentsImpl.getInstance(args);
+        final boolean printHelp = arguments.hasOption(HELP_SHORT);
+        final int serverPort = Integer.valueOf(arguments.getOptionValue(SERVER_PORT_SHORT));
+        final String bindingsFilePath = arguments.getOptionValue(BINDINGS_PATH_SHORT);
+        final InputFormat bindingsFileFormat = InputFormat.fromString(arguments.getOptionValue(BINDINGS_FORMAT_SHORT));
 
         if(printHelp) {
             arguments.printHelp();
             System.exit(0);
         }
 
-        Parser parser = ParserFactory.newParser(bindingsFileFormat);
-        Object objectsGraph = parser.parse(new FileReader(bindingsFilePath));
-        final HTTPBinding responseResolver = Marshaller.GetAsHTTPBinding(objectsGraph);
-        HTTPServer server = HTTPServerImpl.getFactory().create(serverPort);
+        final Parser parser = ParserFactory.newParser(bindingsFileFormat);
+        final Object objectsGraph = parser.parse(new FileReader(bindingsFilePath));
 
+        final HTTPBinding responseResolver = Marshaller.GetAsHTTPBinding(objectsGraph);
+
+        final HTTPServer server = HTTPServerImpl.getFactory().create(serverPort);
         server.setHandler(new Handler() {
             @Override
             public HTTPResponse handle(HTTPRequest request) {

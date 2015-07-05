@@ -6,6 +6,7 @@ import org.mb.http.HTTPRequest;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static org.mb.binding.Utils.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 18.06.2015.
@@ -108,36 +109,18 @@ public class HTTPRequestPattern {
             }
         }
 
-        if(!multimapMatchesMultimap(request.getQueryParameters(), this.queryParameters)) {
+        if(!checkMultimap(request.getQueryParameters(), this.queryParameters)) {
             return false;
         }
 
-        if(!multimapMatchesMap(this.headers, request.getHeaders())) {
+        if(!checkMap(request.getHeaders(), this.headers)) {
             return false;
         }
 
-        if(!multimapMatchesMap(this.contentParameters, requestContentParameters)) {
+        if(!checkMap(requestContentParameters, this.contentParameters)) {
             return false;
         }
 
-        return true;
-    }
-
-    private <T1, T2> boolean multimapMatchesMap(Multimap<T1, T2> multimap, Map<T1, T2> map) {
-        if(multimap.isEmpty()) return true;
-        for (T1 key : multimap.keySet()) {
-            if(!multimap.get(key).contains(map.get(key)))
-                return false;
-        }
-        return true;
-    }
-
-    private <T1, T2> boolean multimapMatchesMultimap(Multimap<T1, T2> ar, Multimap<T1, T2> er) {
-        if(er.isEmpty()) return true;
-        for (T1 key : er.keySet()) {
-            if(!(er.get(key).containsAll(ar.get(key)) && ar.get(key).containsAll(er.get(key))))
-                return false;
-        }
         return true;
     }
 
@@ -179,5 +162,22 @@ public class HTTPRequestPattern {
         result = 31 * result + this.uriPattern.hashCode();
         result = 31 * result + this.contentParameters.hashCode();
         return result;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("\tMethod: %s", methods));
+        builder.append(String.format("%n\tURI pattern: %s", uriPattern));
+        if(!queryParameters.isEmpty()) {
+            builder.append(String.format("%n\tQuery parameters: %s", queryParameters));
+        }
+        if(!headers.isEmpty()) {
+            builder.append(String.format("%n\tHeaders: %s", headers));
+        }
+        if(!contentParameters.isEmpty()) {
+            builder.append(String.format("%n\tContent parameters: %s", contentParameters));
+        }
+        return builder.toString();
     }
 }

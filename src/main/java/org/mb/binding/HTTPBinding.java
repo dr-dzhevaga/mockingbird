@@ -1,5 +1,6 @@
 package org.mb.binding;
 
+import org.apache.log4j.Logger;
 import org.mb.http.HTTPRequest;
 import org.mb.http.HTTPResponse;
 
@@ -16,6 +17,7 @@ public class HTTPBinding {
 
     private HTTPResponse defaultResponse;
     private Map<HTTPRequestPattern, HTTPResponse> binding = new LinkedHashMap<HTTPRequestPattern, HTTPResponse>();
+    final static private Logger Log = Logger.getLogger(HTTPBinding.class);
 
     public HTTPBinding() {
         defaultResponse = HTTPResponse.getBuilder().
@@ -26,6 +28,7 @@ public class HTTPBinding {
 
     public void addBinding(HTTPRequestPattern requestPattern, HTTPResponse response) {
         binding.put(requestPattern, response);
+        Log.info(String.format("Binding is added%nRequest pattern:%n%s%nResponse:%n%s", requestPattern, response));
     }
 
     public void setDefaultResponse(HTTPResponse defaultResponse) {
@@ -33,11 +36,15 @@ public class HTTPBinding {
     }
 
     public HTTPResponse resolve(HTTPRequest request) {
+        Log.info(String.format("Request is received%n%s", request));
         for(HTTPRequestPattern requestPattern : binding.keySet()) {
             if(requestPattern.matches(request, Collections.<String, String>emptyMap())) {
-                return binding.get(requestPattern);
+                HTTPResponse response = binding.get(requestPattern);
+                Log.info(String.format("Response is found in bindings%n%s", response));
+                return response;
             }
         }
+        Log.info(String.format("Response is not found in bindings, default response will be used%n%s", defaultResponse));
         return defaultResponse;
     }
 }

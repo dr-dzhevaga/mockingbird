@@ -67,6 +67,14 @@ public class HTTPResponse {
 
     @Override
     public String toString() {
-        return getStatusCode() + " response";
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("\tStatus code: %s", getStatusCode()));
+        if(!getHeaders().isEmpty()) {
+            builder.append(String.format("%n\tHeaders: %s", getHeaders()));
+        }
+        if(!getContent().isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", getContent()));
+        }
+        return builder.toString();
     }
 }

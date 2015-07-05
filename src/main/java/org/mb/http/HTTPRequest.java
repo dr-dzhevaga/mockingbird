@@ -44,6 +44,18 @@ public class HTTPRequest {
 
     @Override
     public String toString() {
-        return getMethod() + " to " + getURI();
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("\tMethod: %s", getMethod()));
+        builder.append(String.format("%n\tURI: %s", getURI()));
+        if(!getQueryParameters().isEmpty()) {
+            builder.append(String.format("%n\tQuery parameters: %s", getQueryParameters()));
+        }
+        if(!getHeaders().isEmpty()) {
+            builder.append(String.format("%n\tHeaders: %s", getHeaders()));
+        }
+        if(!getContent().isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", getContent()));
+        }
+        return builder.toString();
     }
 }

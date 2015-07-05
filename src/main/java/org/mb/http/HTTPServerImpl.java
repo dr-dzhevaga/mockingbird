@@ -23,11 +23,11 @@ public class HTTPServerImpl implements HTTPServer {
 
     private Server server;
 
-    public static ServerFactoryImpl getFactory() {
-        return new ServerFactoryImpl();
+    public static HTTPServerFactoryImpl getFactory() {
+        return new HTTPServerFactoryImpl();
     }
 
-    public static class ServerFactoryImpl implements HTTPServerFactory {
+    public static class HTTPServerFactoryImpl implements HTTPServerFactory {
         @Override
         public HTTPServer create(int port) {
             return new HTTPServerImpl(port);
