@@ -1,9 +1,9 @@
 package org.mb.http;
 
-
-import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
@@ -65,44 +65,46 @@ public class HTTPServerImpl implements HTTPServer {
 
         @Override
         public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException {
-            HTTPRequest httpRequest = readRequest(httpServletRequest);
+            HTTPRequest httpRequest = convertRequest(httpServletRequest);
             HTTPResponse httpResponse = handler.handle(httpRequest);
-            writeResponse(httpResponse, httpServletResponse);
+            convertResponse(httpResponse, httpServletResponse);
             request.setHandled(true);
         }
 
-        private HTTPRequest readRequest(HttpServletRequest source) throws IllegalArgumentException, IOException {
-            String uri = source.getRequestURI();
+        private HTTPRequest convertRequest(HttpServletRequest from) throws IllegalArgumentException, IOException {
+            String uri = from.getRequestURI();
 
-            HTTPMethod method = HTTPMethod.fromString(source.getMethod());
+            HTTPMethod method = HTTPMethod.fromString(from.getMethod());
 
-            Enumeration<String> headerNames = source.getHeaderNames();
+            Enumeration<String> headerNames = from.getHeaderNames();
 
             Map<String, String> headers = new HashMap<String, String>();
             while(headerNames.hasMoreElements()){
                 String headerName = headerNames.nextElement();
-                headers.put(headerName, source.getHeader(headerName));
+                headers.put(headerName, from.getHeader(headerName));
             }
 
             ListMultimap<String, String> parameters = ArrayListMultimap.create();
-            for(Map.Entry<String, String[]> parameter : source.getParameterMap().entrySet()) {
+            for(Map.Entry<String, String[]> parameter : from.getParameterMap().entrySet()) {
                 parameters.putAll(parameter.getKey(), Arrays.asList(parameter.getValue()));
             }
 
-            String encoding = Optional.fromNullable(source.getCharacterEncoding()).or("UTF-8");
-            String content = CharStreams.toString(new InputStreamReader(source.getInputStream(), encoding));
+            String encoding = Strings.isNullOrEmpty(from.getCharacterEncoding()) ? "UTF-8" : from.getCharacterEncoding();
+            String content = CharStreams.toString(new InputStreamReader(from.getInputStream(), encoding));
 
             return new HTTPRequest(uri, method, parameters, headers, content);
         }
 
-        private void writeResponse(HTTPResponse source, HttpServletResponse destination) throws IOException {
-            destination.setStatus(source.getStatusCode());
+        private void convertResponse(HTTPResponse from, HttpServletResponse to) throws IOException {
+            to.setStatus(from.getStatusCode());
 
-            for(Map.Entry<String, String> header : source.getHeaders().entrySet()) {
-                destination.setHeader(header.getKey(), header.getValue());
+            for(Map.Entry<String, String> header : from.getHeaders().entrySet()) {
+                to.setHeader(header.getKey(), header.getValue());
             }
 
-            destination.getOutputStream().print(source.getContent());
+            try(InputStream inputStream = from.getContent()) {
+                ByteStreams.copy(inputStream, to.getOutputStream());
+            }
         }
     }
 }

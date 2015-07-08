@@ -1,6 +1,10 @@
 package org.mb.http;
 
-import java.util.Collections;
+import com.google.common.base.Charsets;
+import com.google.common.collect.Maps;
+import com.google.common.io.ByteStreams;
+import com.google.common.io.CharStreams;
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -8,14 +12,18 @@ import java.util.Map;
  */
 public class HTTPResponse {
     private static int DEFAULT_STATUS_CODE = 200;
+    private static int CONTENT_MAX_LOG_LENGTH = 1024;
+
     private int statusCode;
     private Map<String, String> headers;
     private String content;
+    private boolean contentIsFilePath;
 
     private HTTPResponse() {
         this.statusCode = DEFAULT_STATUS_CODE;
-        this.headers = Collections.emptyMap();
+        this.headers = Maps.newHashMap();
         this.content = "";
+        this.contentIsFilePath = false;
     }
 
     public static HTTPResponseBuilder getBuilder() {return new HTTPResponseBuilder();}
@@ -45,6 +53,7 @@ public class HTTPResponse {
 
         public HTTPResponseBuilder setContent(String content) {
             httpResponse.content = content;
+            httpResponse.contentIsFilePath = new File(content).exists();
             return this;
         }
 
@@ -61,8 +70,24 @@ public class HTTPResponse {
         return headers;
     }
 
-    public String getContent() {
-        return content;
+    public InputStream getContent() {
+        if(contentIsFilePath) {
+            try {
+                return new FileInputStream(content);
+            } catch (FileNotFoundException e) {
+                return new ByteArrayInputStream(e.getMessage().getBytes(Charsets.UTF_8));
+            }
+        } else {
+            return new ByteArrayInputStream(content.getBytes(Charsets.UTF_8));
+        }
+    }
+
+    private String getContentAsString(int maxLength) {
+        try(InputStream stream = getContent()) {
+            return CharStreams.toString(new InputStreamReader(ByteStreams.limit(stream, maxLength), Charsets.UTF_8));
+        } catch (IOException e) {
+            return e.getMessage();
+        }
     }
 
     @Override
@@ -72,8 +97,9 @@ public class HTTPResponse {
         if(!getHeaders().isEmpty()) {
             builder.append(String.format("%n\tHeaders: %s", getHeaders()));
         }
-        if(!getContent().isEmpty()) {
-            builder.append(String.format("%n\tContent: %s", getContent()));
+        String content = getContentAsString(CONTENT_MAX_LOG_LENGTH);
+        if(!content.isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", content));
         }
         return builder.toString();
     }
