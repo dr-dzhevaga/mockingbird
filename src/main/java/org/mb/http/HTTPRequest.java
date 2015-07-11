@@ -17,8 +17,8 @@ public class HTTPRequest {
     public HTTPRequest(String uri, HTTPMethod method, ListMultimap<String, String> queryParameters, Map<String, String> headers, String content) {
         this.uri = uri;
         this.method = method;
-        this.queryParameters = Multimaps.unmodifiableListMultimap(queryParameters);
-        this.headers = Collections.unmodifiableMap(headers);
+        this.queryParameters = queryParameters;
+        this.headers = headers;
         this.content = content;
     }
 

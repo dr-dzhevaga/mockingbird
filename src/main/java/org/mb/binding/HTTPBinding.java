@@ -1,11 +1,10 @@
 package org.mb.binding;
 
+import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.mb.http.HTTPRequest;
 import org.mb.http.HTTPResponse;
-
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -16,7 +15,7 @@ public class HTTPBinding {
     public static String DEFAULT_CONTENT = "Not found";
 
     private HTTPResponse defaultResponse;
-    private Map<HTTPRequestPattern, HTTPResponse> binding = new LinkedHashMap<HTTPRequestPattern, HTTPResponse>();
+    private Map<HTTPRequestPattern, HTTPResponse> binding = Maps.newHashMap();
     final static private Logger Log = Logger.getLogger(HTTPBinding.class);
 
     public HTTPBinding() {

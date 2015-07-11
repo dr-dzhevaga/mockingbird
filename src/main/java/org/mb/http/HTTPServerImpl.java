@@ -3,6 +3,7 @@ package org.mb.http;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import org.eclipse.jetty.server.Request;
@@ -78,7 +79,7 @@ public class HTTPServerImpl implements HTTPServer {
 
             Enumeration<String> headerNames = from.getHeaderNames();
 
-            Map<String, String> headers = new HashMap<String, String>();
+            Map<String, String> headers = Maps.newHashMap();
             while(headerNames.hasMoreElements()){
                 String headerName = headerNames.nextElement();
                 headers.put(headerName, from.getHeader(headerName));

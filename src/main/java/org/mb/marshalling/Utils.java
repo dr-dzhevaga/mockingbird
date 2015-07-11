@@ -1,6 +1,7 @@
 package org.mb.marshalling;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 import java.util.Collections;
@@ -79,7 +80,7 @@ public class Utils {
     }
 
     public static <K, V> Multimap<K, V> getAsMultimap(Object o, Class<K> keyType, Class<V> valueType) throws MarshallingException {
-        Multimap<K, V> multimap = ArrayListMultimap.create();
+        ListMultimap<K, V> multimap = ArrayListMultimap.create();
         if(o == null) {
             return multimap;
         }
