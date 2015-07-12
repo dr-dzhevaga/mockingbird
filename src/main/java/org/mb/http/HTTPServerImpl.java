@@ -12,10 +12,7 @@ import org.eclipse.jetty.server.handler.AbstractHandler;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.util.Arrays;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
@@ -73,27 +70,28 @@ public class HTTPServerImpl implements HTTPServer {
         }
 
         private HTTPRequest convertRequest(HttpServletRequest from) throws IllegalArgumentException, IOException {
-            String uri = from.getRequestURI();
-
-            HTTPMethod method = HTTPMethod.fromString(from.getMethod());
+            HTTPRequest.HTTPRequestBuilder builder = HTTPRequest.getBuilder(
+                    from.getRequestURI(),
+                    HTTPMethod.fromString(from.getMethod()));
 
             Enumeration<String> headerNames = from.getHeaderNames();
-
-            Map<String, String> headers = Maps.newHashMap();
             while(headerNames.hasMoreElements()){
                 String headerName = headerNames.nextElement();
-                headers.put(headerName, from.getHeader(headerName));
+                String headerValue = from.getHeader(headerName);
+                builder.addHeader(headerName, headerValue);
             }
 
-            ListMultimap<String, String> parameters = ArrayListMultimap.create();
             for(Map.Entry<String, String[]> parameter : from.getParameterMap().entrySet()) {
-                parameters.putAll(parameter.getKey(), Arrays.asList(parameter.getValue()));
+                String parameterName = parameter.getKey();
+                List<String> parameterValues = Arrays.asList(parameter.getValue());
+                builder.addQueryParameters(parameterName, parameterValues);
             }
 
             String encoding = Strings.isNullOrEmpty(from.getCharacterEncoding()) ? "UTF-8" : from.getCharacterEncoding();
             String content = CharStreams.toString(new InputStreamReader(from.getInputStream(), encoding));
+            builder.setContent(content);
 
-            return new HTTPRequest(uri, method, parameters, headers, content);
+            return builder.build();
         }
 
         private void convertResponse(HTTPResponse from, HttpServletResponse to) throws IOException {

@@ -27,7 +27,9 @@ public class HTTPBinding {
 
     public void addBinding(HTTPRequestPattern requestPattern, HTTPResponse response) {
         binding.put(requestPattern, response);
-        Log.info(String.format("Binding is added%nRequest pattern:%n%s%nResponse:%n%s", requestPattern, response));
+        Log.info(String.format("Binding is added%nRequest pattern:%n%s%nResponse:%n%s",
+                requestPattern,
+                response));
     }
 
     public void setDefaultResponse(HTTPResponse defaultResponse) {
@@ -37,13 +39,14 @@ public class HTTPBinding {
     public HTTPResponse resolve(HTTPRequest request) {
         Log.info(String.format("Request is received%n%s", request));
         for(HTTPRequestPattern requestPattern : binding.keySet()) {
-            if(requestPattern.matches(request, Collections.<String, String>emptyMap())) {
+            if(requestPattern.matches(request)) {
                 HTTPResponse response = binding.get(requestPattern);
                 Log.info(String.format("Response is found in bindings%n%s", response));
                 return response;
             }
         }
-        Log.info(String.format("Response is not found in bindings, default response will be used%n%s", defaultResponse));
+        Log.info(String.format("Response is not found in bindings, default response will be used%n%s",
+                defaultResponse));
         return defaultResponse;
     }
 }

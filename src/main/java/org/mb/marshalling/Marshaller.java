@@ -17,7 +17,6 @@ public class Marshaller {
     private final static String METHOD = "method";
     private final static String QUERY_PARAMETER = "queryParameter";
     private final static String HEADER = "header";
-    private final static String CONTENT_PARAMETER = "contentParameter";
     private final static String STATUS_CODE = "statusCode";
     private final static String CONTENT = "content";
 
@@ -52,9 +51,6 @@ public class Marshaller {
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
         builder.addHeaders(getAsMultimap(headerObject, String.class, String.class));
-
-        Object contentParameterObject = httpRequestPatternMap.get(CONTENT_PARAMETER);
-        builder.addContentParameters(getAsMultimap(contentParameterObject, String.class, String.class));
 
         return builder.build();
     }

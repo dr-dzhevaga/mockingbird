@@ -18,14 +18,12 @@ public class HTTPRequestPattern {
     private Set<HTTPMethod> methods;
     private ListMultimap<String, String> queryParameters;
     private SetMultimap<String, String> headers;
-    private SetMultimap<String, String> contentParameters;
 
     private HTTPRequestPattern() {
         this.uriPattern = Pattern.compile(DEFAULT_URI_PATTERN);
         this.methods = Sets.newHashSet();
         this.queryParameters = ArrayListMultimap.create();
         this.headers = HashMultimap.create();
-        this.contentParameters = HashMultimap.create();
     }
 
     public static RequestPatternBuilder getBuilder() {
@@ -82,22 +80,12 @@ public class HTTPRequestPattern {
             return this;
         }
 
-        public RequestPatternBuilder addContentParameter(String name, String value) {
-            requestPattern.contentParameters.put(name, value);
-            return this;
-        }
-
-        public RequestPatternBuilder addContentParameters(Multimap<String, String> parameters) {
-            requestPattern.contentParameters.putAll(parameters);
-            return this;
-        }
-
         public HTTPRequestPattern build() {
             return requestPattern;
         }
     }
 
-    boolean matches(HTTPRequest request, Map<String, String> requestContentParameters) {
+    boolean matches(HTTPRequest request) {
         Matcher matcher = this.uriPattern.matcher(request.getURI());
         if(!matcher.matches()) {
             return false;
@@ -117,10 +105,6 @@ public class HTTPRequestPattern {
             return false;
         }
 
-        if(!checkMap(requestContentParameters, this.contentParameters)) {
-            return false;
-        }
-
         return true;
     }
 
@@ -135,7 +119,7 @@ public class HTTPRequestPattern {
         }
 
         HTTPRequestPattern requestPattern = (HTTPRequestPattern)obj;
-        if(!requestPattern.uriPattern.equals(this.uriPattern)) {
+        if(!requestPattern.uriPattern.pattern().equals(this.uriPattern.pattern())) {
             return false;
         }
         if(!requestPattern.methods.equals(this.methods)) {
@@ -159,8 +143,7 @@ public class HTTPRequestPattern {
         result = 31 * result + this.queryParameters.hashCode();
         result = 31 * result + this.headers.hashCode();
         result = 31 * result + this.methods.hashCode();
-        result = 31 * result + this.uriPattern.hashCode();
-        result = 31 * result + this.contentParameters.hashCode();
+        result = 31 * result + this.uriPattern.pattern().hashCode();
         return result;
     }
 
@@ -174,9 +157,6 @@ public class HTTPRequestPattern {
         }
         if(!headers.isEmpty()) {
             builder.append(String.format("%n\tHeaders: %s", headers));
-        }
-        if(!contentParameters.isEmpty()) {
-            builder.append(String.format("%n\tContent parameters: %s", contentParameters));
         }
         return builder.toString();
     }

@@ -8,7 +8,6 @@ import java.util.Map;
  */
 public class Utils {
     public static <T1, T2> boolean checkMap(Map<T1, T2> checked, Multimap<T1, T2> rules) {
-        if(rules.isEmpty()) return true;
         for (T1 key : rules.keySet()) {
             if(!rules.get(key).contains(checked.get(key)))
                 return false;
@@ -17,8 +16,10 @@ public class Utils {
     }
 
     public static <T1, T2> boolean checkMultimap(Multimap<T1, T2> checked, Multimap<T1, T2> rules) {
-        if(rules.isEmpty()) return true;
         for (T1 key : rules.keySet()) {
+            if(rules.get(key).size() != checked.get(key).size()) {
+                return false;
+            }
             if(!(rules.get(key).containsAll(checked.get(key)) && checked.get(key).containsAll(rules.get(key))))
                 return false;
         }
