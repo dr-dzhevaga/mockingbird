@@ -33,7 +33,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void checkMap_checkedEqualsRules_returnTrue() throws Exception {
+    public void checkMap_checkedIsSameAsRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("key1", "value1");
         Multimap<String, String> rules = HashMultimap.create();
@@ -82,7 +82,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void checkMap_duplicateRules_returnTrue() throws Exception {
+    public void checkMap_missingDuplicateValueInChecked_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("key1", "value1");
         Multimap<String, String> rules = ArrayListMultimap.create();
@@ -118,7 +118,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void checkMultimap_checkedEqualsRules_returnTrue() throws Exception {
+    public void checkMultimap_checkedIsSameAsRules_returnTrue() throws Exception {
         SetMultimap<String, String> checked = HashMultimap.create();
         checked.put("key1", "value1");
         Multimap<String, String> rules = HashMultimap.create();
@@ -167,7 +167,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void checkMultimap_duplicateRules_returnFalse() throws Exception {
+    public void checkMultimap_missingDuplicateValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = ArrayListMultimap.create();
         checked.put("key1", "value1");
         Multimap<String, String> rules = ArrayListMultimap.create();
@@ -180,7 +180,7 @@ public class UtilsTest {
     }
 
     @Test
-    public void checkMultimap_duplicateChecked_returnFalse() throws Exception {
+    public void checkMultimap_extraDuplicateValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = ArrayListMultimap.create();
         checked.put("key1", "value1");
         checked.put("key1", "value1");

@@ -139,7 +139,7 @@ public class HTTPRequestPatternTest {
     }
 
     @Test
-    public void matches_duplicateQueryParameterInRequest_returnFalse() throws Exception {
+    public void matches_extraDuplicateQueryParameterInRequest_returnFalse() throws Exception {
         HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
                 addQueryParameter("parameterName1", "parameterValue1").
                 build();
@@ -154,7 +154,7 @@ public class HTTPRequestPatternTest {
     }
 
     @Test
-    public void matches_duplicateQueryParameterInPattern_returnFalse() throws Exception {
+    public void matches_missingDuplicateQueryParameterInRequest_returnFalse() throws Exception {
         HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
                 addQueryParameter("parameterName1", "parameterValue1").
                 addQueryParameter("parameterName1", "parameterValue1").
@@ -208,7 +208,7 @@ public class HTTPRequestPatternTest {
     }
 
     @Test
-    public void equals_equalsObjects_returnTrue() throws Exception {
+    public void equals_equalObjects_returnTrue() throws Exception {
         HTTPRequestPattern requestPattern1 = getFilledRequestPattern();
         HTTPRequestPattern requestPattern2 = getFilledRequestPattern();
 
@@ -267,7 +267,7 @@ public class HTTPRequestPatternTest {
     }
 
     @Test
-    public void hashCode_equalsObjects_equals() throws Exception {
+    public void hashCode_equalObjects_equals() throws Exception {
         HTTPRequestPattern requestPattern1 = getFilledRequestPattern();
         HTTPRequestPattern requestPattern2 = getFilledRequestPattern();
 

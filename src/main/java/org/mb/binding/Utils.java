@@ -17,9 +17,8 @@ public class Utils {
 
     public static <T1, T2> boolean checkMultimap(Multimap<T1, T2> checked, Multimap<T1, T2> rules) {
         for (T1 key : rules.keySet()) {
-            if(rules.get(key).size() != checked.get(key).size()) {
+            if(rules.get(key).size() != checked.get(key).size())
                 return false;
-            }
             if(!(rules.get(key).containsAll(checked.get(key)) && checked.get(key).containsAll(rules.get(key))))
                 return false;
         }
