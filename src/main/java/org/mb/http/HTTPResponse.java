@@ -91,6 +91,27 @@ public class HTTPResponse {
     }
 
     @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if(!(obj instanceof HTTPResponse)) {
+            return false;
+        }
+        HTTPResponse response = (HTTPResponse)obj;
+        if(this.getStatusCode() != response.getStatusCode()) {
+            return false;
+        }
+        if(!this.getHeaders().equals(response.getHeaders())) {
+            return false;
+        }
+        if(!this.content.equals(response.content)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tStatus code: %s", getStatusCode()));
