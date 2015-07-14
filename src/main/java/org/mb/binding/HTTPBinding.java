@@ -20,7 +20,7 @@ public class HTTPBinding {
     private static final String RESPONSE_IS_NOT_FOUND = "Response is not found in bindings, default response will be used%n%s";
 
     private HTTPResponse defaultResponse;
-    private Map<HTTPRequestPattern, HTTPResponse> binding = Maps.newHashMap();
+    private Map<HTTPRequestPattern, HTTPResponse> binding = Maps.newLinkedHashMap();
     final static private Logger Log = Logger.getLogger(HTTPBinding.class);
 
     public HTTPBinding() {
