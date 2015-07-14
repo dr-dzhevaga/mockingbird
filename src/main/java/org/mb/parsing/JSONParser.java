@@ -1,8 +1,6 @@
 package org.mb.parsing;
 
 import com.google.gson.Gson;
-
-import java.io.FileNotFoundException;
 import java.io.Reader;
 
 /**
@@ -17,7 +15,11 @@ public class JSONParser implements Parser {
     }
 
     @Override
-    public Object parse(Reader inputFile) throws FileNotFoundException {
-        return parser.fromJson(inputFile, Object.class);
+    public Object parse(Reader inputFile) throws ParsingException {
+        try {
+            return parser.fromJson(inputFile, Object.class);
+        } catch (Throwable e) {
+            throw new ParsingException(e);
+        }
     }
 }
