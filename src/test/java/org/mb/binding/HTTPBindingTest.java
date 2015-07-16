@@ -77,10 +77,13 @@ public class HTTPBindingTest {
         HTTPBinding binding = new HTTPBinding();
         HTTPRequestPattern requestPattern1 = getRequestPattern(HTTPMethod.GET);
         HTTPRequestPattern requestPattern2 = getRequestPattern(HTTPMethod.GET, HTTPMethod.POST);
+        HTTPRequestPattern requestPattern3 = getRequestPattern(HTTPMethod.GET, HTTPMethod.POST, HTTPMethod.PUT);
         HTTPResponse response1 = getResponse(1);
         HTTPResponse response2 = getResponse(2);
+        HTTPResponse response3 = getResponse(3);
         binding.addBinding(requestPattern1, response1);
         binding.addBinding(requestPattern2, response2);
+        binding.addBinding(requestPattern3, response3);
         HTTPRequest request = getRequest(HTTPMethod.GET);
 
         Assert.assertTrue(response1.equals(binding.resolve(request)));

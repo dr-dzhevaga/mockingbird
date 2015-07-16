@@ -70,6 +70,11 @@ public class HTTPRequestPattern {
             return this;
         }
 
+        public RequestPatternBuilder addQueryParameters(String name, Collection<String> values) {
+            requestPattern.queryParameters.putAll(name, values);
+            return this;
+        }
+
         public RequestPatternBuilder addHeader(String name, String value) {
             requestPattern.headers.put(name, value);
             return this;
@@ -77,6 +82,11 @@ public class HTTPRequestPattern {
 
         public RequestPatternBuilder addHeaders(Multimap<String, String> parameters) {
             requestPattern.headers.putAll(parameters);
+            return this;
+        }
+
+        public RequestPatternBuilder addHeaders(String name, Collection<String> values) {
+            requestPattern.headers.putAll(name, values);
             return this;
         }
 

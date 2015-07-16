@@ -25,7 +25,7 @@ public class UtilsTest {
     public void checkMap_emptyCheckedAndNotEmptyRules_returnFalse() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMap(checked, rules);
 
@@ -35,9 +35,9 @@ public class UtilsTest {
     @Test
     public void checkMap_checkedIsSameAsRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
-        checked.put("key1", "value1");
+        checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMap(checked, rules);
 
@@ -47,10 +47,10 @@ public class UtilsTest {
     @Test
     public void checkMap_checkedContainsRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
-        checked.put("key1", "value1");
-        checked.put("key2", "value2");
+        checked.put("1", "1");
+        checked.put("2", "2");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMap(checked, rules);
 
@@ -60,9 +60,9 @@ public class UtilsTest {
     @Test
     public void checkMap_missingKeyInChecked_returnFalse() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
-        checked.put("key1", "value1");
+        checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key2", "value2");
+        rules.put("2", "2");
 
         boolean result = Utils.checkMap(checked, rules);
 
@@ -72,9 +72,9 @@ public class UtilsTest {
     @Test
     public void checkMap_wrongValueInChecked_returnFalse() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
-        checked.put("key1", "value2");
+        checked.put("1", "2");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMap(checked, rules);
 
@@ -84,10 +84,10 @@ public class UtilsTest {
     @Test
     public void checkMap_missingDuplicateValueInChecked_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
-        checked.put("key1", "value1");
+        checked.put("1", "1");
         Multimap<String, String> rules = ArrayListMultimap.create();
-        rules.put("key1", "value1");
-        rules.put("key1", "value1");
+        rules.put("1", "1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMap(checked, rules);
 
@@ -110,7 +110,7 @@ public class UtilsTest {
     public void checkMultimap_emptyCheckedAndNotEmptyRules_returnFalse() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
@@ -120,9 +120,9 @@ public class UtilsTest {
     @Test
     public void checkMultimap_checkedIsSameAsRules_returnTrue() throws Exception {
         SetMultimap<String, String> checked = HashMultimap.create();
-        checked.put("key1", "value1");
+        checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
@@ -132,10 +132,10 @@ public class UtilsTest {
     @Test
     public void checkMultimap_checkedContainsRules_returnTrue() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
-        checked.put("key1", "value1");
-        checked.put("key2", "value2");
+        checked.put("1", "1");
+        checked.put("2", "2");
         Multimap<String, String> rules = ArrayListMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
@@ -145,9 +145,9 @@ public class UtilsTest {
     @Test
     public void checkMultimap_missingKeyInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
-        checked.put("key1", "value1");
+        checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key2", "value2");
+        rules.put("2", "2");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
@@ -157,9 +157,9 @@ public class UtilsTest {
     @Test
     public void checkMultimap_wrongValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
-        checked.put("key1", "value2");
+        checked.put("1", "2");
         Multimap<String, String> rules = HashMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
@@ -169,10 +169,10 @@ public class UtilsTest {
     @Test
     public void checkMultimap_missingDuplicateValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = ArrayListMultimap.create();
-        checked.put("key1", "value1");
+        checked.put("1", "1");
         Multimap<String, String> rules = ArrayListMultimap.create();
-        rules.put("key1", "value1");
-        rules.put("key1", "value1");
+        rules.put("1", "1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
@@ -182,10 +182,10 @@ public class UtilsTest {
     @Test
     public void checkMultimap_extraDuplicateValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = ArrayListMultimap.create();
-        checked.put("key1", "value1");
-        checked.put("key1", "value1");
+        checked.put("1", "1");
+        checked.put("1", "1");
         Multimap<String, String> rules = ArrayListMultimap.create();
-        rules.put("key1", "value1");
+        rules.put("1", "1");
 
         boolean result = Utils.checkMultimap(checked, rules);
 
