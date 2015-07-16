@@ -37,7 +37,7 @@ public class HTTPResponse {
         }
 
         public HTTPResponseBuilder setStatusCode(String statusCode) {
-            httpResponse.statusCode = Integer.valueOf(statusCode);
+            httpResponse.statusCode = Integer.parseInt(statusCode);
             return this;
         }
 
@@ -109,6 +109,15 @@ public class HTTPResponse {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + this.statusCode;
+        result = 31 * result + this.headers.hashCode();
+        result = 31 * result + this.content.hashCode();
+        return result;
     }
 
     @Override

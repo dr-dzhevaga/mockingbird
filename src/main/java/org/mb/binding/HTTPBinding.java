@@ -41,9 +41,10 @@ public class HTTPBinding {
 
     public HTTPResponse resolve(HTTPRequest request) {
         Log.info(String.format(REQUEST_IS_RECEIVED, request));
-        for(HTTPRequestPattern requestPattern : binding.keySet()) {
+        for(Map.Entry<HTTPRequestPattern, HTTPResponse> entry : binding.entrySet()) {
+            HTTPRequestPattern requestPattern = entry.getKey();
             if(requestPattern.matches(request)) {
-                HTTPResponse response = binding.get(requestPattern);
+                HTTPResponse response = entry.getValue();
                 Log.info(String.format(RESPONSE_IS_FOUND, response));
                 return response;
             }

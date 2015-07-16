@@ -7,6 +7,7 @@ import com.google.common.collect.Multimap;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by Dmitriy Dzhevaga on 28.06.2015.
@@ -51,7 +52,7 @@ public class Utils {
         if(o instanceof String) {
             return Lists.<T>newArrayList((T) o);
         } else if(o instanceof List) {
-            for(Object listItem : (List)o) {
+            for(Object listItem : (List<Object>)o) {
                 if(type.isAssignableFrom(o.getClass())) {
                     throw new MarshallingException(GET_AS_LIST_ERROR);
                 }
@@ -68,10 +69,10 @@ public class Utils {
             return Collections.emptyMap();
         }
         if(o instanceof Map) {
-            Map map = (Map)o;
-            for(Object key : map.keySet()) {
-                getAs(key, keyType, true);
-                getAs(map.get(key), valueType, true);
+            Map<Object, Object> map = (Map<Object, Object>)o;
+            for(Map.Entry<Object, Object> entry : map.entrySet()) {
+                getAs(entry.getKey(), keyType, true);
+                getAs(entry.getValue(), valueType, true);
             }
             return (Map<K, V>) o;
         } else {
@@ -79,15 +80,16 @@ public class Utils {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static <K, V> Multimap<K, V> getAsMultimap(Object o, Class<K> keyType, Class<V> valueType) throws MarshallingException {
         ListMultimap<K, V> multimap = ArrayListMultimap.create();
         if(o == null) {
             return multimap;
         }
         if(o instanceof Map) {
-            Map map = (Map)o;
-            for(Object key : map.keySet()) {
-                multimap.putAll(getAs(key, keyType, true), getAsList(map.get(key), valueType));
+            Map<Object, Object> map = (Map<Object, Object>)o;
+            for(Map.Entry<Object, Object> entry : map.entrySet()) {
+                multimap.putAll(getAs(entry.getKey(), keyType, true), getAsList(entry.getValue(), valueType));
             }
             return multimap;
         } else {

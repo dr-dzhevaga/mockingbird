@@ -1,5 +1,6 @@
 package org.mb;
 
+import com.google.common.base.Charsets;
 import org.mb.binding.HTTPBinding;
 import org.mb.cli.Arguments;
 import org.mb.cli.ArgumentsImpl;
@@ -9,7 +10,11 @@ import org.mb.marshalling.Marshaller;
 import org.mb.parsing.InputFormat;
 import org.mb.parsing.Parser;
 import org.mb.parsing.ParserFactory;
+
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+
 import static org.mb.cli.ArgumentsImpl.*;
 
 /**
@@ -29,7 +34,7 @@ public class Main {
         }
 
         final boolean printHelp = arguments.hasOption(HELP_SHORT);
-        final int serverPort = Integer.valueOf(arguments.getOptionValue(SERVER_PORT_SHORT));
+        final int serverPort = Integer.parseInt(arguments.getOptionValue(SERVER_PORT_SHORT));
         final String bindingsFilePath = arguments.getOptionValue(BINDINGS_PATH_SHORT);
         final InputFormat bindingsFileFormat = InputFormat.fromString(arguments.getOptionValue(BINDINGS_FORMAT_SHORT));
 
@@ -39,9 +44,9 @@ public class Main {
         }
 
         final Parser parser = ParserFactory.newParser(bindingsFileFormat);
-        final Object objectsGraph = parser.parse(new FileReader(bindingsFilePath));
+        final Object objectsGraph = parser.parse(new InputStreamReader(new FileInputStream(bindingsFilePath), Charsets.UTF_8));
 
-        final HTTPBinding responseResolver = Marshaller.GetAsHTTPBinding(objectsGraph);
+        final HTTPBinding responseResolver = Marshaller.getAsHTTPBinding(objectsGraph);
 
         final HTTPServer server = HTTPServerImpl.getFactory().create(serverPort);
         server.setHandler(new Handler() {

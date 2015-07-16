@@ -20,7 +20,7 @@ public class Marshaller {
     private final static String STATUS_CODE = "statusCode";
     private final static String CONTENT = "content";
 
-    public static HTTPBinding GetAsHTTPBinding(Object o) throws MarshallingException {
+    public static HTTPBinding getAsHTTPBinding(Object o) throws MarshallingException {
         List httpBindingsList = getAs(o, List.class, true);
         HTTPBinding httpBinding = new HTTPBinding();
         for(Object httpBindingObject : httpBindingsList) {
