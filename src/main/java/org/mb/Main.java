@@ -3,6 +3,7 @@ package org.mb;
 import org.mb.binding.HTTPBinding;
 import org.mb.cli.Arguments;
 import org.mb.cli.ArgumentsImpl;
+import org.mb.cli.ParsingException;
 import org.mb.http.*;
 import org.mb.marshalling.Marshaller;
 import org.mb.parsing.InputFormat;
@@ -17,7 +18,16 @@ import static org.mb.cli.ArgumentsImpl.*;
 public class Main {
     public static void main(String[] args) throws Exception {
 
-        final Arguments arguments = ArgumentsImpl.getInstance(args);
+        final Arguments arguments = ArgumentsImpl.getInstance();
+        try {
+            arguments.parse(args);
+        } catch (ParsingException e) {
+            System.out.println(e.getMessage());
+            arguments.printHelp();
+            System.exit(0);
+            throw e;
+        }
+
         final boolean printHelp = arguments.hasOption(HELP_SHORT);
         final int serverPort = Integer.valueOf(arguments.getOptionValue(SERVER_PORT_SHORT));
         final String bindingsFilePath = arguments.getOptionValue(BINDINGS_PATH_SHORT);

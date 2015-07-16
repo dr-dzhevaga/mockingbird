@@ -29,27 +29,19 @@ public class ArgumentsImpl implements Arguments {
 
     private static final String COMMAND_LINE_SYNTAX     = "java mockingbird.jar";
 
-    private final CommandLine commandLine;
     private final Options options = new Options();
+    private CommandLine commandLine;
+    private boolean isParsed;
 
-    public static Arguments getInstance(String[] args) throws ParseException {
-        return new ArgumentsImpl(args);
+    public static Arguments getInstance() {
+        return new ArgumentsImpl();
     }
 
-    private ArgumentsImpl(String[] args) throws ParseException {
+    public ArgumentsImpl() {
         addOption(HELP_SHORT, HELP_LONG, HELP_DESC, false, "");
         addOption(SERVER_PORT_SHORT, SERVER_PORT_LONG, SERVER_PORT_DESC, true, SERVER_PORT_ARG);
         addOption(BINDINGS_PATH_SHORT, BINDINGS_PATH_LONG, BINDINGS_PATH_DESC, true, BINDINGS_PATH_ARG);
         addOption(BINDINGS_FORMAT_SHORT, BINDINGS_FORMAT_LONG, BINDINGS_FORMAT_DESC, true, BINDINGS_FORMAT_ARG);
-        CommandLineParser parser = new DefaultParser();
-        try {
-            commandLine = parser.parse(options, args);
-        } catch (ParseException e) {
-            System.out.println(e.getMessage());
-            printHelp();
-            System.exit(0);
-            throw e;
-        }
     }
 
     private void addOption(String optShort, String optLong, String desc, boolean required, String arg) {
@@ -65,12 +57,25 @@ public class ArgumentsImpl implements Arguments {
     }
 
     @Override
+    public void parse(String[] args) throws ParsingException {
+        CommandLineParser parser = new DefaultParser();
+        try {
+            commandLine = parser.parse(options, args);
+        } catch (ParseException e) {
+            throw new ParsingException(e);
+        }
+        isParsed = true;
+    }
+
+    @Override
     public boolean hasOption(String opt) {
+        if(!isParsed) throw new IllegalStateException();
         return commandLine.hasOption(opt);
     }
 
     @Override
     public String getOptionValue(String opt) {
+        if(!isParsed) throw new IllegalStateException();
         return commandLine.getOptionValue(opt);
     }
 
