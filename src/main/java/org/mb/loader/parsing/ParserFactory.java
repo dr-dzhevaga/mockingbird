@@ -1,4 +1,4 @@
-package org.mb.parsing;
+package org.mb.loader.parsing;
 
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.

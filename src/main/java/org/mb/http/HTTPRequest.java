@@ -3,7 +3,6 @@ package org.mb.http;
 import com.google.common.collect.*;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -24,38 +23,38 @@ public class HTTPRequest {
         this.content = "";
     }
 
-    public static HTTPRequestBuilder getBuilder(String uri, HTTPMethod method) {
-        return new HTTPRequestBuilder(uri, method);
+    public static Builder getBuilder(String uri, HTTPMethod method) {
+        return new Builder(uri, method);
     }
 
-    public static class HTTPRequestBuilder {
+    public static class Builder {
         private HTTPRequest httpRequest;
 
-        private HTTPRequestBuilder(String uri, HTTPMethod method) {
+        private Builder(String uri, HTTPMethod method) {
             httpRequest = new HTTPRequest(uri, method);
         }
 
-        public HTTPRequestBuilder addQueryParameter(String name, String value) {
+        public Builder addQueryParameter(String name, String value) {
             httpRequest.queryParameters.put(name, value);
             return this;
         }
 
-        public HTTPRequestBuilder addQueryParameters(String name, Collection<String> values) {
+        public Builder addQueryParameters(String name, Collection<String> values) {
             httpRequest.queryParameters.putAll(name, values);
             return this;
         }
 
-        public HTTPRequestBuilder addHeader(String name, String value) {
+        public Builder addHeader(String name, String value) {
             httpRequest.headers.put(name, value);
             return this;
         }
 
-        public HTTPRequestBuilder addHeaders(Map<String, String> parameters) {
+        public Builder addHeaders(Map<String, String> parameters) {
             httpRequest.headers.putAll(parameters);
             return this;
         }
 
-        public HTTPRequestBuilder setContent(String content) {
+        public Builder setContent(String content) {
             httpRequest.content = content;
             return this;
         }

@@ -1,11 +1,10 @@
-package org.mb.marshalling;
+package org.mb.loader.marshalling;
 
 import org.mb.binding.HTTPBinding;
 import org.mb.binding.HTTPRequestPattern;
 import org.mb.http.HTTPResponse;
 import java.util.List;
 import java.util.Map;
-import static org.mb.marshalling.Utils.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.
@@ -20,57 +19,57 @@ public class Marshaller {
     private final static String STATUS_CODE = "statusCode";
     private final static String CONTENT = "content";
 
-    public static HTTPBinding getAsHTTPBinding(Object o) throws MarshallingException {
-        List httpBindingsList = getAs(o, List.class, true);
+    public static HTTPBinding toHTTPBinding(Object o) throws MarshallingException {
+        List httpBindingsList = CommonMarshaller.toType(o, List.class, true);
         HTTPBinding httpBinding = new HTTPBinding();
         for(Object httpBindingObject : httpBindingsList) {
-            Map httpBindingMap = getAs(httpBindingObject, Map.class, true);
-            HTTPRequestPattern httpRequestPattern = getAsHTTPRequestPattern(httpBindingMap.get(REQUEST));
-            HTTPResponse httpResponse = getAsHTTPResponse(httpBindingMap.get(RESPONSE));
+            Map httpBindingMap = CommonMarshaller.toType(httpBindingObject, Map.class, true);
+            HTTPRequestPattern httpRequestPattern = toHTTPRequestPattern(httpBindingMap.get(REQUEST));
+            HTTPResponse httpResponse = toHTTPResponse(httpBindingMap.get(RESPONSE));
             httpBinding.addBinding(httpRequestPattern, httpResponse);
         }
         return  httpBinding;
     }
 
-    public static HTTPRequestPattern getAsHTTPRequestPattern(Object o) throws MarshallingException {
-        Map httpRequestPatternMap = getAs(o, Map.class, true);
+    public static HTTPRequestPattern toHTTPRequestPattern(Object o) throws MarshallingException {
+        Map httpRequestPatternMap = CommonMarshaller.toType(o, Map.class, true);
 
-        HTTPRequestPattern.RequestPatternBuilder builder = HTTPRequestPattern.getBuilder();
+        HTTPRequestPattern.Builder builder = HTTPRequestPattern.getBuilder();
 
         Object uriObject = httpRequestPatternMap.get(URI);
-        String uri = getAsString(uriObject);
+        String uri = CommonMarshaller.toString(uriObject);
         if(!uri.isEmpty()) {
             builder.setUriPattern(uri);
         }
 
         Object methodObject = httpRequestPatternMap.get(METHOD);
-        builder.addMethodsAsStrings(getAsList(methodObject, String.class));
+        builder.addMethodsAsStrings(CommonMarshaller.toListOfType(methodObject, String.class));
 
         Object queryParameterObject = httpRequestPatternMap.get(QUERY_PARAMETER);
-        builder.addQueryParameters(getAsMultimap(queryParameterObject, String.class, String.class));
+        builder.addQueryParameters(CommonMarshaller.toMultimapOfType(queryParameterObject, String.class, String.class));
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
-        builder.addHeaders(getAsMultimap(headerObject, String.class, String.class));
+        builder.addHeaders(CommonMarshaller.toMultimapOfType(headerObject, String.class, String.class));
 
         return builder.build();
     }
 
-    public static HTTPResponse getAsHTTPResponse(Object o) throws MarshallingException {
-        Map httpResponseMap = getAs(o, Map.class, true);
+    public static HTTPResponse toHTTPResponse(Object o) throws MarshallingException {
+        Map httpResponseMap = CommonMarshaller.toType(o, Map.class, true);
 
-        HTTPResponse.HTTPResponseBuilder builder = HTTPResponse.getBuilder();
+        HTTPResponse.Builder builder = HTTPResponse.getBuilder();
 
         Object statusCodeObject = httpResponseMap.get(STATUS_CODE);
-        String statusCode = getAsString(statusCodeObject);
+        String statusCode = CommonMarshaller.toString(statusCodeObject);
         if(!statusCode.isEmpty()) {
             builder.setStatusCode(statusCode);
         }
 
         Object headerObject = httpResponseMap.get(HEADER);
-        builder.addHeaders(getAsMap(headerObject, String.class, String.class));
+        builder.addHeaders(CommonMarshaller.toMapOfType(headerObject, String.class, String.class));
 
         Object contentObject = httpResponseMap.get(CONTENT);
-        String content = getAsString(contentObject);
+        String content = CommonMarshaller.toString(contentObject);
         if(!content.isEmpty()) {
             builder.setContent(content);
         }

@@ -1,4 +1,4 @@
-package org.mb.parsing;
+package org.mb.loader.parsing;
 
 import com.google.gson.Gson;
 import java.io.Reader;

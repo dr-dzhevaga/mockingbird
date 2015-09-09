@@ -9,7 +9,7 @@ import static org.junit.Assert.*;
 /**
  * Created by Dmitriy Dzhevaga on 11.07.2015.
  */
-public class UtilsTest {
+public class CommonMarshallerTest {
 
     @Test
     public void checkMap_emptyRules_returnTrue() throws Exception {

@@ -26,32 +26,32 @@ public class HTTPResponse {
         this.contentIsFilePath = false;
     }
 
-    public static HTTPResponseBuilder getBuilder() {return new HTTPResponseBuilder();}
+    public static Builder getBuilder() {return new Builder();}
 
-    public static class HTTPResponseBuilder {
+    public static class Builder {
         private HTTPResponse httpResponse = new HTTPResponse();
 
-        public HTTPResponseBuilder setStatusCode(int statusCode) {
+        public Builder setStatusCode(int statusCode) {
             httpResponse.statusCode = statusCode;
             return this;
         }
 
-        public HTTPResponseBuilder setStatusCode(String statusCode) {
+        public Builder setStatusCode(String statusCode) {
             httpResponse.statusCode = Integer.parseInt(statusCode);
             return this;
         }
 
-        public HTTPResponseBuilder addHeader(String name, String value) {
+        public Builder addHeader(String name, String value) {
             httpResponse.headers.put(name, value);
             return this;
         }
 
-        public HTTPResponseBuilder addHeaders(Map<String, String> parameters) {
+        public Builder addHeaders(Map<String, String> parameters) {
             httpResponse.headers.putAll(parameters);
             return this;
         }
 
-        public HTTPResponseBuilder setContent(String content) {
+        public Builder setContent(String content) {
             httpResponse.content = content;
             httpResponse.contentIsFilePath = new File(content).exists();
             return this;

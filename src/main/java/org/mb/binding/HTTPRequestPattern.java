@@ -26,66 +26,66 @@ public class HTTPRequestPattern {
         this.headers = HashMultimap.create();
     }
 
-    public static RequestPatternBuilder getBuilder() {
-        return new RequestPatternBuilder();
+    public static Builder getBuilder() {
+        return new Builder();
     }
 
-    public static class RequestPatternBuilder {
+    public static class Builder {
         private final HTTPRequestPattern requestPattern = new HTTPRequestPattern();
 
-        public RequestPatternBuilder setUriPattern(String uriPattern) {
+        public Builder setUriPattern(String uriPattern) {
             requestPattern.uriPattern = Pattern.compile(uriPattern);
             return this;
         }
 
-        public RequestPatternBuilder addMethod(HTTPMethod method) {
+        public Builder addMethod(HTTPMethod method) {
             requestPattern.methods.add(method);
             return this;
         }
 
-        public RequestPatternBuilder addMethod(String method) {
-            addMethod(HTTPMethod.fromString(method));
+        public Builder addMethod(String method) {
+            addMethod(HTTPMethod.of(method));
             return this;
         }
 
-        public RequestPatternBuilder addMethods(Collection<HTTPMethod> methods) {
+        public Builder addMethods(Collection<HTTPMethod> methods) {
             requestPattern.methods.addAll(methods);
             return this;
         }
 
-        public RequestPatternBuilder addMethodsAsStrings(Collection<String> methods) {
+        public Builder addMethodsAsStrings(Collection<String> methods) {
             for(String method : methods) {
                 addMethod(method);
             }
             return this;
         }
 
-        public RequestPatternBuilder addQueryParameter(String name, String values) {
+        public Builder addQueryParameter(String name, String values) {
             requestPattern.queryParameters.put(name, values);
             return this;
         }
 
-        public RequestPatternBuilder addQueryParameters(Multimap<String, String> parameters) {
+        public Builder addQueryParameters(Multimap<String, String> parameters) {
             requestPattern.queryParameters.putAll(parameters);
             return this;
         }
 
-        public RequestPatternBuilder addQueryParameters(String name, Collection<String> values) {
+        public Builder addQueryParameters(String name, Collection<String> values) {
             requestPattern.queryParameters.putAll(name, values);
             return this;
         }
 
-        public RequestPatternBuilder addHeader(String name, String value) {
+        public Builder addHeader(String name, String value) {
             requestPattern.headers.put(name, value);
             return this;
         }
 
-        public RequestPatternBuilder addHeaders(Multimap<String, String> parameters) {
+        public Builder addHeaders(Multimap<String, String> parameters) {
             requestPattern.headers.putAll(parameters);
             return this;
         }
 
-        public RequestPatternBuilder addHeaders(String name, Collection<String> values) {
+        public Builder addHeaders(String name, Collection<String> values) {
             requestPattern.headers.putAll(name, values);
             return this;
         }

@@ -1,4 +1,4 @@
-package org.mb.parsing;
+package org.mb.loader.parsing;
 
 import com.google.common.collect.Maps;
 import java.util.Map;
@@ -28,7 +28,7 @@ public enum InputFormat {
         return string;
     }
 
-    public static InputFormat fromString(String string) throws IllegalArgumentException {
+    public static InputFormat of(String string) throws IllegalArgumentException {
         InputFormat method = stringToEnum.get(string.toLowerCase());
         if(method == null) {
             throw new IllegalArgumentException("Unknown file format: " + string);

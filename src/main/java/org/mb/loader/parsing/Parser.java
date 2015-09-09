@@ -1,4 +1,4 @@
-package org.mb.parsing;
+package org.mb.loader.parsing;
 
 import java.io.FileNotFoundException;
 import java.io.Reader;

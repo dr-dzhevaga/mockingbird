@@ -36,7 +36,7 @@ public enum HTTPMethod {
         return string;
     }
 
-    public static HTTPMethod fromString(String string) throws IllegalArgumentException {
+    public static HTTPMethod of(String string) throws IllegalArgumentException {
         HTTPMethod method = stringToEnum.get(string.toLowerCase());
         if(method == null) {
             throw new IllegalArgumentException("Unknown HTTP method: " + string);
