@@ -1,5 +1,6 @@
 package org.mb.http;
 
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
@@ -17,7 +18,6 @@ import java.util.*;
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
 public class JettyHTTPServer implements HTTPServer {
-
     private Server jettyServer;
 
     public static HTTPServer newInstance(int port) {
@@ -34,10 +34,6 @@ public class JettyHTTPServer implements HTTPServer {
             throw new IllegalStateException("Handler is not set");
         }
         jettyServer.start();
-    }
-
-    @Override
-    public void join() throws InterruptedException {
         jettyServer.join();
     }
 
@@ -54,38 +50,42 @@ public class JettyHTTPServer implements HTTPServer {
         });
     }
 
-    private HTTPRequest readRequest(HttpServletRequest from) throws IllegalArgumentException, IOException {
-        HTTPRequest.Builder builder = HTTPRequest.getBuilder(from.getRequestURI(), HTTPMethod.of(from.getMethod()));
+    private HTTPRequest readRequest(HttpServletRequest srcRequest) throws IllegalArgumentException, IOException {
+        HTTPRequest.Builder builder = HTTPRequest.newBuilder(srcRequest.getRequestURI(), HTTPMethod.of(srcRequest.getMethod()));
 
-        Enumeration<String> headerNames = from.getHeaderNames();
+        Enumeration<String> headerNames = srcRequest.getHeaderNames();
         while(headerNames.hasMoreElements()){
             String headerName = headerNames.nextElement();
-            String headerValue = from.getHeader(headerName);
+            String headerValue = srcRequest.getHeader(headerName);
             builder.addHeader(headerName, headerValue);
         }
 
-        for(Map.Entry<String, String[]> parameter : from.getParameterMap().entrySet()) {
+        for(Map.Entry<String, String[]> parameter : srcRequest.getParameterMap().entrySet()) {
             String parameterName = parameter.getKey();
             List<String> parameterValues = Arrays.asList(parameter.getValue());
             builder.addQueryParameters(parameterName, parameterValues);
         }
 
-        String encoding = Strings.isNullOrEmpty(from.getCharacterEncoding()) ? "UTF-8" : from.getCharacterEncoding();
-        String content = CharStreams.toString(new InputStreamReader(from.getInputStream(), encoding));
+        String encoding = srcRequest.getCharacterEncoding();
+        if(Strings.isNullOrEmpty(encoding)){
+            encoding = Charsets.UTF_8.toString();
+        };
+
+        String content = CharStreams.toString(new InputStreamReader(srcRequest.getInputStream(), encoding));
         builder.setContent(content);
 
         return builder.build();
     }
 
-    private void writeResponse(HTTPResponse from, HttpServletResponse to) throws IOException {
-        to.setStatus(from.getStatusCode());
+    private void writeResponse(HTTPResponse srcResponse, HttpServletResponse dstResponse) throws IOException {
+        dstResponse.setStatus(srcResponse.getStatusCode());
 
-        for(Map.Entry<String, String> header : from.getHeaders().entrySet()) {
-            to.setHeader(header.getKey(), header.getValue());
+        for(Map.Entry<String, String> header : srcResponse.getHeaders().entrySet()) {
+            dstResponse.setHeader(header.getKey(), header.getValue());
         }
 
-        try(InputStream inputStream = from.getContent()) {
-            ByteStreams.copy(inputStream, to.getOutputStream());
+        try(InputStream inputStream = srcResponse.getContent()) {
+            ByteStreams.copy(inputStream, dstResponse.getOutputStream());
         }
     }
 }

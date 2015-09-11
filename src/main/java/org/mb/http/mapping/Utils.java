@@ -1,4 +1,4 @@
-package org.mb.binding;
+package org.mb.http.mapping;
 
 import com.google.common.collect.Multimap;
 import java.util.Map;

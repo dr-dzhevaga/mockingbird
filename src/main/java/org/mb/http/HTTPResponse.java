@@ -11,56 +11,22 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
 public class HTTPResponse {
-    private static int DEFAULT_STATUS_CODE = 200;
-    private static int CONTENT_MAX_LOG_LENGTH = 1024;
+    private static final int DEFAULT_STATUS_CODE    = 200;
+    private static final int LOG_MAX_CONTENT_LENGTH = 1024;
 
-    private int statusCode;
-    private Map<String, String> headers;
-    private String content;
-    private boolean contentIsFilePath;
+    final private int statusCode;
+    final private Map<String, String> headers;
+    final private String content;
+    final private boolean contentIsFilePath;
 
-    private HTTPResponse() {
-        this.statusCode = DEFAULT_STATUS_CODE;
-        this.headers = Maps.newHashMap();
-        this.content = "";
-        this.contentIsFilePath = false;
+    private HTTPResponse(int statusCode, Map<String, String> headers, String content, boolean contentIsFilePath) {
+        this.statusCode = statusCode;
+        this.headers = headers;
+        this.content = content;
+        this.contentIsFilePath = contentIsFilePath;
     }
 
-    public static Builder getBuilder() {return new Builder();}
-
-    public static class Builder {
-        private HTTPResponse httpResponse = new HTTPResponse();
-
-        public Builder setStatusCode(int statusCode) {
-            httpResponse.statusCode = statusCode;
-            return this;
-        }
-
-        public Builder setStatusCode(String statusCode) {
-            httpResponse.statusCode = Integer.parseInt(statusCode);
-            return this;
-        }
-
-        public Builder addHeader(String name, String value) {
-            httpResponse.headers.put(name, value);
-            return this;
-        }
-
-        public Builder addHeaders(Map<String, String> parameters) {
-            httpResponse.headers.putAll(parameters);
-            return this;
-        }
-
-        public Builder setContent(String content) {
-            httpResponse.content = content;
-            httpResponse.contentIsFilePath = new File(content).exists();
-            return this;
-        }
-
-        public HTTPResponse build() {
-            return httpResponse;
-        }
-    }
+    public static Builder newBuilder() {return new Builder();}
 
     public int getStatusCode() {
         return statusCode;
@@ -127,10 +93,47 @@ public class HTTPResponse {
         if(!getHeaders().isEmpty()) {
             builder.append(String.format("%n\tHeaders: %s", getHeaders()));
         }
-        String content = getContentAsString(CONTENT_MAX_LOG_LENGTH);
+        String content = getContentAsString(LOG_MAX_CONTENT_LENGTH);
         if(!content.isEmpty()) {
             builder.append(String.format("%n\tContent: %s", content));
         }
         return builder.toString();
+    }
+
+    public static class Builder {
+        private int statusCode = DEFAULT_STATUS_CODE;
+        private Map<String, String> headers = Maps.newHashMap();;
+        private String content = "";
+        private boolean contentIsFilePath = false;
+
+        public Builder setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+            return this;
+        }
+
+        public Builder setStatusCode(String statusCode) {
+            this.statusCode = Integer.parseInt(statusCode);
+            return this;
+        }
+
+        public Builder addHeader(String name, String value) {
+            this.headers.put(name, value);
+            return this;
+        }
+
+        public Builder addHeaders(Map<String, String> parameters) {
+            this.headers.putAll(parameters);
+            return this;
+        }
+
+        public Builder setContent(String content) {
+            this.content = content;
+            this.contentIsFilePath = new File(content).exists();
+            return this;
+        }
+
+        public HTTPResponse build() {
+            return new HTTPResponse(statusCode, headers, content, contentIsFilePath);
+        }
     }
 }

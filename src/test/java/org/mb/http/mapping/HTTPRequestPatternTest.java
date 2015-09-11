@@ -1,11 +1,10 @@
-package org.mb.binding;
+package org.mb.http.mapping;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.mb.http.HTTPMethod;
 import org.mb.http.HTTPRequest;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 12.07.2015.
@@ -13,11 +12,11 @@ import static org.junit.Assert.*;
 public class HTTPRequestPatternTest {
 
     private HTTPRequestPattern getEmptyRequestPattern() {
-        return HTTPRequestPattern.getBuilder().build();
+        return HTTPRequestPattern.newBuilder().build();
     }
 
     private HTTPRequestPattern getFilledRequestPattern() {
-        return HTTPRequestPattern.getBuilder().
+        return HTTPRequestPattern.newBuilder().
                 setUriPattern("/uri").
                 addMethod(HTTPMethod.GET).
                 addQueryParameter("1", "1").
@@ -28,7 +27,7 @@ public class HTTPRequestPatternTest {
     @Test
     public void matches_defaultPattern_returnTrue() throws Exception {
         HTTPRequestPattern requestPattern = getEmptyRequestPattern();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.GET).build();
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.GET).build();
 
         boolean result = requestPattern.matches(request);
 
@@ -38,7 +37,7 @@ public class HTTPRequestPatternTest {
     @Test
     public void matches_requestEqualsPattern_returnTrue() throws Exception {
         HTTPRequestPattern requestPattern = getFilledRequestPattern();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.GET).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.GET).
                 addQueryParameter("1", "1").
                 addHeader("1", "1").
                 setContent("content").
@@ -51,12 +50,12 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_patternContainsRequest_returnTrue() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 setUriPattern("/uri/.*").
                 addMethods(asList(HTTPMethod.GET, HTTPMethod.POST)).
                 addHeaders("1", asList("1", "2")).
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri/uri", HTTPMethod.GET).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri/uri", HTTPMethod.GET).
                 addHeader("1", "1").
                 setContent("content").
                 build();
@@ -68,10 +67,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_wrongUri_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 setUriPattern("/uri/uri").
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.GET).build();
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.GET).build();
 
         boolean result = requestPattern.matches(request);
 
@@ -80,10 +79,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_wrongMethod_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addMethod(HTTPMethod.GET).
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).build();
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).build();
 
         boolean result = requestPattern.matches(request);
 
@@ -92,10 +91,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_missingQueryParameter_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addQueryParameter("1", "1").
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).
                 addQueryParameter("2", "2").
                 build();
 
@@ -106,10 +105,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_wrongQueryParameterValue_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addQueryParameter("1", "1").
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).
                 addQueryParameter("1", "2").
                 build();
 
@@ -120,10 +119,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_extraDuplicateQueryParameterInRequest_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addQueryParameter("1", "1").
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).
                 addQueryParameters("1", asList("1", "1")).
                 build();
 
@@ -134,10 +133,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_missingDuplicateQueryParameterInRequest_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addQueryParameters("1", asList("1", "1")).
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).
                 addQueryParameter("1", "1").
                 build();
 
@@ -148,10 +147,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_missingHeader_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addHeader("1", "1").
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).
                 addHeader("2", "2").
                 build();
 
@@ -162,10 +161,10 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void matches_wrongHeaderValue_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern = HTTPRequestPattern.getBuilder().
+        HTTPRequestPattern requestPattern = HTTPRequestPattern.newBuilder().
                 addHeader("1", "1").
                 build();
-        HTTPRequest request = HTTPRequest.getBuilder("/uri", HTTPMethod.POST).
+        HTTPRequest request = HTTPRequest.newBuilder("/uri", HTTPMethod.POST).
                 addHeader("1", "2").
                 build();
 
@@ -173,8 +172,6 @@ public class HTTPRequestPatternTest {
 
         Assert.assertFalse(result);
     }
-
-
 
     @Test
     public void equals_sameObject_returnTrue() throws Exception {
@@ -197,8 +194,8 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void equals_notEqualUri_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().setUriPattern("/uri1").build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().setUriPattern("/uri2").build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().setUriPattern("/uri1").build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().setUriPattern("/uri2").build();
 
         boolean result = requestPattern1.equals(requestPattern2);
 
@@ -207,8 +204,8 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void equals_notEqualMethod_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().addMethod(HTTPMethod.GET).build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().addMethod(HTTPMethod.POST).build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().addMethod(HTTPMethod.GET).build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().addMethod(HTTPMethod.POST).build();
 
         boolean result = requestPattern1.equals(requestPattern2);
 
@@ -217,8 +214,8 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void equals_notEqualQueryParameter_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().addQueryParameter("1", "1").build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().addQueryParameter("1", "2").build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().addQueryParameter("1", "1").build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().addQueryParameter("1", "2").build();
 
         boolean result = requestPattern1.equals(requestPattern2);
 
@@ -227,15 +224,13 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void equals_notEqualHeader_returnFalse() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().addHeader("1", "1").build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().addHeader("1", "2").build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().addHeader("1", "1").build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().addHeader("1", "2").build();
 
         boolean result = requestPattern1.equals(requestPattern2);
 
         Assert.assertFalse(result);
     }
-
-
 
     @Test
     public void hashCode_sameObject_equals() throws Exception {
@@ -254,32 +249,32 @@ public class HTTPRequestPatternTest {
 
     @Test
     public void hashCode_notEqualUri_notEquals() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().setUriPattern("/uri1").build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().setUriPattern("/uri2").build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().setUriPattern("/uri1").build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().setUriPattern("/uri2").build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }
 
     @Test
     public void hashCode_notEqualMethod_notEquals() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().addMethod(HTTPMethod.GET).build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().addMethod(HTTPMethod.POST).build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().addMethod(HTTPMethod.GET).build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().addMethod(HTTPMethod.POST).build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }
 
     @Test
     public void hashCode_notEqualQueryParameter_notEquals() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().addQueryParameter("1", "1").build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().addQueryParameter("1", "2").build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().addQueryParameter("1", "1").build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().addQueryParameter("1", "2").build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }
 
     @Test
     public void hashCode_notEqualHeader_notEquals() throws Exception {
-        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.getBuilder().addHeader("1", "1").build();
-        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.getBuilder().addHeader("1", "2").build();
+        HTTPRequestPattern requestPattern1 = HTTPRequestPattern.newBuilder().addHeader("1", "1").build();
+        HTTPRequestPattern requestPattern2 = HTTPRequestPattern.newBuilder().addHeader("1", "2").build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }

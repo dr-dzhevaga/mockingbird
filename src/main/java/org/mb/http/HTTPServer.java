@@ -5,6 +5,5 @@ package org.mb.http;
  */
 public interface HTTPServer {
     public void start() throws Exception;
-    public void join() throws InterruptedException;
     public void setHandler(Handler handler);
 }

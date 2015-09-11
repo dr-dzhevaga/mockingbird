@@ -6,7 +6,6 @@ import org.apache.commons.cli.*;
  * Created by Dmitriy Dzhevaga on 04.07.2015.
  */
 public class CommonsCLI implements CLI {
-
     private static final String COMMAND_LINE_SYNTAX     = "java mockingbird.jar";
 
     public static final String HELP = "?";
@@ -29,7 +28,7 @@ public class CommonsCLI implements CLI {
         return new CommonsCLI();
     }
 
-    public CommonsCLI() {
+    private CommonsCLI() {
         for(InitialOption initialOption : initialOptions) {
             Option.Builder builder = Option.builder(initialOption.name);
             builder.longOpt(initialOption.longName);
@@ -72,7 +71,7 @@ public class CommonsCLI implements CLI {
         formatter.printHelp(COMMAND_LINE_SYNTAX, options, true);
     }
 
-    static private class InitialOption {
+    private static class InitialOption {
         final String name;
         final String longName;
         final String description;

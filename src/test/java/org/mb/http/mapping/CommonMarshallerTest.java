@@ -1,10 +1,9 @@
-package org.mb.binding;
+package org.mb.http.mapping;
 
 import com.google.common.collect.*;
 import org.junit.Assert;
 import org.junit.Test;
 import java.util.Map;
-import static org.junit.Assert.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 11.07.2015.
