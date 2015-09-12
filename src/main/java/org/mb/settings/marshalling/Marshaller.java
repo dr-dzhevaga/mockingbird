@@ -1,8 +1,8 @@
-package org.mb.loader.marshalling;
+package org.mb.settings.marshalling;
 
 import org.mb.http.mapping.HTTPRequestResponseMapping;
 import org.mb.http.mapping.HTTPRequestPattern;
-import org.mb.http.HTTPResponse;
+import org.mb.http.basic.HTTPResponse;
 import java.util.List;
 import java.util.Map;
 

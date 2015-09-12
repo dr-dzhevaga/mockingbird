@@ -2,9 +2,9 @@ package org.mb.http.mapping;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mb.http.HTTPMethod;
-import org.mb.http.HTTPRequest;
-import org.mb.http.HTTPResponse;
+import org.mb.http.basic.HTTPMethod;
+import org.mb.http.basic.HTTPRequest;
+import org.mb.http.basic.HTTPResponse;
 
 import java.util.Arrays;
 

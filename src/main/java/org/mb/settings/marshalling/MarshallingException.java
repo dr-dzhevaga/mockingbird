@@ -1,4 +1,4 @@
-package org.mb.loader.marshalling;
+package org.mb.settings.marshalling;
 
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.

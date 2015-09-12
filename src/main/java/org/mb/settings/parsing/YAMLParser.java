@@ -1,4 +1,4 @@
-package org.mb.loader.parsing;
+package org.mb.settings.parsing;
 
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;

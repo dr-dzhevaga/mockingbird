@@ -1,4 +1,4 @@
-package org.mb.http;
+package org.mb.http.basic;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;

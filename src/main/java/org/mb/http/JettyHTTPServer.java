@@ -7,6 +7,7 @@ import com.google.common.io.CharStreams;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.mb.http.basic.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;

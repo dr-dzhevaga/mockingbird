@@ -1,4 +1,4 @@
-package org.mb.loader.marshalling;
+package org.mb.settings.marshalling;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;

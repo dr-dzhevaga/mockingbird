@@ -1,13 +1,13 @@
-package org.mb.loader;
+package org.mb.settings;
 
 import com.google.common.base.Charsets;
 import org.mb.http.mapping.HTTPRequestResponseMapping;
-import org.mb.loader.marshalling.Marshaller;
-import org.mb.loader.marshalling.MarshallingException;
-import org.mb.loader.parsing.InputFormat;
-import org.mb.loader.parsing.Parser;
-import org.mb.loader.parsing.ParserFactory;
-import org.mb.loader.parsing.ParsingException;
+import org.mb.settings.marshalling.Marshaller;
+import org.mb.settings.marshalling.MarshallingException;
+import org.mb.settings.parsing.InputFormat;
+import org.mb.settings.parsing.Parser;
+import org.mb.settings.parsing.ParserFactory;
+import org.mb.settings.parsing.ParsingException;
 import java.io.*;
 
 /**

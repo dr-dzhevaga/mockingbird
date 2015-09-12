@@ -1,8 +1,8 @@
 package org.mb.http.mapping;
 
 import com.google.common.collect.*;
-import org.mb.http.HTTPMethod;
-import org.mb.http.HTTPRequest;
+import org.mb.http.basic.HTTPMethod;
+import org.mb.http.basic.HTTPRequest;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

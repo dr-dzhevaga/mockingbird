@@ -17,6 +17,7 @@ public class CommonsCLI implements CLI {
         new InitialOption(HELP,   "help",                 "print this message",           "",          false),
         new InitialOption(PORT,   "server-port",          "specify server port",          "port",      true),
         new InitialOption(FILE,   "bindings-file",        "specify bindings file",        "file",      true),
+        // TODO: dynamic arguments names based on InputFormat enum
         new InitialOption(FORMAT, "bindings-file-format", "specify bindings file format", "YAML|JSON", true)
     };
 

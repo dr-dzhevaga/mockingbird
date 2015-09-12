@@ -2,8 +2,8 @@ package org.mb.http.mapping;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.mb.http.HTTPMethod;
-import org.mb.http.HTTPRequest;
+import org.mb.http.basic.HTTPMethod;
+import org.mb.http.basic.HTTPRequest;
 import static java.util.Arrays.asList;
 
 /**

@@ -1,12 +1,14 @@
 package org.mb;
 
+import org.mb.http.MainHandler;
+import org.mb.http.basic.HTTPServer;
 import org.mb.http.mapping.HTTPRequestResponseMapping;
 import org.mb.cli.CLI;
 import org.mb.cli.CommonsCLI;
 import org.mb.cli.ParsingException;
 import org.mb.http.*;
-import org.mb.loader.Loader;
-import org.mb.loader.parsing.InputFormat;
+import org.mb.settings.Loader;
+import org.mb.settings.parsing.InputFormat;
 import static org.mb.cli.CommonsCLI.*;
 
 /**
@@ -34,14 +36,9 @@ public class Main {
             return;
         }
 
-        final HTTPRequestResponseMapping httpRequestResponseMapping = Loader.loadMapping(filePath, fileFormat);
+        HTTPRequestResponseMapping mapping = Loader.loadMapping(filePath, fileFormat);
         HTTPServer server = JettyHTTPServer.newInstance(serverPort);
-        server.setHandler(new Handler() {
-            @Override
-            public HTTPResponse handle(HTTPRequest request) {
-                return httpRequestResponseMapping.findResponse(request);
-            }
-        });
+        server.setHandler(new MainHandler(mapping));
         server.start();
     }
 }

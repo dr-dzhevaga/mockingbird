@@ -2,8 +2,8 @@ package org.mb.http.mapping;
 
 import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
-import org.mb.http.HTTPRequest;
-import org.mb.http.HTTPResponse;
+import org.mb.http.basic.HTTPRequest;
+import org.mb.http.basic.HTTPResponse;
 
 import java.util.Map;
 
