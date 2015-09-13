@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public enum HTTPMethod {
+public enum Method {
     GET("GET"),
     HEAD("HEAD"),
     POST("POST"),
@@ -18,15 +18,15 @@ public enum HTTPMethod {
     CONNECT("CONNECT");
 
     private final String string;
-    private static final Map<String, HTTPMethod> stringToEnum = Maps.newHashMap();
+    private static final Map<String, Method> stringToEnum = Maps.newHashMap();
 
     static {
-        for(HTTPMethod value : values()) {
+        for(Method value : values()) {
             stringToEnum.put(value.toString().toLowerCase(), value);
         }
     }
 
-    HTTPMethod(String string) {
+    Method(String string) {
         this.string = string;
     }
 
@@ -35,8 +35,8 @@ public enum HTTPMethod {
         return string;
     }
 
-    public static HTTPMethod of(String string) throws IllegalArgumentException {
-        HTTPMethod method = stringToEnum.get(string.toLowerCase());
+    public static Method of(String string) throws IllegalArgumentException {
+        Method method = stringToEnum.get(string.toLowerCase());
         if(method == null) {
             // TODO: show expected input strings based on stringToEnum map
             throw new IllegalArgumentException("Unknown HTTP method: " + string);

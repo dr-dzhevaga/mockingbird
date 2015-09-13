@@ -32,7 +32,7 @@ public enum InputFormat {
         InputFormat enumFromString = stringToEnum.get(string.toLowerCase());
         if(enumFromString == null) {
             // TODO: show expected input strings based on stringToEnum map
-            throw new IllegalArgumentException("Unknown file format: " + string);
+            throw new IllegalArgumentException("Unsupported file format: " + string);
         }
         return enumFromString;
     }

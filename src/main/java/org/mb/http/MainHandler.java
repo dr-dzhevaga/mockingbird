@@ -1,10 +1,10 @@
 package org.mb.http;
 
 import com.google.common.collect.Maps;
-import org.mb.http.basic.HTTPRequest;
-import org.mb.http.basic.HTTPResponse;
+import org.mb.http.basic.Request;
+import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
-import org.mb.http.mapping.HTTPRequestResponseMapping;
+import org.mb.settings.Settings;
 
 import java.util.Map;
 
@@ -12,15 +12,15 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
 public class MainHandler implements Handler {
-    private final HTTPRequestResponseMapping mapping;
+    private final Settings settings;
 
-    public MainHandler(HTTPRequestResponseMapping mapping) {
-        this.mapping = mapping;
+    public MainHandler(Settings settings) {
+        this.settings = settings;
     }
 
     @Override
-    public HTTPResponse handle(HTTPRequest request) {
-        Map<String, String> context = Maps.newHashMap();
-        return mapping.findResponse(request);
+    public Response handle(Request request) {
+        Map<String, String> content = Maps.newHashMap();
+        return settings.mapping.find(request, content).response;
     }
 }

@@ -1,8 +1,12 @@
 package org.mb.settings.marshalling;
 
-import org.mb.http.mapping.HTTPRequestResponseMapping;
-import org.mb.http.mapping.HTTPRequestPattern;
-import org.mb.http.basic.HTTPResponse;
+import com.google.common.collect.Table;
+import org.mb.http.mapping.HandlerDataMapping;
+import org.mb.http.mapping.RequestPattern;
+import org.mb.http.basic.Response;
+import org.mb.parsing.ParserType;
+import org.mb.settings.Settings;
+
 import java.util.List;
 import java.util.Map;
 
@@ -10,6 +14,8 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
 public class Marshaller {
+    private final static String MAPPING         = "mapping";
+    private final static String PARSING         = "parsing";
     private final static String REQUEST         = "request";
     private final static String RESPONSE        = "response";
     private final static String URI             = "url";
@@ -19,57 +25,66 @@ public class Marshaller {
     private final static String STATUS_CODE     = "statusCode";
     private final static String CONTENT         = "content";
 
-    public static HTTPRequestResponseMapping toHTTPMapping(Object o) throws MarshallingException {
-        List httpMappingList = CommonMarshaller.toType(o, List.class, true);
-        HTTPRequestResponseMapping httpRequestResponseMapping = new HTTPRequestResponseMapping();
-        for(Object httpMappingObject : httpMappingList) {
-            Map httpMappingMap = CommonMarshaller.toType(httpMappingObject, Map.class, true);
-            HTTPRequestPattern httpRequestPattern = toHTTPRequestPattern(httpMappingMap.get(REQUEST));
-            HTTPResponse httpResponse = toHTTPResponse(httpMappingMap.get(RESPONSE));
-            httpRequestResponseMapping.addMapping(httpRequestPattern, httpResponse);
-        }
-        return httpRequestResponseMapping;
+    public static Settings toSettings(Object o) throws MarshallingException {
+        Map settingsMap = BaseMarshaller.toType(o, Map.class, true);
+        HandlerDataMapping mapping = toHTTPMapping(settingsMap.get(MAPPING));
+        Table<ParserType, String, String> parsing = BaseMarshaller.ToTableOfType(settingsMap.get(PARSING), ParserType.class, String.class, String.class);
+        return new Settings(mapping, parsing);
     }
 
-    public static HTTPRequestPattern toHTTPRequestPattern(Object o) throws MarshallingException {
-        Map httpRequestPatternMap = CommonMarshaller.toType(o, Map.class, true);
+    public static HandlerDataMapping toHTTPMapping(Object o) throws MarshallingException {
+        HandlerDataMapping handlerDataMapping = new HandlerDataMapping();
 
-        HTTPRequestPattern.Builder builder = HTTPRequestPattern.newBuilder();
+        List httpMappingList = BaseMarshaller.toType(o, List.class, true);
+        for(Object httpMappingObject : httpMappingList) {
+            Map httpMappingMap = BaseMarshaller.toType(httpMappingObject, Map.class, true);
+            RequestPattern requestPattern = toHTTPRequestPattern(httpMappingMap.get(REQUEST));
+            Response response = toHTTPResponse(httpMappingMap.get(RESPONSE));
+            Table<ParserType, String, String> parsing = BaseMarshaller.ToTableOfType(httpMappingMap.get(PARSING), ParserType.class, String.class, String.class);
+            handlerDataMapping.addMapping(requestPattern, response, parsing);
+        }
+        return handlerDataMapping;
+    }
+
+    public static RequestPattern toHTTPRequestPattern(Object o) throws MarshallingException {
+        Map httpRequestPatternMap = BaseMarshaller.toType(o, Map.class, true);
+
+        RequestPattern.Builder builder = RequestPattern.newBuilder();
 
         Object uriObject = httpRequestPatternMap.get(URI);
-        String uri = CommonMarshaller.toString(uriObject);
+        String uri = BaseMarshaller.toString(uriObject);
         if(!uri.isEmpty()) {
             builder.setUriPattern(uri);
         }
 
         Object methodObject = httpRequestPatternMap.get(METHOD);
-        builder.addMethodsAsStrings(CommonMarshaller.toListOfType(methodObject, String.class));
+        builder.addMethodsAsStrings(BaseMarshaller.toListOfType(methodObject, String.class));
 
         Object queryParameterObject = httpRequestPatternMap.get(QUERY_PARAMETER);
-        builder.addQueryParameters(CommonMarshaller.toMultimapOfType(queryParameterObject, String.class, String.class));
+        builder.addQueryParameters(BaseMarshaller.toMultimapOfType(queryParameterObject, String.class, String.class));
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
-        builder.addHeaders(CommonMarshaller.toMultimapOfType(headerObject, String.class, String.class));
+        builder.addHeaders(BaseMarshaller.toMultimapOfType(headerObject, String.class, String.class));
 
         return builder.build();
     }
 
-    public static HTTPResponse toHTTPResponse(Object o) throws MarshallingException {
-        Map httpResponseMap = CommonMarshaller.toType(o, Map.class, true);
+    public static Response toHTTPResponse(Object o) throws MarshallingException {
+        Map httpResponseMap = BaseMarshaller.toType(o, Map.class, true);
 
-        HTTPResponse.Builder builder = HTTPResponse.newBuilder();
+        Response.Builder builder = Response.newBuilder();
 
         Object statusCodeObject = httpResponseMap.get(STATUS_CODE);
-        String statusCode = CommonMarshaller.toString(statusCodeObject);
+        String statusCode = BaseMarshaller.toString(statusCodeObject);
         if(!statusCode.isEmpty()) {
             builder.setStatusCode(statusCode);
         }
 
         Object headerObject = httpResponseMap.get(HEADER);
-        builder.addHeaders(CommonMarshaller.toMapOfType(headerObject, String.class, String.class));
+        builder.addHeaders(BaseMarshaller.toMapOfType(headerObject, String.class, String.class));
 
         Object contentObject = httpResponseMap.get(CONTENT);
-        String content = CommonMarshaller.toString(contentObject);
+        String content = BaseMarshaller.toString(contentObject);
         if(!content.isEmpty()) {
             builder.setContent(content);
         }

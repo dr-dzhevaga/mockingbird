@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public class HTTPResponse {
+public class Response {
     private static final int DEFAULT_STATUS_CODE    = 200;
     private static final int LOG_MAX_CONTENT_LENGTH = 1024;
 
@@ -19,7 +19,7 @@ public class HTTPResponse {
     final private String content;
     final private boolean contentIsFilePath;
 
-    private HTTPResponse(int statusCode, Map<String, String> headers, String content, boolean contentIsFilePath) {
+    private Response(int statusCode, Map<String, String> headers, String content, boolean contentIsFilePath) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.content = content;
@@ -61,10 +61,10 @@ public class HTTPResponse {
         if(this == obj) {
             return true;
         }
-        if(!(obj instanceof HTTPResponse)) {
+        if(!(obj instanceof Response)) {
             return false;
         }
-        HTTPResponse response = (HTTPResponse)obj;
+        Response response = (Response)obj;
         if(this.getStatusCode() != response.getStatusCode()) {
             return false;
         }
@@ -132,8 +132,8 @@ public class HTTPResponse {
             return this;
         }
 
-        public HTTPResponse build() {
-            return new HTTPResponse(statusCode, headers, content, contentIsFilePath);
+        public Response build() {
+            return new Response(statusCode, headers, content, contentIsFilePath);
         }
     }
 }

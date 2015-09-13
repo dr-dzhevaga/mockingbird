@@ -6,6 +6,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 05.07.2015.
  */
+// TODO: refactor
 public class Utils {
     public static <T1, T2> boolean checkMap(Map<T1, T2> checked, Multimap<T1, T2> rules) {
         for (T1 key : rules.keySet()) {

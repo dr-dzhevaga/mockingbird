@@ -1,12 +1,32 @@
-- request:
-   method: POST
-   url: /test/post
-   header:
-    Content-Type: text/plain
-  response:
-   content: Hello POST
-- request:
-   method: GET
-   url: /test/get
-  response:
-   content: Hello GET
+parsing:
+  xpath:
+    name: "..*/user/name/text()"
+    id: "..*/user/id/text()"
+  regex:
+    name: "name : (.*)"
+    id: "id : (.*)"
+mapping:
+  -
+    request:
+      method: "POST"
+      url: "/test/post"
+      header:
+        Content-Type: "text/plain"
+      content:
+        name: "Hohn"
+        id: "9876543210"
+    response:
+      content: "Hello POST"
+    parsing:
+      xpath:
+        name: "..*/user/name/text()"
+        id: "..*/user/id/text()"
+      regex:
+        name: "name : (.*)"
+        id: "id : (.*)"
+  -
+    request:
+      method: "GET"
+      url: "/test/get"
+    response:
+      content: "Hello GET"

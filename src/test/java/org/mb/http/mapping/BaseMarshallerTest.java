@@ -8,7 +8,8 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 11.07.2015.
  */
-public class CommonMarshallerTest {
+// TODO: test new mwthod
+public class BaseMarshallerTest {
 
     @Test
     public void checkMap_emptyRules_returnTrue() throws Exception {

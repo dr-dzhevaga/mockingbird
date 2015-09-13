@@ -1,13 +1,10 @@
-package org.mb.http;
+package org.mb.http.basic;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
-import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.mb.http.basic.*;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,15 +15,15 @@ import java.util.*;
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public class JettyHTTPServer implements HTTPServer {
-    private Server jettyServer;
+public class JettyServer implements Server {
+    private org.eclipse.jetty.server.Server jettyServer;
 
-    public static HTTPServer newInstance(int port) {
-        return new JettyHTTPServer(port);
+    public static Server newInstance(int port) {
+        return new JettyServer(port);
     }
 
-    private JettyHTTPServer(int port) {
-        jettyServer = new Server(port);
+    private JettyServer(int port) {
+        jettyServer = new org.eclipse.jetty.server.Server(port);
     }
 
     @Override
@@ -42,17 +39,17 @@ public class JettyHTTPServer implements HTTPServer {
     public void setHandler(final Handler handler) {
         jettyServer.setHandler(new AbstractHandler() {
             @Override
-            public void handle(String s, Request request, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-                HTTPRequest httpRequest = readRequest(httpServletRequest);
-                HTTPResponse httpResponse = handler.handle(httpRequest);
-                writeResponse(httpResponse, httpServletResponse);
-                request.setHandled(true);
+            public void handle(String s, org.eclipse.jetty.server.Request httpRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
+                Request request = readRequest(httpServletRequest);
+                Response response = handler.handle(request);
+                writeResponse(response, httpServletResponse);
+                httpRequest.setHandled(true);
             }
         });
     }
 
-    private HTTPRequest readRequest(HttpServletRequest srcRequest) throws IllegalArgumentException, IOException {
-        HTTPRequest.Builder builder = HTTPRequest.newBuilder(srcRequest.getRequestURI(), HTTPMethod.of(srcRequest.getMethod()));
+    private Request readRequest(HttpServletRequest srcRequest) throws IllegalArgumentException, IOException {
+        Request.Builder builder = Request.newBuilder(srcRequest.getRequestURI(), Method.of(srcRequest.getMethod()));
 
         Enumeration<String> headerNames = srcRequest.getHeaderNames();
         while(headerNames.hasMoreElements()){
@@ -78,7 +75,7 @@ public class JettyHTTPServer implements HTTPServer {
         return builder.build();
     }
 
-    private void writeResponse(HTTPResponse srcResponse, HttpServletResponse dstResponse) throws IOException {
+    private void writeResponse(Response srcResponse, HttpServletResponse dstResponse) throws IOException {
         dstResponse.setStatus(srcResponse.getStatusCode());
 
         for(Map.Entry<String, String> header : srcResponse.getHeaders().entrySet()) {

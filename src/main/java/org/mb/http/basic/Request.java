@@ -7,14 +7,14 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public class HTTPRequest {
+public class Request {
     final private String uri;
-    final private HTTPMethod method;
+    final private Method method;
     final private ListMultimap<String, String> queryParameters;
     final private Map<String, String> headers;
     final private String content;
 
-    private HTTPRequest(String uri, HTTPMethod method, ListMultimap<String, String> queryParameters, Map<String, String> headers, String content) {
+    private Request(String uri, Method method, ListMultimap<String, String> queryParameters, Map<String, String> headers, String content) {
         this.uri = uri;
         this.method = method;
         this.queryParameters = queryParameters;
@@ -22,7 +22,7 @@ public class HTTPRequest {
         this.content = content;
     }
 
-    public static Builder newBuilder(String uri, HTTPMethod method) {
+    public static Builder newBuilder(String uri, Method method) {
         return new Builder(uri, method);
     }
 
@@ -30,7 +30,7 @@ public class HTTPRequest {
         return uri;
     }
 
-    public HTTPMethod getMethod() {
+    public Method getMethod() {
         return method;
     }
 
@@ -65,12 +65,12 @@ public class HTTPRequest {
 
     public static class Builder {
         private String uri;
-        private HTTPMethod method;
+        private Method method;
         private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();;
         private Map<String, String> headers = Maps.newHashMap();;
         private String content = "";
 
-        private Builder(String uri, HTTPMethod method) {
+        private Builder(String uri, Method method) {
             this.uri = uri;
             this.method = method;
         }
@@ -100,8 +100,8 @@ public class HTTPRequest {
             return this;
         }
 
-        public HTTPRequest build() {
-            return new HTTPRequest(uri, method, queryParameters, headers, content);
+        public Request build() {
+            return new Request(uri, method, queryParameters, headers, content);
         }
     }
 }

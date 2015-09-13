@@ -1,8 +1,9 @@
 package org.mb.http.mapping;
 
 import com.google.common.collect.*;
-import org.mb.http.basic.HTTPMethod;
-import org.mb.http.basic.HTTPRequest;
+import org.mb.http.basic.Method;
+import org.mb.http.basic.Request;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -11,26 +12,28 @@ import static org.mb.http.mapping.Utils.*;
 /**
  * Created by Dmitriy Dzhevaga on 18.06.2015.
  */
-public class HTTPRequestPattern {
+public class RequestPattern {
     private static final String DEFAULT_URI_PATTERN = ".*";
 
     final private Pattern uriPattern;
-    final private Set<HTTPMethod> methods;
+    final private Set<Method> methods;
     final private ListMultimap<String, String> queryParameters;
     final private SetMultimap<String, String> headers;
+    final private Multimap<String, String> content;
 
-    public HTTPRequestPattern(Pattern uriPattern, Set<HTTPMethod> methods, ListMultimap<String, String> queryParameters, SetMultimap<String, String> headers) {
+    private RequestPattern(Pattern uriPattern, Set<Method> methods, ListMultimap<String, String> queryParameters, SetMultimap<String, String> headers, Multimap<String, String> content) {
         this.uriPattern = uriPattern;
         this.methods = methods;
         this.queryParameters = queryParameters;
         this.headers = headers;
+        this.content = content;
     }
 
     public static Builder newBuilder() {
         return new Builder();
     }
 
-    boolean matches(HTTPRequest request) {
+    boolean matches(Request request, Map<String, String> content) {
         Matcher matcher = this.uriPattern.matcher(request.getURI());
         if(!matcher.matches()) {
             return false;
@@ -50,6 +53,10 @@ public class HTTPRequestPattern {
             return false;
         }
 
+        if(!checkMap(content, this.content)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -59,11 +66,11 @@ public class HTTPRequestPattern {
             return true;
         }
 
-        if(!(obj instanceof HTTPRequestPattern)) {
+        if(!(obj instanceof RequestPattern)) {
             return false;
         }
 
-        HTTPRequestPattern requestPattern = (HTTPRequestPattern)obj;
+        RequestPattern requestPattern = (RequestPattern)obj;
         if(!requestPattern.uriPattern.pattern().equals(this.uriPattern.pattern())) {
             return false;
         }
@@ -79,6 +86,9 @@ public class HTTPRequestPattern {
         if(!requestPattern.queryParameters.equals(this.queryParameters)) {
             return false;
         }
+        if(!requestPattern.content.equals(this.content)) {
+            return false;
+        }
         return true;
     }
 
@@ -89,6 +99,7 @@ public class HTTPRequestPattern {
         result = 31 * result + this.headers.hashCode();
         result = 31 * result + this.methods.hashCode();
         result = 31 * result + this.uriPattern.pattern().hashCode();
+        result = 31 * result + this.content.hashCode();
         return result;
     }
 
@@ -103,31 +114,35 @@ public class HTTPRequestPattern {
         if(!headers.isEmpty()) {
             builder.append(String.format("%n\tHeaders: %s", headers));
         }
+        if(!content.isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", content));
+        }
         return builder.toString();
     }
 
     public static class Builder {
         private Pattern uriPattern = Pattern.compile(DEFAULT_URI_PATTERN);
-        private Set<HTTPMethod> methods = Sets.newHashSet();
+        private Set<Method> methods = Sets.newHashSet();
         private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();
         private SetMultimap<String, String> headers = HashMultimap.create();
+        private Multimap<String, String> content = ArrayListMultimap.create();
 
         public Builder setUriPattern(String uriPattern) {
             this.uriPattern = Pattern.compile(uriPattern);
             return this;
         }
 
-        public Builder addMethod(HTTPMethod method) {
+        public Builder addMethod(Method method) {
             this.methods.add(method);
             return this;
         }
 
         public Builder addMethod(String method) {
-            addMethod(HTTPMethod.of(method));
+            addMethod(Method.of(method));
             return this;
         }
 
-        public Builder addMethods(Collection<HTTPMethod> methods) {
+        public Builder addMethods(Collection<Method> methods) {
             this.methods.addAll(methods);
             return this;
         }
@@ -169,8 +184,18 @@ public class HTTPRequestPattern {
             return this;
         }
 
-        public HTTPRequestPattern build() {
-            return new HTTPRequestPattern(uriPattern, methods, queryParameters, headers);
+        public Builder addContentParameter(String name, String value) {
+            content.put(name, value);
+            return this;
+        }
+
+        public Builder addParserResult(String name, Collection<String> values) {
+            content.putAll(name, values);
+            return this;
+        }
+
+        public RequestPattern build() {
+            return new RequestPattern(uriPattern, methods, queryParameters, headers, content);
         }
     }
 }

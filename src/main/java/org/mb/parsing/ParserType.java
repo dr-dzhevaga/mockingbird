@@ -32,7 +32,7 @@ public enum ParserType {
         ParserType enumFromString = stringToEnum.get(string.toLowerCase());
         if(enumFromString == null) {
             // TODO: show expected input strings based on stringToEnum map
-            throw new IllegalArgumentException("Unknown parser type: " + string);
+            throw new IllegalArgumentException("Unsupported parser type: " + string);
         }
         return enumFromString;
     }

@@ -1,9 +1,7 @@
 package org.mb.settings.marshalling;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Multimap;
+import com.google.common.collect.*;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,13 +9,14 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 28.06.2015.
  */
-public class CommonMarshaller {
+public class BaseMarshaller {
     private static final String GET_AS_TYPE_ERROR = "%s is expected";
     private static final String EMPTY_PARAMETER_ERROR = "Not empty %s is expected";
     private static final String GET_AS_STRING_ERROR = "Either string or number is expected";
     private static final String GET_AS_LIST_ERROR = "Either string or list of strings is expected";
     private static final String GET_AS_MAP_ERROR = "Map is expected";
 
+    // TODO: make syntax as: BaseMarshaller(o).toType(String, true)
     public static <T> T toType(Object o, Class<T> type, boolean notNull) throws MarshallingException {
         if(notNull && o == null) {
             throw new MarshallingException(String.format(EMPTY_PARAMETER_ERROR, type.getSimpleName()));
@@ -94,5 +93,22 @@ public class CommonMarshaller {
         } else {
             throw new MarshallingException(GET_AS_MAP_ERROR);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <K1, K2, V> Table<K1, K2, V> ToTableOfType(Object o, Class<K1> key1Type, Class<K2> key2Type, Class<V> valueType) throws MarshallingException {
+        Table<K1, K2, V> table = HashBasedTable.create();
+
+        Map<K1, Map> map1 = toMapOfType(o, key1Type, Map.class);
+        for(Map.Entry<K1, Map> entry1 : map1.entrySet()) {
+            K1 key1 = entry1.getKey();
+            Map<K2, V> map2 = toMapOfType(entry1.getValue(), key2Type, valueType);
+            for(Map.Entry<K2, V> entry2 : map2.entrySet()) {
+                K2 key2 = entry2.getKey();
+                V value = entry2.getValue();
+                table.put(key1, key2, value);
+            }
+        }
+        return table;
     }
 }
