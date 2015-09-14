@@ -54,17 +54,17 @@ public class HandlerDataMapping {
         private final Response response;
         private final Table<ParserType, String, String> parsing;
 
+        private HandlerData(Response response, Table<ParserType, String, String> parsing) {
+            this.response = response;
+            this.parsing = parsing;
+        }
+
         public Table<ParserType, String, String> getParsing() {
             return parsing;
         }
 
         public Response getResponse() {
             return response;
-        }
-
-        private HandlerData(Response response, Table<ParserType, String, String> parsing) {
-            this.response = response;
-            this.parsing = parsing;
         }
     }
 }

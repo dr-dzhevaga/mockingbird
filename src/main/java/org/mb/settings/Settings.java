@@ -17,8 +17,8 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
 public class Settings {
-    public final HandlerDataMapping mapping;
-    public final Table<ParserType, String, String> parsing;
+    private final HandlerDataMapping mapping;
+    private final Table<ParserType, String, String> parsing;
 
     public Settings(HandlerDataMapping mapping, Table<ParserType, String, String> parsing) {
         this.mapping = mapping;
@@ -32,5 +32,13 @@ public class Settings {
             Object o = parser.parse(r);
             return Marshaller.from(o).toSettings();
         }
+    }
+
+    public Table<ParserType, String, String> getParsing() {
+        return parsing;
+    }
+
+    public HandlerDataMapping getMapping() {
+        return mapping;
     }
 }

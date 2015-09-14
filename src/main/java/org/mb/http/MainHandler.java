@@ -21,6 +21,6 @@ public class MainHandler implements Handler {
     @Override
     public Response handle(Request request) {
         Map<String, String> content = Maps.newHashMap();
-        return settings.mapping.find(request, content).getResponse();
+        return settings.getMapping().find(request, content).getResponse();
     }
 }

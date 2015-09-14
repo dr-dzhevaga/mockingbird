@@ -31,7 +31,7 @@ public class RequestPattern {
         return new Builder();
     }
 
-    boolean matches(Request request, Map<String, String> content) {
+    public boolean matches(Request request, Map<String, String> content) {
         java.util.regex.Matcher matcher = this.uriPattern.matcher(request.getURI());
         if(!matcher.matches()) {
             return false;

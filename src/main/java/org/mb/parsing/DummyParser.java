@@ -8,13 +8,11 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
-public class DummyParser implements Parser {
-    private final String text;
+public class DummyParser extends AbstractParser {
 
     public DummyParser(String text) {
-        this.text = text;
+        super(text);
     }
-
 
     @Override
     public String parse(String path) throws ParsingException {
