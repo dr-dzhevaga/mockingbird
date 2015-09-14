@@ -60,9 +60,7 @@ public class BaseMarshaller {
             return Lists.<T>newArrayList((T) o);
         } else if(o instanceof List) {
             for(Object listItem : (List<Object>)o) {
-                if(type.isAssignableFrom(o.getClass())) {
-                    throw new MarshallingException(GET_AS_LIST_ERROR);
-                }
+                from(listItem).toType(type, true);
             }
             return (List<T>)o;
         } else {
@@ -96,8 +94,7 @@ public class BaseMarshaller {
         if(o instanceof Map) {
             Map<Object, Object> map = (Map<Object, Object>)o;
             for(Map.Entry<Object, Object> entry : map.entrySet()) {
-                multimap.putAll(from(entry.getKey()).toType(keyType, true),
-                        from(entry.getValue()).toListOfType(valueType));
+                multimap.putAll(from(entry.getKey()).toType(keyType, true), from(entry.getValue()).toListOfType(valueType));
             }
             return multimap;
         } else {
