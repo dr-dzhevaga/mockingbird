@@ -39,11 +39,15 @@ public class JettyServer implements Server {
     public void setHandler(final Handler handler) {
         jettyServer.setHandler(new AbstractHandler() {
             @Override
-            public void handle(String s, org.eclipse.jetty.server.Request httpRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws IOException, ServletException {
-                Request request = readRequest(httpServletRequest);
-                Response response = handler.handle(request);
-                writeResponse(response, httpServletResponse);
-                httpRequest.setHandled(true);
+            public void handle(String s, org.eclipse.jetty.server.Request httpRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+                try {
+                    Request request = readRequest(httpServletRequest);
+                    Response response = handler.handle(request);
+                    writeResponse(response, httpServletResponse);
+                    httpRequest.setHandled(true);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

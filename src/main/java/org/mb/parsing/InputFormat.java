@@ -7,19 +7,19 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
-public enum ParserType {
-    DUMMY("DUMMY");
+public enum InputFormat {
+    XML("XML");
 
     private final String string;
-    private static final Map<String, ParserType> stringToEnum = Maps.newHashMap();
+    private static final Map<String, InputFormat> stringToEnum = Maps.newHashMap();
 
     static {
-        for(ParserType value : values()) {
+        for(InputFormat value : values()) {
             stringToEnum.put(value.toString().toLowerCase(), value);
         }
     }
 
-    ParserType(String string) {
+    InputFormat(String string) {
         this.string = string;
     }
 
@@ -28,11 +28,11 @@ public enum ParserType {
         return string;
     }
 
-    public static ParserType of(String string) throws IllegalArgumentException {
-        ParserType enumFromString = stringToEnum.get(string.toLowerCase());
+    public static InputFormat of(String string) throws IllegalArgumentException {
+        InputFormat enumFromString = stringToEnum.get(string.toLowerCase());
         if(enumFromString == null) {
             // TODO: show expected input strings based on stringToEnum map
-            throw new IllegalArgumentException("Unsupported parser type: " + string);
+            throw new IllegalArgumentException("Unsupported input format: " + string);
         }
         return enumFromString;
     }

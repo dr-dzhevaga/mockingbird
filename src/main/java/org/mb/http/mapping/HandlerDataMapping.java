@@ -6,7 +6,7 @@ import com.google.common.collect.Table;
 import org.apache.log4j.Logger;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
-import org.mb.parsing.ParserType;
+import org.mb.parsing.InputFormat;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -31,10 +31,10 @@ public class HandlerDataMapping {
                 setStatusCode(DEFAULT_RESPONSE_STATUS_CODE).
                 setContent(DEFAULT_RESPONSE_CONTENT).
                 build();
-        defaultHandlerData = new HandlerData(defaultResponse, HashBasedTable.<ParserType, String, String>create());
+        defaultHandlerData = new HandlerData(defaultResponse, HashBasedTable.<InputFormat, String, String>create());
     }
 
-    public void addMapping(RequestPattern requestPattern, Response response, Table<ParserType, String, String> parsing) {
+    public void addMapping(RequestPattern requestPattern, Response response, Table<InputFormat, String, String> parsing) {
         mapping.put(requestPattern, new HandlerData(response, parsing));
         Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
     }
@@ -52,14 +52,14 @@ public class HandlerDataMapping {
 
     public static class HandlerData {
         private final Response response;
-        private final Table<ParserType, String, String> parsing;
+        private final Table<InputFormat, String, String> parsing;
 
-        private HandlerData(Response response, Table<ParserType, String, String> parsing) {
+        private HandlerData(Response response, Table<InputFormat, String, String> parsing) {
             this.response = response;
             this.parsing = parsing;
         }
 
-        public Table<ParserType, String, String> getParsing() {
+        public Table<InputFormat, String, String> getParsing() {
             return parsing;
         }
 
