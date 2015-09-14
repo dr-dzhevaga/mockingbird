@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
-public class Marshaller {
+public class Marshaller extends BaseMarshaller {
     private final static String MAPPING         = "mapping";
     private final static String PARSING         = "parsing";
     private final static String REQUEST         = "request";
@@ -25,66 +25,74 @@ public class Marshaller {
     private final static String STATUS_CODE     = "statusCode";
     private final static String CONTENT         = "content";
 
-    public static Settings toSettings(Object o) throws MarshallingException {
-        Map settingsMap = BaseMarshaller.toType(o, Map.class, true);
-        HandlerDataMapping mapping = toHTTPMapping(settingsMap.get(MAPPING));
-        Table<ParserType, String, String> parsing = BaseMarshaller.ToTableOfType(settingsMap.get(PARSING), ParserType.class, String.class, String.class);
+    private Marshaller(Object o) {
+        super(o);
+    }
+
+    public static Marshaller from(Object o) {
+        return new Marshaller(o);
+    }
+
+    public Settings toSettings() throws MarshallingException {
+        Map settingsMap = toType(Map.class, true);
+        HandlerDataMapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
+        Table<ParserType, String, String> parsing = from(settingsMap.get(PARSING)).toTableOfType(ParserType.class, String.class, String.class);
         return new Settings(mapping, parsing);
     }
 
-    public static HandlerDataMapping toHTTPMapping(Object o) throws MarshallingException {
+    public HandlerDataMapping toHTTPMapping() throws MarshallingException {
         HandlerDataMapping handlerDataMapping = new HandlerDataMapping();
 
-        List httpMappingList = BaseMarshaller.toType(o, List.class, true);
+        List httpMappingList = toType(List.class, true);
         for(Object httpMappingObject : httpMappingList) {
-            Map httpMappingMap = BaseMarshaller.toType(httpMappingObject, Map.class, true);
-            RequestPattern requestPattern = toHTTPRequestPattern(httpMappingMap.get(REQUEST));
-            Response response = toHTTPResponse(httpMappingMap.get(RESPONSE));
-            Table<ParserType, String, String> parsing = BaseMarshaller.ToTableOfType(httpMappingMap.get(PARSING), ParserType.class, String.class, String.class);
+            Map httpMappingMap = from(httpMappingObject).toType(Map.class, true);
+            RequestPattern requestPattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
+            Response response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
+            Table<ParserType, String, String> parsing = from(httpMappingMap.get(PARSING)).toTableOfType(ParserType.class, String.class, String.class);
             handlerDataMapping.addMapping(requestPattern, response, parsing);
         }
         return handlerDataMapping;
     }
 
-    public static RequestPattern toHTTPRequestPattern(Object o) throws MarshallingException {
-        Map httpRequestPatternMap = BaseMarshaller.toType(o, Map.class, true);
+    public RequestPattern toHTTPRequestPattern() throws MarshallingException {
+        Map httpRequestPatternMap = toType(Map.class, true);
 
         RequestPattern.Builder builder = RequestPattern.newBuilder();
 
         Object uriObject = httpRequestPatternMap.get(URI);
-        String uri = BaseMarshaller.toString(uriObject);
+        String uri = from(uriObject).toStr();
         if(!uri.isEmpty()) {
             builder.setUriPattern(uri);
         }
 
         Object methodObject = httpRequestPatternMap.get(METHOD);
-        builder.addMethodsAsStrings(BaseMarshaller.toListOfType(methodObject, String.class));
+        builder.addMethodsAsStrings(from(methodObject).toListOfType(String.class));
 
         Object queryParameterObject = httpRequestPatternMap.get(QUERY_PARAMETER);
-        builder.addQueryParameters(BaseMarshaller.toMultimapOfType(queryParameterObject, String.class, String.class));
+        builder.addQueryParameters(from(queryParameterObject).toMultimapOfType(String.class, String.class));
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
-        builder.addHeaders(BaseMarshaller.toMultimapOfType(headerObject, String.class, String.class));
+        builder.addHeaders(from(headerObject).toMultimapOfType(String.class, String.class));
 
         return builder.build();
     }
 
-    public static Response toHTTPResponse(Object o) throws MarshallingException {
-        Map httpResponseMap = BaseMarshaller.toType(o, Map.class, true);
+    public Response toHTTPResponse() throws MarshallingException {
+        Map httpResponseMap = toType(Map.class, true);
 
         Response.Builder builder = Response.newBuilder();
 
         Object statusCodeObject = httpResponseMap.get(STATUS_CODE);
-        String statusCode = BaseMarshaller.toString(statusCodeObject);
+        String statusCode = from(statusCodeObject).toStr();
         if(!statusCode.isEmpty()) {
             builder.setStatusCode(statusCode);
         }
 
         Object headerObject = httpResponseMap.get(HEADER);
-        builder.addHeaders(BaseMarshaller.toMapOfType(headerObject, String.class, String.class));
+        builder.addHeaders(from(headerObject).toMapOfType(String.class, String.class));
 
         Object contentObject = httpResponseMap.get(CONTENT);
-        String content = BaseMarshaller.toString(contentObject);
+        String content = from(contentObject).toStr();
         if(!content.isEmpty()) {
             builder.setContent(content);
         }

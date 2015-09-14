@@ -9,87 +9,87 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 11.07.2015.
  */
 // TODO: test new mwthod
-public class BaseMarshallerTest {
+public class MatcherTest {
 
     @Test
-    public void checkMap_emptyRules_returnTrue() throws Exception {
+    public void matchesMap_emptyRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         SetMultimap<String, String> rules = HashMultimap.create();
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void checkMap_emptyCheckedAndNotEmptyRules_returnFalse() throws Exception {
+    public void matchesMap_emptyCheckedAndNotEmptyRules_returnFalse() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMap_checkedIsSameAsRules_returnTrue() throws Exception {
+    public void matchesMap_checkedIsSameAsRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void checkMap_checkedContainsRules_returnTrue() throws Exception {
+    public void matchesMap_checkedContainsRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("1", "1");
         checked.put("2", "2");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void checkMap_missingKeyInChecked_returnFalse() throws Exception {
+    public void matchesMap_missingKeyInChecked_returnFalse() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("2", "2");
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMap_wrongValueInChecked_returnFalse() throws Exception {
+    public void matchesMap_wrongValueInChecked_returnFalse() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("1", "2");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMap_missingDuplicateValueInChecked_returnTrue() throws Exception {
+    public void matchesMap_missingDuplicateValueInChecked_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         checked.put("1", "1");
         Multimap<String, String> rules = ArrayListMultimap.create();
         rules.put("1", "1");
         rules.put("1", "1");
 
-        boolean result = Utils.checkMap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -97,97 +97,97 @@ public class BaseMarshallerTest {
 
 
     @Test
-    public void checkMultimap_emptyRules_returnTrue() throws Exception {
+    public void matchesMultimap_emptyRules_returnTrue() throws Exception {
         SetMultimap<String, String> checked = HashMultimap.create();
         SetMultimap<String, String> rules = HashMultimap.create();
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void checkMultimap_emptyCheckedAndNotEmptyRules_returnFalse() throws Exception {
+    public void matchesMultimap_emptyCheckedAndNotEmptyRules_returnFalse() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMultimap_checkedIsSameAsRules_returnTrue() throws Exception {
+    public void matchesMultimap_checkedIsSameAsRules_returnTrue() throws Exception {
         SetMultimap<String, String> checked = HashMultimap.create();
         checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void checkMultimap_checkedContainsRules_returnTrue() throws Exception {
+    public void matchesMultimap_checkedContainsRules_returnTrue() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
         checked.put("1", "1");
         checked.put("2", "2");
         Multimap<String, String> rules = ArrayListMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void checkMultimap_missingKeyInChecked_returnFalse() throws Exception {
+    public void matchesMultimap_missingKeyInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
         checked.put("1", "1");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("2", "2");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMultimap_wrongValueInChecked_returnFalse() throws Exception {
+    public void matchesMultimap_wrongValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = HashMultimap.create();
         checked.put("1", "2");
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMultimap_missingDuplicateValueInChecked_returnFalse() throws Exception {
+    public void matchesMultimap_missingDuplicateValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = ArrayListMultimap.create();
         checked.put("1", "1");
         Multimap<String, String> rules = ArrayListMultimap.create();
         rules.put("1", "1");
         rules.put("1", "1");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
 
     @Test
-    public void checkMultimap_extraDuplicateValueInChecked_returnFalse() throws Exception {
+    public void matchesMultimap_extraDuplicateValueInChecked_returnFalse() throws Exception {
         Multimap<String, String> checked = ArrayListMultimap.create();
         checked.put("1", "1");
         checked.put("1", "1");
         Multimap<String, String> rules = ArrayListMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Utils.checkMultimap(checked, rules);
+        boolean result = Matcher.withRules(rules).matches(checked);
 
         Assert.assertFalse(result);
     }

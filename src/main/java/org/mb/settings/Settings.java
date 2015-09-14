@@ -29,8 +29,8 @@ public class Settings {
         Parser parser = ParserFactory.newParser(fileFormat);
         InputStream is = new FileInputStream(filePath);
         try(Reader r = new InputStreamReader(is, Charsets.UTF_8)) {
-            Object objectsGraph = parser.parse(r);
-            return Marshaller.toSettings(objectsGraph);
+            Object o = parser.parse(r);
+            return Marshaller.from(o).toSettings();
         }
     }
 }

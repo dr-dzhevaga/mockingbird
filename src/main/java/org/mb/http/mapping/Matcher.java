@@ -6,9 +6,19 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 05.07.2015.
  */
-// TODO: refactor
-public class Utils {
-    public static <T1, T2> boolean checkMap(Map<T1, T2> checked, Multimap<T1, T2> rules) {
+public class Matcher<T1, T2> {
+
+    private final Multimap<T1, T2> rules;
+
+    private Matcher(Multimap<T1, T2> rules) {
+        this.rules = rules;
+    }
+
+    public static <T1, T2> Matcher<T1, T2> withRules(Multimap<T1, T2> rules) {
+        return new Matcher<>(rules);
+    }
+
+    public boolean matches(Map<T1, T2> checked) {
         for (T1 key : rules.keySet()) {
             if(!rules.get(key).contains(checked.get(key)))
                 return false;
@@ -16,7 +26,7 @@ public class Utils {
         return true;
     }
 
-    public static <T1, T2> boolean checkMultimap(Multimap<T1, T2> checked, Multimap<T1, T2> rules) {
+    public boolean matches(Multimap<T1, T2> checked) {
         for (T1 key : rules.keySet()) {
             if(rules.get(key).size() != checked.get(key).size())
                 return false;

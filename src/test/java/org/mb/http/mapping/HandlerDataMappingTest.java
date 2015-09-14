@@ -63,11 +63,12 @@ public class HandlerDataMappingTest {
     public void resolve_noMatchedPattern_returnDefaultResponse() throws Exception {
         HandlerDataMapping mapping = new HandlerDataMapping();
         RequestPattern requestPattern = getRequestPattern(Method.GET);
-        Response response = getResponse(1);
-        mapping.addMapping(requestPattern, response, getParsing());
+        Response responseER = getResponse(1);
+        mapping.addMapping(requestPattern, responseER, getParsing());
         Request request = getRequest(Method.POST);
 
-        Assert.assertFalse(response.equals(mapping.find(request, getContent())));
+        Response responseAR = mapping.find(request, getContent()).getResponse();
+        Assert.assertFalse(responseER.equals(responseAR));
     }
 
     @Test
@@ -75,15 +76,16 @@ public class HandlerDataMappingTest {
         HandlerDataMapping mapping = new HandlerDataMapping();
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.POST);
-        Response response1 = getResponse(1);
-        Response response2 = getResponse(2);
-        mapping.addMapping(requestPattern1, response1, getParsing());
-        mapping.addMapping(requestPattern2, response2, getParsing());
+        Response responseER1 = getResponse(1);
+        Response responseER2 = getResponse(2);
+        mapping.addMapping(requestPattern1, responseER1, getParsing());
+        mapping.addMapping(requestPattern2, responseER2, getParsing());
         Request request1 = getRequest(Method.GET);
         Request request2 = getRequest(Method.POST);
-
-        Assert.assertTrue(response1.equals(mapping.find(request1, getContent())));
-        Assert.assertTrue(response2.equals(mapping.find(request2, getContent())));
+        Response responseAR1 = mapping.find(request1, getContent()).getResponse();
+        Response responseAR2 = mapping.find(request2, getContent()).getResponse();
+        Assert.assertTrue(responseER1.equals(responseAR1));
+        Assert.assertTrue(responseER2.equals(responseAR2));
     }
 
     @Test
@@ -92,14 +94,15 @@ public class HandlerDataMappingTest {
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.GET, Method.POST);
         RequestPattern requestPattern3 = getRequestPattern(Method.GET, Method.POST, Method.PUT);
-        Response response1 = getResponse(1);
-        Response response2 = getResponse(2);
-        Response response3 = getResponse(3);
-        mapping.addMapping(requestPattern1, response1, getParsing());
-        mapping.addMapping(requestPattern2, response2, getParsing());
-        mapping.addMapping(requestPattern3, response3, getParsing());
+        Response responseER = getResponse(1);
+        Response response1 = getResponse(2);
+        Response response2 = getResponse(3);
+        mapping.addMapping(requestPattern1, responseER, getParsing());
+        mapping.addMapping(requestPattern2, response1, getParsing());
+        mapping.addMapping(requestPattern3, response2, getParsing());
         Request request = getRequest(Method.GET);
 
-        Assert.assertTrue(response1.equals(mapping.find(request, getContent())));
+        Response responseAR = mapping.find(request, getContent()).getResponse();
+        Assert.assertTrue(responseER.equals(responseAR));
     }
 }

@@ -16,8 +16,17 @@ public class BaseMarshaller {
     private static final String GET_AS_LIST_ERROR = "Either string or list of strings is expected";
     private static final String GET_AS_MAP_ERROR = "Map is expected";
 
-    // TODO: make syntax as: BaseMarshaller(o).toType(String, true)
-    public static <T> T toType(Object o, Class<T> type, boolean notNull) throws MarshallingException {
+    protected final Object o;
+
+    protected BaseMarshaller(Object o) {
+        this.o = o;
+    }
+
+    public static BaseMarshaller from(Object o) {
+        return new BaseMarshaller(o);
+    }
+
+    public <T> T toType(Class<T> type, boolean notNull) throws MarshallingException {
         if(notNull && o == null) {
             throw new MarshallingException(String.format(EMPTY_PARAMETER_ERROR, type.getSimpleName()));
         }
@@ -27,7 +36,7 @@ public class BaseMarshaller {
         return type.cast(o);
     }
 
-    public static String toString(Object o) throws MarshallingException {
+    public String toStr() throws MarshallingException {
         if(o == null) {
             return "";
         }
@@ -43,7 +52,7 @@ public class BaseMarshaller {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> List<T> toListOfType(Object o, Class<T> type) throws MarshallingException {
+    public <T> List<T> toListOfType(Class<T> type) throws MarshallingException {
         if(o == null) {
             return Collections.emptyList();
         }
@@ -62,15 +71,15 @@ public class BaseMarshaller {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Map<K, V> toMapOfType(Object o, Class<K> keyType, Class<V> valueType) throws MarshallingException {
+    public <K, V> Map<K, V> toMapOfType(Class<K> keyType, Class<V> valueType) throws MarshallingException {
         if(o == null) {
             return Collections.emptyMap();
         }
         if(o instanceof Map) {
             Map<Object, Object> map = (Map<Object, Object>)o;
             for(Map.Entry<Object, Object> entry : map.entrySet()) {
-                toType(entry.getKey(), keyType, true);
-                toType(entry.getValue(), valueType, true);
+                from(entry.getKey()).toType(keyType, true);
+                from(entry.getValue()).toType(valueType, true);
             }
             return (Map<K, V>) o;
         } else {
@@ -79,7 +88,7 @@ public class BaseMarshaller {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K, V> Multimap<K, V> toMultimapOfType(Object o, Class<K> keyType, Class<V> valueType) throws MarshallingException {
+    public <K, V> Multimap<K, V> toMultimapOfType(Class<K> keyType, Class<V> valueType) throws MarshallingException {
         ListMultimap<K, V> multimap = ArrayListMultimap.create();
         if(o == null) {
             return multimap;
@@ -87,7 +96,8 @@ public class BaseMarshaller {
         if(o instanceof Map) {
             Map<Object, Object> map = (Map<Object, Object>)o;
             for(Map.Entry<Object, Object> entry : map.entrySet()) {
-                multimap.putAll(toType(entry.getKey(), keyType, true), toListOfType(entry.getValue(), valueType));
+                multimap.putAll(from(entry.getKey()).toType(keyType, true),
+                        from(entry.getValue()).toListOfType(valueType));
             }
             return multimap;
         } else {
@@ -96,13 +106,13 @@ public class BaseMarshaller {
     }
 
     @SuppressWarnings("unchecked")
-    public static <K1, K2, V> Table<K1, K2, V> ToTableOfType(Object o, Class<K1> key1Type, Class<K2> key2Type, Class<V> valueType) throws MarshallingException {
+    public <K1, K2, V> Table<K1, K2, V> toTableOfType(Class<K1> key1Type, Class<K2> key2Type, Class<V> valueType) throws MarshallingException {
         Table<K1, K2, V> table = HashBasedTable.create();
 
-        Map<K1, Map> map1 = toMapOfType(o, key1Type, Map.class);
+        Map<K1, Map> map1 = toMapOfType(key1Type, Map.class);
         for(Map.Entry<K1, Map> entry1 : map1.entrySet()) {
             K1 key1 = entry1.getKey();
-            Map<K2, V> map2 = toMapOfType(entry1.getValue(), key2Type, valueType);
+            Map<K2, V> map2 = from(entry1.getValue()).toMapOfType(key2Type, valueType);
             for(Map.Entry<K2, V> entry2 : map2.entrySet()) {
                 K2 key2 = entry2.getKey();
                 V value = entry2.getValue();

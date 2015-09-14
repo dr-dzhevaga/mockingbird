@@ -5,9 +5,7 @@ import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
 
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import static org.mb.http.mapping.Utils.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 18.06.2015.
@@ -34,7 +32,7 @@ public class RequestPattern {
     }
 
     boolean matches(Request request, Map<String, String> content) {
-        Matcher matcher = this.uriPattern.matcher(request.getURI());
+        java.util.regex.Matcher matcher = this.uriPattern.matcher(request.getURI());
         if(!matcher.matches()) {
             return false;
         }
@@ -45,15 +43,15 @@ public class RequestPattern {
             }
         }
 
-        if(!checkMultimap(request.getQueryParameters(), this.queryParameters)) {
+        if(!Matcher.withRules(this.queryParameters).matches(request.getQueryParameters())) {
             return false;
         }
 
-        if(!checkMap(request.getHeaders(), this.headers)) {
+        if(!Matcher.withRules(this.headers).matches(request.getHeaders())) {
             return false;
         }
 
-        if(!checkMap(content, this.content)) {
+        if(!Matcher.withRules(this.content).matches(content)) {
             return false;
         }
 
