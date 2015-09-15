@@ -1,11 +1,11 @@
 package org.mb.settings.marshalling;
 
-import com.google.common.collect.Table;
 import org.mb.http.mapping.HandlerDataMapping;
 import org.mb.http.mapping.RequestPattern;
 import org.mb.http.basic.Response;
 import org.mb.parsing.PathType;
 import org.mb.settings.Settings;
+import org.mb.parsing.BulkParser;
 
 import java.util.List;
 import java.util.Map;
@@ -36,8 +36,8 @@ public class Marshaller extends BaseMarshaller {
     public Settings toSettings() throws MarshallingException {
         Map settingsMap = toType(Map.class, true);
         HandlerDataMapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
-        Table<PathType, String, String> parsing = from(settingsMap.get(PARSING)).toTableOfType(PathType.class, String.class, String.class);
-        return new Settings(mapping, parsing);
+        BulkParser bulkParser = from(settingsMap.get(PARSING)).toBulkParser();
+        return new Settings(mapping, bulkParser);
     }
 
     public HandlerDataMapping toHTTPMapping() throws MarshallingException {
@@ -48,8 +48,8 @@ public class Marshaller extends BaseMarshaller {
             Map httpMappingMap = from(httpMappingObject).toType(Map.class, true);
             RequestPattern requestPattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
             Response response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
-            Table<PathType, String, String> parsing = from(httpMappingMap.get(PARSING)).toTableOfType(PathType.class, String.class, String.class);
-            handlerDataMapping.addMapping(requestPattern, response, parsing);
+            BulkParser bulkParser = from(httpMappingMap.get(PARSING)).toBulkParser();
+            handlerDataMapping.addMapping(requestPattern, response, bulkParser);
         }
         return handlerDataMapping;
     }
@@ -98,5 +98,18 @@ public class Marshaller extends BaseMarshaller {
         }
 
         return builder.build();
+    }
+
+    public BulkParser toBulkParser() throws MarshallingException {
+        BulkParser bulkParser = new BulkParser();
+
+        Map<String, Map> map = toMapOfType(String.class, Map.class);
+        for(Map.Entry<String, Map> entry : map.entrySet()) {
+            PathType pathType = PathType.of(entry.getKey());
+            Map<String, String> paths = from(entry.getValue()).toMapOfType(String.class, String.class);
+            bulkParser.add(pathType, paths);
+        }
+
+        return bulkParser;
     }
 }

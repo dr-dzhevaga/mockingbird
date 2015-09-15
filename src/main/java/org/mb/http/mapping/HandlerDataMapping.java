@@ -1,12 +1,10 @@
 package org.mb.http.mapping;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import org.apache.log4j.Logger;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
-import org.mb.parsing.PathType;
+import org.mb.parsing.BulkParser;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ public class HandlerDataMapping {
     private static final int    DEFAULT_RESPONSE_STATUS_CODE  = 404;
     private static final String DEFAULT_RESPONSE_CONTENT      = "Not found";
 
-    private static final String LOG_MAPPING_IS_ADDED        = "Mapping is added%nRequest pattern:%n%s%nResponse:%n%s%nParsing:%n%s";
+    private static final String LOG_MAPPING_IS_ADDED        = "Mapping is added%nRequest pattern:%n%s%nResponse:%n%s";
     private static final String LOG_RESPONSE_IS_FOUND       = "Response is found in mapping";
     private static final String LOG_RESPONSE_IS_NOT_FOUND   = "Response is not found in mapping, default response will be used";
 
@@ -31,12 +29,12 @@ public class HandlerDataMapping {
                 setStatusCode(DEFAULT_RESPONSE_STATUS_CODE).
                 setContent(DEFAULT_RESPONSE_CONTENT).
                 build();
-        defaultHandlerData = new HandlerData(defaultResponse, HashBasedTable.<PathType, String, String>create());
+        defaultHandlerData = new HandlerData(defaultResponse, new BulkParser());
     }
 
-    public void addMapping(RequestPattern requestPattern, Response response, Table<PathType, String, String> parsing) {
-        mapping.put(requestPattern, new HandlerData(response, parsing));
-        Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
+    public void addMapping(RequestPattern requestPattern, Response response, BulkParser bulkParser) {
+        mapping.put(requestPattern, new HandlerData(response, bulkParser));
+        Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response));
     }
 
     public HandlerData find(Request request, Map<String, String> content) {
@@ -52,15 +50,15 @@ public class HandlerDataMapping {
 
     public static class HandlerData {
         private final Response response;
-        private final Table<PathType, String, String> parsing;
+        private final BulkParser bulkParser;
 
-        private HandlerData(Response response, Table<PathType, String, String> parsing) {
+        private HandlerData(Response response, BulkParser bulkParser) {
             this.response = response;
-            this.parsing = parsing;
+            this.bulkParser = bulkParser;
         }
 
-        public Table<PathType, String, String> getParsing() {
-            return parsing;
+        public BulkParser getBulkParser() {
+            return bulkParser;
         }
 
         public Response getResponse() {

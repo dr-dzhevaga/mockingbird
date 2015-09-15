@@ -101,21 +101,4 @@ public class BaseMarshaller {
             throw new MarshallingException(GET_AS_MAP_ERROR);
         }
     }
-
-    @SuppressWarnings("unchecked")
-    public <K1, K2, V> Table<K1, K2, V> toTableOfType(Class<K1> key1Type, Class<K2> key2Type, Class<V> valueType) throws MarshallingException {
-        Table<K1, K2, V> table = HashBasedTable.create();
-
-        Map<K1, Map> map1 = toMapOfType(key1Type, Map.class);
-        for(Map.Entry<K1, Map> entry1 : map1.entrySet()) {
-            K1 key1 = entry1.getKey();
-            Map<K2, V> map2 = from(entry1.getValue()).toMapOfType(key2Type, valueType);
-            for(Map.Entry<K2, V> entry2 : map2.entrySet()) {
-                K2 key2 = entry2.getKey();
-                V value = entry2.getValue();
-                table.put(key1, key2, value);
-            }
-        }
-        return table;
-    }
 }

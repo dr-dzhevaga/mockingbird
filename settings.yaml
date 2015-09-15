@@ -1,8 +1,8 @@
-parsing:
+bulkParser:
   xpath:
     name: "..*/user/name/text()"
     id: "..*/user/id/text()"
-  regex:
+  regexp:
     name: "name : (.*)"
     id: "id : (.*)"
 mapping:
@@ -17,11 +17,11 @@ mapping:
         id: "9876543210"
     response:
       content: "Hello POST"
-    parsing:
+    bulkParser:
       xpath:
         name: "..*/user/name/text()"
         id: "..*/user/id/text()"
-      regex:
+      regexp:
         name: "name : (.*)"
         id: "id : (.*)"
   -

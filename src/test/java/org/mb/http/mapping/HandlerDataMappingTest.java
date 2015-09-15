@@ -1,14 +1,12 @@
 package org.mb.http.mapping;
 
-import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Maps;
-import com.google.common.collect.Table;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
-import org.mb.parsing.PathType;
+import org.mb.parsing.BulkParser;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -44,8 +42,8 @@ public class HandlerDataMappingTest {
         return Maps.newHashMap();
     }
 
-    private Table<PathType, String, String> getParsing() {
-        return HashBasedTable.create();
+    private BulkParser getBulkParser() {
+        return new BulkParser();
     }
 
     @Test
@@ -64,7 +62,7 @@ public class HandlerDataMappingTest {
         HandlerDataMapping mapping = new HandlerDataMapping();
         RequestPattern requestPattern = getRequestPattern(Method.GET);
         Response responseER = getResponse(1);
-        mapping.addMapping(requestPattern, responseER, getParsing());
+        mapping.addMapping(requestPattern, responseER, getBulkParser());
         Request request = getRequest(Method.POST);
 
         Response responseAR = mapping.find(request, getContent()).getResponse();
@@ -78,8 +76,8 @@ public class HandlerDataMappingTest {
         RequestPattern requestPattern2 = getRequestPattern(Method.POST);
         Response responseER1 = getResponse(1);
         Response responseER2 = getResponse(2);
-        mapping.addMapping(requestPattern1, responseER1, getParsing());
-        mapping.addMapping(requestPattern2, responseER2, getParsing());
+        mapping.addMapping(requestPattern1, responseER1, getBulkParser());
+        mapping.addMapping(requestPattern2, responseER2, getBulkParser());
         Request request1 = getRequest(Method.GET);
         Request request2 = getRequest(Method.POST);
         Response responseAR1 = mapping.find(request1, getContent()).getResponse();
@@ -97,9 +95,9 @@ public class HandlerDataMappingTest {
         Response responseER = getResponse(1);
         Response response1 = getResponse(2);
         Response response2 = getResponse(3);
-        mapping.addMapping(requestPattern1, responseER, getParsing());
-        mapping.addMapping(requestPattern2, response1, getParsing());
-        mapping.addMapping(requestPattern3, response2, getParsing());
+        mapping.addMapping(requestPattern1, responseER, getBulkParser());
+        mapping.addMapping(requestPattern2, response1, getBulkParser());
+        mapping.addMapping(requestPattern3, response2, getBulkParser());
         Request request = getRequest(Method.GET);
 
         Response responseAR = mapping.find(request, getContent()).getResponse();

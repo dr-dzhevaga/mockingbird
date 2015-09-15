@@ -1,15 +1,11 @@
 package org.mb.settings;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.Table;
 import org.mb.http.mapping.HandlerDataMapping;
-import org.mb.parsing.PathType;
+import org.mb.parsing.BulkParser;
 import org.mb.settings.marshalling.Marshaller;
 import org.mb.settings.marshalling.MarshallingException;
-import org.mb.settings.parsing.FileFormat;
-import org.mb.settings.parsing.Parser;
-import org.mb.settings.parsing.ParserFactory;
-import org.mb.settings.parsing.ParsingException;
+import org.mb.settings.parsing.*;
 
 import java.io.*;
 
@@ -18,11 +14,11 @@ import java.io.*;
  */
 public class Settings {
     private final HandlerDataMapping mapping;
-    private final Table<PathType, String, String> parsing;
+    private final BulkParser bulkParser;
 
-    public Settings(HandlerDataMapping mapping, Table<PathType, String, String> parsing) {
+    public Settings(HandlerDataMapping mapping, BulkParser bulkParser) {
         this.mapping = mapping;
-        this.parsing = parsing;
+        this.bulkParser = bulkParser;
     }
 
     public static Settings load(String filePath, FileFormat fileFormat) throws IOException, ParsingException, MarshallingException {
@@ -34,8 +30,8 @@ public class Settings {
         }
     }
 
-    public Table<PathType, String, String> getParsing() {
-        return parsing;
+    public BulkParser getBulkParser() {
+        return bulkParser;
     }
 
     public HandlerDataMapping getMapping() {

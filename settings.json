@@ -4,7 +4,7 @@
       "name":"..*/user/name/text()",
       "id":"..*/user/id/text()"
     },
-    "regex":{
+    "regexp":{
       "name":"name : (.*)",
       "id":"id : (.*)"
     }
@@ -30,7 +30,7 @@
           "name":"..*/user/name/text()",
           "id":"..*/user/id/text()"
         },
-        "regex":{
+        "regexp":{
           "name":"name : (.*)",
           "id":"id : (.*)"
         }
