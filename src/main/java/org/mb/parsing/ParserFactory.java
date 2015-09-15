@@ -8,6 +8,8 @@ public class ParserFactory {
         switch (inputFormat) {
             case XML:
                 return new XmlParser(inputText);
+            case TEXT:
+                return new TextParser(inputText);
         }
         throw new IllegalArgumentException("Unsupported parser type: " + inputFormat.toString());
     }

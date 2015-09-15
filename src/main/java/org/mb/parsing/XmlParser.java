@@ -1,5 +1,6 @@
 package org.mb.parsing;
 
+import com.google.common.collect.Maps;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -13,14 +14,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
 public class XmlParser extends AbstractParser {
-    private Document xml;
+    private Document document;
     boolean isValid = true;
 
     public XmlParser(String text) {
@@ -29,7 +29,7 @@ public class XmlParser extends AbstractParser {
         factory.setNamespaceAware(true);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
-            xml = builder.parse(new InputSource(new StringReader(text)));
+            document = builder.parse(new InputSource(new StringReader(text)));
         } catch (ParserConfigurationException | SAXException | IOException e) {
             isValid = false;
         }
@@ -42,7 +42,7 @@ public class XmlParser extends AbstractParser {
             XPath xpath = xpathFactory.newXPath();
             try {
                 XPathExpression expr = xpath.compile(path);
-                return expr.evaluate(xml);
+                return expr.evaluate(document);
             } catch (XPathExpressionException e) {
                 throw new ParsingException(e);
             }
@@ -53,12 +53,10 @@ public class XmlParser extends AbstractParser {
 
     @Override
     public Map<String, String> parse(Map<String, String> paths) throws ParsingException {
-        Map<String, String> results = new HashMap<>(paths.size());
         if(isValid) {
-            for (Map.Entry<String, String> path : paths.entrySet()) {
-                results.put(path.getKey(), parse(path.getValue()));
-            }
+            return super.parse(paths);
+        } else {
+            return Maps.newHashMap();
         }
-        return results;
     }
 }
