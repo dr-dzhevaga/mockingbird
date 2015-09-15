@@ -1,23 +1,19 @@
 package org.mb.settings.parsing;
 
-import com.google.gson.Gson;
+import net.minidev.json.JSONValue;
+
 import java.io.Reader;
 
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
 public class JSONParser implements Parser {
-
-    private final Gson parser;
-
-    public JSONParser() {
-        this.parser = new Gson();
-    }
+    public JSONParser() {}
 
     @Override
     public Object parse(Reader inputFile) throws ParsingException {
         try {
-            return parser.fromJson(inputFile, Object.class);
+            return JSONValue.parse(inputFile);
         } catch (Throwable e) {
             throw new ParsingException(e);
         }
