@@ -7,7 +7,8 @@ import org.mb.cli.CLI;
 import org.mb.cli.CommonsCLI;
 import org.mb.cli.ParsingException;
 import org.mb.settings.Settings;
-import org.mb.settings.parsing.InputFormat;
+import org.mb.settings.parsing.FileFormat;
+
 import static org.mb.cli.CommonsCLI.*;
 
 /**
@@ -28,7 +29,7 @@ public class Main {
         boolean printHelp = cli.hasOption(HELP);
         int serverPort = Integer.parseInt(cli.getOptionValue(PORT));
         String filePath = cli.getOptionValue(FILE);
-        InputFormat fileFormat = InputFormat.of(cli.getOptionValue(FORMAT));
+        FileFormat fileFormat = FileFormat.of(cli.getOptionValue(FORMAT));
 
         if(printHelp) {
             cli.printHelp();

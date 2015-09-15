@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
-import org.mb.parsing.InputFormat;
+import org.mb.parsing.PathType;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -44,7 +44,7 @@ public class HandlerDataMappingTest {
         return Maps.newHashMap();
     }
 
-    private Table<InputFormat, String, String> getParsing() {
+    private Table<PathType, String, String> getParsing() {
         return HashBasedTable.create();
     }
 

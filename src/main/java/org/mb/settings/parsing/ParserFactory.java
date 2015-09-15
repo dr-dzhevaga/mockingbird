@@ -5,7 +5,7 @@ package org.mb.settings.parsing;
  */
 public class ParserFactory {
 
-    public static Parser newParser(InputFormat format) throws IllegalArgumentException {
+    public static Parser newParser(FileFormat format) throws IllegalArgumentException {
         switch (format) {
             case JSON:
                 return new JSONParser();

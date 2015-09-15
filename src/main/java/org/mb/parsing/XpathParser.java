@@ -1,6 +1,5 @@
 package org.mb.parsing;
 
-import com.google.common.collect.Maps;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -14,16 +13,14 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Map;
 
 /**
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
-public class XmlParser extends AbstractParser {
+public class XpathParser extends AbstractParser {
     private Document document;
-    boolean isValid = true;
 
-    public XmlParser(String text) {
+    public XpathParser(String text) {
         super(text);
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
@@ -48,15 +45,6 @@ public class XmlParser extends AbstractParser {
             }
         } else {
             return "";
-        }
-    }
-
-    @Override
-    public Map<String, String> parse(Map<String, String> paths) throws ParsingException {
-        if(isValid) {
-            return super.parse(paths);
-        } else {
-            return Maps.newHashMap();
         }
     }
 }

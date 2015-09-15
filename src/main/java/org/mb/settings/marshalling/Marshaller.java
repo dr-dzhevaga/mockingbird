@@ -4,7 +4,7 @@ import com.google.common.collect.Table;
 import org.mb.http.mapping.HandlerDataMapping;
 import org.mb.http.mapping.RequestPattern;
 import org.mb.http.basic.Response;
-import org.mb.parsing.InputFormat;
+import org.mb.parsing.PathType;
 import org.mb.settings.Settings;
 
 import java.util.List;
@@ -36,7 +36,7 @@ public class Marshaller extends BaseMarshaller {
     public Settings toSettings() throws MarshallingException {
         Map settingsMap = toType(Map.class, true);
         HandlerDataMapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
-        Table<InputFormat, String, String> parsing = from(settingsMap.get(PARSING)).toTableOfType(InputFormat.class, String.class, String.class);
+        Table<PathType, String, String> parsing = from(settingsMap.get(PARSING)).toTableOfType(PathType.class, String.class, String.class);
         return new Settings(mapping, parsing);
     }
 
@@ -48,7 +48,7 @@ public class Marshaller extends BaseMarshaller {
             Map httpMappingMap = from(httpMappingObject).toType(Map.class, true);
             RequestPattern requestPattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
             Response response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
-            Table<InputFormat, String, String> parsing = from(httpMappingMap.get(PARSING)).toTableOfType(InputFormat.class, String.class, String.class);
+            Table<PathType, String, String> parsing = from(httpMappingMap.get(PARSING)).toTableOfType(PathType.class, String.class, String.class);
             handlerDataMapping.addMapping(requestPattern, response, parsing);
         }
         return handlerDataMapping;

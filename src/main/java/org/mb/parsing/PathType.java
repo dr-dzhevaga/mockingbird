@@ -7,21 +7,21 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
-public enum InputFormat {
-    XML("Xml"),
-    TEXT("Text"),
-    JSON("Json");
+public enum PathType {
+    Xpath("Xpath"),
+    RegExp("RegExp"),
+    JSONPath("JSONPath");
 
     private final String string;
-    private static final Map<String, InputFormat> stringToEnum = Maps.newHashMap();
+    private static final Map<String, PathType> stringToEnum = Maps.newHashMap();
 
     static {
-        for(InputFormat value : values()) {
+        for(PathType value : values()) {
             stringToEnum.put(value.toString().toLowerCase(), value);
         }
     }
 
-    InputFormat(String string) {
+    PathType(String string) {
         this.string = string;
     }
 
@@ -30,11 +30,11 @@ public enum InputFormat {
         return string;
     }
 
-    public static InputFormat of(String string) throws IllegalArgumentException {
-        InputFormat enumFromString = stringToEnum.get(string.toLowerCase());
+    public static PathType of(String string) throws IllegalArgumentException {
+        PathType enumFromString = stringToEnum.get(string.toLowerCase());
         if(enumFromString == null) {
             // TODO: show expected input strings based on stringToEnum map
-            throw new IllegalArgumentException("Unsupported input format: " + string);
+            throw new IllegalArgumentException("Unsupported parser path type: " + string);
         }
         return enumFromString;
     }
