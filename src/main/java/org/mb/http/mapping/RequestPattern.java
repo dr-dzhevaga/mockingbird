@@ -182,13 +182,13 @@ public class RequestPattern {
             return this;
         }
 
-        public Builder addContentParameter(String name, String value) {
-            content.put(name, value);
+        public Builder addContentParameter(String name, Collection<String> values) {
+            content.putAll(name, values);
             return this;
         }
 
-        public Builder addParserResult(String name, Collection<String> values) {
-            content.putAll(name, values);
+        public Builder addContentParameters(Multimap<String, String> parameters) {
+            content.putAll(parameters);
             return this;
         }
 

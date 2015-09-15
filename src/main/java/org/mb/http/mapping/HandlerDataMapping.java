@@ -4,7 +4,7 @@ import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
-import org.mb.parsing.BulkParser;
+import org.mb.parsing.Parsing;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -29,11 +29,11 @@ public class HandlerDataMapping {
                 setStatusCode(DEFAULT_RESPONSE_STATUS_CODE).
                 setContent(DEFAULT_RESPONSE_CONTENT).
                 build();
-        defaultHandlerData = new HandlerData(defaultResponse, new BulkParser());
+        defaultHandlerData = new HandlerData(defaultResponse, new Parsing());
     }
 
-    public void addMapping(RequestPattern requestPattern, Response response, BulkParser bulkParser) {
-        mapping.put(requestPattern, new HandlerData(response, bulkParser));
+    public void addMapping(RequestPattern requestPattern, Response response, Parsing parsing) {
+        mapping.put(requestPattern, new HandlerData(response, parsing));
         Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response));
     }
 
@@ -50,15 +50,15 @@ public class HandlerDataMapping {
 
     public static class HandlerData {
         private final Response response;
-        private final BulkParser bulkParser;
+        private final Parsing parsing;
 
-        private HandlerData(Response response, BulkParser bulkParser) {
+        private HandlerData(Response response, Parsing parsing) {
             this.response = response;
-            this.bulkParser = bulkParser;
+            this.parsing = parsing;
         }
 
-        public BulkParser getBulkParser() {
-            return bulkParser;
+        public Parsing getParsing() {
+            return parsing;
         }
 
         public Response getResponse() {

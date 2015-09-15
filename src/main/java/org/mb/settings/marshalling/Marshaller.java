@@ -3,9 +3,9 @@ package org.mb.settings.marshalling;
 import org.mb.http.mapping.HandlerDataMapping;
 import org.mb.http.mapping.RequestPattern;
 import org.mb.http.basic.Response;
+import org.mb.parsing.Parsing;
 import org.mb.parsing.PathType;
 import org.mb.settings.Settings;
-import org.mb.parsing.BulkParser;
 
 import java.util.List;
 import java.util.Map;
@@ -36,8 +36,8 @@ public class Marshaller extends BaseMarshaller {
     public Settings toSettings() throws MarshallingException {
         Map settingsMap = toType(Map.class, true);
         HandlerDataMapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
-        BulkParser bulkParser = from(settingsMap.get(PARSING)).toBulkParser();
-        return new Settings(mapping, bulkParser);
+        Parsing parsing = from(settingsMap.get(PARSING)).toParsing();
+        return new Settings(mapping, parsing);
     }
 
     public HandlerDataMapping toHTTPMapping() throws MarshallingException {
@@ -48,8 +48,8 @@ public class Marshaller extends BaseMarshaller {
             Map httpMappingMap = from(httpMappingObject).toType(Map.class, true);
             RequestPattern requestPattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
             Response response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
-            BulkParser bulkParser = from(httpMappingMap.get(PARSING)).toBulkParser();
-            handlerDataMapping.addMapping(requestPattern, response, bulkParser);
+            Parsing parsing = from(httpMappingMap.get(PARSING)).toParsing();
+            handlerDataMapping.addMapping(requestPattern, response, parsing);
         }
         return handlerDataMapping;
     }
@@ -73,6 +73,9 @@ public class Marshaller extends BaseMarshaller {
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
         builder.addHeaders(from(headerObject).toMultimapOfType(String.class, String.class));
+
+        Object contentObject = httpRequestPatternMap.get(CONTENT);
+        builder.addContentParameters(from(contentObject).toMultimapOfType(String.class, String.class));
 
         return builder.build();
     }
@@ -100,16 +103,16 @@ public class Marshaller extends BaseMarshaller {
         return builder.build();
     }
 
-    public BulkParser toBulkParser() throws MarshallingException {
-        BulkParser bulkParser = new BulkParser();
+    public Parsing toParsing() throws MarshallingException {
+        Parsing parsing = new Parsing();
 
         Map<String, Map> map = toMapOfType(String.class, Map.class);
         for(Map.Entry<String, Map> entry : map.entrySet()) {
             PathType pathType = PathType.of(entry.getKey());
             Map<String, String> paths = from(entry.getValue()).toMapOfType(String.class, String.class);
-            bulkParser.add(pathType, paths);
+            parsing.addParsing(pathType, paths);
         }
 
-        return bulkParser;
+        return parsing;
     }
 }

@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public abstract class AbstractParser implements Parser {
     protected final String text;
-    protected boolean isValid;
+    protected boolean isValid = true;
 
     public AbstractParser(String text) {
         this.text = text;

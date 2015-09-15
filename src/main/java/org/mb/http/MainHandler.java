@@ -6,7 +6,7 @@ import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
 import org.mb.http.mapping.HandlerDataMapping;
 import org.mb.settings.Settings;
-import org.mb.parsing.BulkParser;
+import org.mb.parsing.Parsing;
 
 import java.util.Map;
 
@@ -22,10 +22,10 @@ public class MainHandler implements Handler {
 
     @Override
     public Response handle(Request request) {
-        Map<String, String> parsingResults = Maps.newHashMap();
-        BulkParser bulkParser = settings.getBulkParser();
-        parsingResults.putAll(bulkParser.parse(request.getContent()));
-        HandlerDataMapping.HandlerData handlerData = settings.getMapping().find(request, parsingResults);
+        Map<String, String> parsingResult = Maps.newHashMap();
+        Parsing parsing = settings.getParsing();
+        parsingResult.putAll(parsing.parse(request.getContent()));
+        HandlerDataMapping.HandlerData handlerData = settings.getMapping().find(request, parsingResult);
         return handlerData.getResponse();
     }
 }

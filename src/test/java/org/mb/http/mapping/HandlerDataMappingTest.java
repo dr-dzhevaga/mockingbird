@@ -6,7 +6,7 @@ import org.junit.Test;
 import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
-import org.mb.parsing.BulkParser;
+import org.mb.parsing.Parsing;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -42,8 +42,8 @@ public class HandlerDataMappingTest {
         return Maps.newHashMap();
     }
 
-    private BulkParser getBulkParser() {
-        return new BulkParser();
+    private Parsing getBulkParser() {
+        return new Parsing();
     }
 
     @Test

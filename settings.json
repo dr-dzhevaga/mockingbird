@@ -1,12 +1,10 @@
 {
   "parsing":{
     "xpath":{
-      "name":"..*/user/name/text()",
-      "id":"..*/user/id/text()"
+      "name":"/project/title/text()"
     },
     "regexp":{
-      "name":"name : (.*)",
-      "id":"id : (.*)"
+      "qualification":"<qualification>(.*)</qualification>"
     }
   },
   "mapping":[
@@ -18,22 +16,12 @@
           "Content-Type":"text/plain"
         },
         "content":{
-          "name":"Hohn",
-          "id":"9876543210"
+          "name":"The project",
+          "qualification" : ["8", "0"]
         }
       },
       "response":{
-        "content":"Hello POST"
-      },
-      "parsing":{
-        "xpath":{
-          "name":"..*/user/name/text()",
-          "id":"..*/user/id/text()"
-        },
-        "regexp":{
-          "name":"name : (.*)",
-          "id":"id : (.*)"
-        }
+        "content":"Hello POST with XML"
       }
     },
     {
