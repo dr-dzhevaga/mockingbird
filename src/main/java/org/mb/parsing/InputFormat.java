@@ -8,8 +8,9 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
 public enum InputFormat {
-    XML("XML"),
-    TEXT("TEXT");
+    XML("Xml"),
+    TEXT("Text"),
+    JSON("Json");
 
     private final String string;
     private static final Map<String, InputFormat> stringToEnum = Maps.newHashMap();

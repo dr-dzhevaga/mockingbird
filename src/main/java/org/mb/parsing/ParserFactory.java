@@ -10,6 +10,8 @@ public class ParserFactory {
                 return new XmlParser(inputText);
             case TEXT:
                 return new TextParser(inputText);
+            case JSON:
+                return new JsonParser(inputText);
         }
         throw new IllegalArgumentException("Unsupported parser type: " + inputFormat.toString());
     }
