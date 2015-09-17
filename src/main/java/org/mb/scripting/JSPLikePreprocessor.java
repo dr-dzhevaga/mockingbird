@@ -1,29 +1,38 @@
 package org.mb.scripting;
 
-import com.google.common.collect.Queues;
-
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
-import java.util.Queue;
+
+import static org.mb.scripting.JSPLikePreprocessor.State.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 
 public class JSPLikePreprocessor extends Reader {
-    private enum STATE {
-        UNKNOWN,
-        TEXT,
-        MACRO,
-        SCRIPT,
-        MACRO_OR_SCRIPT
+
+    protected enum State {
+        TEXT(  "%>", "print(\"", "\");\n"),
+        MACRO( "%=", "print(",   ");\n"),
+        SCRIPT("<%", "",         "\n");
+
+        final String startMacro;
+        final String startScript;
+        final String endScript;
+
+        State(String startMacro, String startScript, String endScript) {
+            this.startMacro = startMacro;
+            this.startScript = startScript;
+            this.endScript = endScript;
+        }
     }
 
     private final Reader reader;
-    private STATE state = STATE.UNKNOWN;
+    private State state = TEXT;
     private int previous = -1;
+    private int current = -1;
     private StringBuilder processed = new StringBuilder();
+    private boolean textIsOpen;
 
     public JSPLikePreprocessor(Reader reader) {
         this.reader = reader;
@@ -31,65 +40,59 @@ public class JSPLikePreprocessor extends Reader {
 
     @Override
     public int read(char[] cbuf, int off, int len) throws IOException {
-        if(previous == -1) {
-            previous = reader.read();
-        }
-        int current;
+        initCurrent();
+
         while(processed.length() < len) {
-            current = reader.read();
-            if(current == -1 && previous != -1) {
-                if(state == STATE.UNKNOWN) {
-                    processed.append("print(\"");
+            readNext();
+            if(current == -1) {
+                if(previous != -1) {
+                    if (state == TEXT) {
+                        if(!textIsOpen) {
+                            processed.append(state.startScript);
+                        }
+                        processed.append((char) previous).append(state.endScript);
+                    }
+                    previous = -1;
                 }
-                processed.append(previous).append("\");");
                 break;
             }
+
             switch (state) {
-                case UNKNOWN:
-                    if(previous == '<' && current == '%') {
-                        state = STATE.MACRO_OR_SCRIPT;
-                    } else {
-                        state = STATE.TEXT;
-                        processed.append("print(\"").append(previous);
-                    }
-                    break;
                 case TEXT:
-                    if(previous == '<' && current == '%') {
-                        state = STATE.MACRO_OR_SCRIPT;
-                        processed.append("\");");
+                    if(startWith(SCRIPT.startMacro)) {
+                        if(textIsOpen) {
+                            textIsOpen = false;
+                            processed.append(state.endScript);
+                        }
+                        readNext();
+                        if(startWith(MACRO.startMacro)) {
+                            state = MACRO;
+                            readNext();
+                        } else {
+                            state = SCRIPT;
+                        }
+                        processed.append(state.startScript);
                     } else {
-                        processed.append(previous);
-                    }
-                    break;
-                case MACRO_OR_SCRIPT:
-                    if(current == '=') {
-                        state = STATE.MACRO;
-                        current = read();
-                        processed.append("print(");
-                    } else {
-                        state = STATE.SCRIPT;
+                        if(!textIsOpen) {
+                            textIsOpen = true;
+                            processed.append(state.startScript);
+                        }
+                        processed.append((char) previous);
                     }
                     break;
                 case MACRO:
-                    if(previous == '%' && current == '>') {
-                        state = STATE.UNKNOWN;
-                        current = read();
-                        processed.append(");");
-                    } else {
-                        processed.append(previous);
-                    }
-                    break;
                 case SCRIPT:
-                    if(previous == '%' && current == '>') {
-                        state = STATE.UNKNOWN;
-                        current = read();
+                    if(startWith(TEXT.startMacro)) {
+                        processed.append(state.endScript);
+                        state = TEXT;
+                        readNext();
                     } else {
-                        processed.append(previous);
+                        processed.append((char) previous);
                     }
                     break;
             }
-            previous = current;
         }
+
         if(processed.length() == 0) {
             return  -1;
         } else if(processed.length() > len) {
@@ -102,6 +105,21 @@ public class JSPLikePreprocessor extends Reader {
             processed = new StringBuilder();
             return processedLength;
         }
+    }
+
+    private void initCurrent() throws IOException {
+        if(current == -1) {
+            current = reader.read();
+        }
+    }
+
+    private void readNext() throws IOException {
+        previous = current;
+        current = reader.read();
+    }
+
+    private boolean startWith(String pattern) {
+        return previous == pattern.charAt(0) && current == pattern.charAt(1);
     }
 
     @Override
