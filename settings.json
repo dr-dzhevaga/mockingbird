@@ -21,7 +21,7 @@
         }
       },
       "response":{
-        "content":"Hello POST with XML"
+        "content":"Hello POST with XML <%=new Date()%>"
       }
     },
     {

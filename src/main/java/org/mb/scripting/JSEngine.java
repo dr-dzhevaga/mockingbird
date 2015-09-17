@@ -3,9 +3,7 @@ package org.mb.scripting;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
+import java.io.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 16.09.2015.
@@ -13,16 +11,18 @@ import java.io.Writer;
 public class JSEngine implements Engine {
     private final static ScriptEngineManager factory = new ScriptEngineManager();
     private final ScriptEngine engine;
-    private final Writer writer;
 
-    private JSEngine() {
+    private JSEngine(Writer writer) {
         engine = factory.getEngineByName("JavaScript");
-        writer = new StringWriter();
         engine.getContext().setWriter(writer);
     }
 
-    public static Engine newInstance() {
-        return new JSEngine();
+    public static Engine newInstance(Writer writer) {
+        return new JSEngine(writer);
+    }
+
+    public static Engine newInstance(OutputStream outputStream) {
+        return new JSEngine(new OutputStreamWriter(outputStream));
     }
 
     @Override
@@ -37,10 +37,5 @@ public class JSEngine implements Engine {
     @Override
     public void put(String name, String value) {
         engine.put(name, value);
-    }
-
-    @Override
-    public String getPrintOutput() {
-        return writer.toString();
     }
 }

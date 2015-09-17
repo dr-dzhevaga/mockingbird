@@ -1,13 +1,18 @@
 package org.mb.http;
 
-import com.google.common.collect.Maps;
+import org.mb.http.basic.Content;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
-import org.mb.http.mapping.HandlerDataMapping;
+import org.mb.http.mapping.ResponseDataMapping;
+import org.mb.scripting.Engine;
+import org.mb.scripting.JSEngine;
+import org.mb.scripting.JSPLikePreprocessor;
+import org.mb.scripting.JSPLikeProcessor;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
 
+import java.io.*;
 import java.util.Map;
 
 /**
@@ -22,10 +27,26 @@ public class MainHandler implements Handler {
 
     @Override
     public Response handle(Request request) {
-        Map<String, String> parsingResult = Maps.newHashMap();
-        Parsing parsing = settings.getParsing();
-        parsingResult.putAll(parsing.parse(request.getContent()));
-        HandlerDataMapping.HandlerData handlerData = settings.getMapping().find(request, parsingResult);
-        return handlerData.getResponse();
+        Parsing commonParsing = settings.getParsing();
+        final Map<String, String> parsingResult = commonParsing.parse(request.getContent());
+
+        ResponseDataMapping.ResponseData responseData = settings.getMapping().find(request, parsingResult);
+
+        Parsing requestParsing = responseData.getParsing();
+        parsingResult.putAll(requestParsing.parse(request.getContent()));
+
+        final Response response = responseData.getResponse();
+        final InputStream inputStream = response.getContent().toStream();
+        return response.setContent(new Content() {
+            @Override
+            public void writeTo(OutputStream outputStream) throws IOException {
+                JSPLikeProcessor.from(inputStream).to(outputStream);
+            }
+
+            @Override
+            public InputStream toStream() {
+                return response.getContent().toStream();
+            }
+        });
     }
 }

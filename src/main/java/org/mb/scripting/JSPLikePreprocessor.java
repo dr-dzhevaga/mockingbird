@@ -1,6 +1,8 @@
 package org.mb.scripting;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.Reader;
 
 import static org.mb.scripting.JSPLikePreprocessor.State.*;
@@ -36,6 +38,10 @@ public class JSPLikePreprocessor extends Reader {
 
     public JSPLikePreprocessor(Reader reader) {
         this.reader = reader;
+    }
+
+    public JSPLikePreprocessor(InputStream inputStream) {
+        this(new InputStreamReader(inputStream));
     }
 
     @Override

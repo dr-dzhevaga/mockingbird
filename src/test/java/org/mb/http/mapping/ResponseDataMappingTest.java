@@ -15,7 +15,7 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 14.07.2015.
  */
 // TODO: test content matching if depends on it
-public class HandlerDataMappingTest {
+public class ResponseDataMappingTest {
     private static int DEFAULT_STATUS_CODE = 404;
     private static String DEFAULT_CONTENT = "Not found";
 
@@ -48,7 +48,7 @@ public class HandlerDataMappingTest {
 
     @Test
     public void resolve_emptyMapping_returnDefaultResponse() throws Exception {
-        HandlerDataMapping mapping = new HandlerDataMapping();
+        ResponseDataMapping mapping = new ResponseDataMapping();
         Request request = getRequest(Method.GET);
         Response defaultResponse = getDefaultResponse();
 
@@ -59,7 +59,7 @@ public class HandlerDataMappingTest {
 
     @Test
     public void resolve_noMatchedPattern_returnDefaultResponse() throws Exception {
-        HandlerDataMapping mapping = new HandlerDataMapping();
+        ResponseDataMapping mapping = new ResponseDataMapping();
         RequestPattern requestPattern = getRequestPattern(Method.GET);
         Response responseER = getResponse(1);
         mapping.addMapping(requestPattern, responseER, getBulkParser());
@@ -71,7 +71,7 @@ public class HandlerDataMappingTest {
 
     @Test
     public void resolve_matchedPattern_returnProperResponse() throws Exception {
-        HandlerDataMapping mapping = new HandlerDataMapping();
+        ResponseDataMapping mapping = new ResponseDataMapping();
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.POST);
         Response responseER1 = getResponse(1);
@@ -88,7 +88,7 @@ public class HandlerDataMappingTest {
 
     @Test
     public void resolve_severalMatchedPatterns_returnFirstResponse() throws Exception {
-        HandlerDataMapping mapping = new HandlerDataMapping();
+        ResponseDataMapping mapping = new ResponseDataMapping();
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.GET, Method.POST);
         RequestPattern requestPattern3 = getRequestPattern(Method.GET, Method.POST, Method.PUT);

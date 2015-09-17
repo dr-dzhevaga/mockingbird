@@ -71,7 +71,7 @@ public class JettyServer implements Server {
         String encoding = srcRequest.getCharacterEncoding();
         if(Strings.isNullOrEmpty(encoding)){
             encoding = Charsets.UTF_8.toString();
-        };
+        }
 
         String content = CharStreams.toString(new InputStreamReader(srcRequest.getInputStream(), encoding));
         builder.setContent(content);
@@ -86,8 +86,6 @@ public class JettyServer implements Server {
             dstResponse.setHeader(header.getKey(), header.getValue());
         }
 
-        try(InputStream inputStream = srcResponse.getContent()) {
-            ByteStreams.copy(inputStream, dstResponse.getOutputStream());
-        }
+        srcResponse.getContent().writeTo(dstResponse.getOutputStream());
     }
 }

@@ -1,10 +1,7 @@
 package org.mb.http.basic;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
-import com.google.common.io.ByteStreams;
-import com.google.common.io.CharStreams;
-import java.io.*;
+
 import java.util.Map;
 
 /**
@@ -12,18 +9,15 @@ import java.util.Map;
  */
 public class Response {
     private static final int DEFAULT_STATUS_CODE    = 200;
-    private static final int LOG_MAX_CONTENT_LENGTH = 1024;
 
     final private int statusCode;
     final private Map<String, String> headers;
-    final private String content;
-    final private boolean contentIsFilePath;
+    final private Content content;
 
-    private Response(int statusCode, Map<String, String> headers, String content, boolean contentIsFilePath) {
+    protected Response(int statusCode, Map<String, String> headers, Content content) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.content = content;
-        this.contentIsFilePath = contentIsFilePath;
     }
 
     public static Builder newBuilder() {return new Builder();}
@@ -36,24 +30,12 @@ public class Response {
         return headers;
     }
 
-    public InputStream getContent() {
-        if(contentIsFilePath) {
-            try {
-                return new FileInputStream(content);
-            } catch (FileNotFoundException e) {
-                return new ByteArrayInputStream(e.getMessage().getBytes(Charsets.UTF_8));
-            }
-        } else {
-            return new ByteArrayInputStream(content.getBytes(Charsets.UTF_8));
-        }
+    public Content getContent() {
+        return content;
     }
 
-    private String getContentAsString(int maxLength) {
-        try(InputStream stream = getContent()) {
-            return CharStreams.toString(new InputStreamReader(ByteStreams.limit(stream, maxLength), Charsets.UTF_8));
-        } catch (IOException e) {
-            return e.getMessage();
-        }
+    public Response setContent(Content content) {
+        return new Response(this.getStatusCode(), this.getHeaders(), content);
     }
 
     @Override
@@ -93,7 +75,7 @@ public class Response {
         if(!getHeaders().isEmpty()) {
             builder.append(String.format("%n\tHeaders: %s", getHeaders()));
         }
-        String content = getContentAsString(LOG_MAX_CONTENT_LENGTH);
+        String content = getContent().toString();
         if(!content.isEmpty()) {
             builder.append(String.format("%n\tContent: %s", content));
         }
@@ -103,8 +85,7 @@ public class Response {
     public static class Builder {
         private int statusCode = DEFAULT_STATUS_CODE;
         private Map<String, String> headers = Maps.newHashMap();;
-        private String content = "";
-        private boolean contentIsFilePath = false;
+        private Content content = new DefaultContent("");
 
         public Builder setStatusCode(int statusCode) {
             this.statusCode = statusCode;
@@ -127,13 +108,12 @@ public class Response {
         }
 
         public Builder setContent(String content) {
-            this.content = content;
-            this.contentIsFilePath = new File(content).exists();
+            this.content = new DefaultContent(content);
             return this;
         }
 
         public Response build() {
-            return new Response(statusCode, headers, content, contentIsFilePath);
+            return new Response(statusCode, headers, content);
         }
     }
 }
