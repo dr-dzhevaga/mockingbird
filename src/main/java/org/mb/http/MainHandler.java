@@ -7,6 +7,7 @@ import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
 import org.mb.http.mapping.ResponseDataMapping;
 import org.mb.scripting.JSPLikeProcessor;
+import org.mb.scripting.JavaToJSConverter;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
 
@@ -45,8 +46,8 @@ public class MainHandler implements Handler {
                     Reader reader = new InputStreamReader(inputStream, Charsets.UTF_8);
                 ) {
                     JSPLikeProcessor.from(reader).
-                            put(PARSING, parsingResult).
-                            put(REQUEST, request).
+                            put(PARSING, JavaToJSConverter.convertMap(parsingResult)).
+                            put(REQUEST, JavaToJSConverter.convertRequest(request)).
                             process(writer);
                 }
             }
