@@ -7,10 +7,8 @@ import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
 import org.mb.http.mapping.ResponseDataMapping;
 import org.mb.scripting.JSPLikeProcessor;
-import org.mb.scripting.ScriptingException;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
-import sun.org.mozilla.javascript.internal.Scriptable;
 
 import java.io.*;
 import java.util.Map;
@@ -19,8 +17,8 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
 public class MainHandler implements Handler {
-    private final String PARSING = "parsing";
-    private final String REQUEST = "request";
+    private final static String PARSING = "parsing";
+    private final static String REQUEST = "request";
     private final Settings settings;
 
     public MainHandler(Settings settings) {
@@ -38,7 +36,7 @@ public class MainHandler implements Handler {
 
         parsingResult.putAll(requestParsing.parse(request.getContent()));
 
-        final InputStream inputStream = response.getContent().toStream();
+        final InputStream inputStream = response.getContent().getStream();
         return response.setContent(new Content() {
             @Override
             public void writeTo(OutputStream outputStream) throws IOException {
@@ -49,13 +47,13 @@ public class MainHandler implements Handler {
                     JSPLikeProcessor.from(reader).
                             put(PARSING, parsingResult).
                             put(REQUEST, request).
-                            compile(writer);
+                            process(writer);
                 }
             }
 
             @Override
-            public InputStream toStream() {
-                return response.getContent().toStream();
+            public InputStream getStream() {
+                return response.getContent().getStream();
             }
         });
     }

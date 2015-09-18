@@ -9,5 +9,5 @@ import java.io.OutputStream;
  */
 public interface Content {
     void writeTo(OutputStream outputStream) throws IOException;
-    InputStream toStream();
+    InputStream getStream();
 }

@@ -21,13 +21,13 @@ public class DefaultContent implements Content {
 
     @Override
     public void writeTo(OutputStream outputStream) throws IOException {
-        try(InputStream inputStream = toStream()) {
+        try(InputStream inputStream = getStream()) {
             ByteStreams.copy(inputStream, outputStream);
         }
     }
 
     @Override
-    public InputStream toStream() {
+    public InputStream getStream() {
         if(sourceIsFilePath) {
             try {
                 return new FileInputStream(source);
@@ -40,7 +40,7 @@ public class DefaultContent implements Content {
     }
 
     private String toString(int maxLength) {
-        try(InputStream stream = toStream()) {
+        try(InputStream stream = getStream()) {
             return CharStreams.toString(new InputStreamReader(ByteStreams.limit(stream, maxLength), Charsets.UTF_8));
         } catch (IOException e) {
             return e.getMessage();

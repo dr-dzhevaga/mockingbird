@@ -6,12 +6,12 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 17.09.2015.
  */
 public class JSPLikeProcessor {
-    private final Reader reader;
     private final Engine engine;
+    private final Reader jspReader;
 
-    private JSPLikeProcessor(Reader reader) {
-        this.reader = reader;
-        engine = JSEngine.newInstance();
+    private JSPLikeProcessor(Reader jspReader) {
+        this.jspReader = jspReader;
+        this.engine = JSEngine.newInstance();
     }
 
     public static JSPLikeProcessor from(Reader reader) {
@@ -23,7 +23,10 @@ public class JSPLikeProcessor {
         return this;
     }
 
-    public void compile(Writer writer) {
-        engine.setWriter(writer).eval(new JSPLikePreprocessor(reader));
+    public JSPLikeProcessor process(Writer writer) throws IOException {
+        try(Reader scriptReader = new JSPLikePreprocessor(jspReader)) {
+            engine.setWriter(writer).eval(scriptReader);
+        }
+        return this;
     }
 }
