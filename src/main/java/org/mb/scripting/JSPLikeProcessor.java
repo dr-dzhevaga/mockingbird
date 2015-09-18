@@ -1,7 +1,5 @@
 package org.mb.scripting;
 
-import org.eclipse.jetty.io.WriterOutputStream;
-
 import java.io.*;
 
 /**
@@ -9,24 +7,23 @@ import java.io.*;
  */
 public class JSPLikeProcessor {
     private final Reader reader;
+    private final Engine engine;
 
     private JSPLikeProcessor(Reader reader) {
         this.reader = reader;
+        engine = JSEngine.newInstance();
     }
 
     public static JSPLikeProcessor from(Reader reader) {
         return new JSPLikeProcessor(reader);
     }
 
-    public static JSPLikeProcessor from(InputStream inputStream) {
-        return from(new InputStreamReader(inputStream));
+    public JSPLikeProcessor put(String name, Object value) {
+        engine.put(name, value);
+        return this;
     }
 
-    public void to(Writer writer) {
-        JSEngine.newInstance(writer).eval(new JSPLikePreprocessor(reader));
-    }
-
-    public void to(OutputStream outputStream) {
-        to(new OutputStreamWriter(outputStream));
+    public void compile(Writer writer) {
+        engine.setWriter(writer).eval(new JSPLikePreprocessor(reader));
     }
 }

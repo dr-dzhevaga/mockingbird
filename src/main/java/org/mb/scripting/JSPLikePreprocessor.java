@@ -10,9 +10,7 @@ import static org.mb.scripting.JSPLikePreprocessor.State.*;
 /**
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
-
 public class JSPLikePreprocessor extends Reader {
-
     protected enum State {
         TEXT(  "%>", "print(\"", "\");\n"),
         MACRO( "%=", "print(",   ");\n"),
@@ -38,10 +36,6 @@ public class JSPLikePreprocessor extends Reader {
 
     public JSPLikePreprocessor(Reader reader) {
         this.reader = reader;
-    }
-
-    public JSPLikePreprocessor(InputStream inputStream) {
-        this(new InputStreamReader(inputStream));
     }
 
     @Override
@@ -130,6 +124,6 @@ public class JSPLikePreprocessor extends Reader {
 
     @Override
     public void close() throws IOException {
-
+        reader.close();
     }
 }

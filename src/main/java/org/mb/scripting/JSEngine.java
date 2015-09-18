@@ -9,33 +9,37 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 public class JSEngine implements Engine {
+    private final static String ENGINE_NAME = "JavaScript";
     private final static ScriptEngineManager factory = new ScriptEngineManager();
     private final ScriptEngine engine;
 
-    private JSEngine(Writer writer) {
-        engine = factory.getEngineByName("JavaScript");
-        engine.getContext().setWriter(writer);
+    private JSEngine() {
+        engine = factory.getEngineByName(ENGINE_NAME);
     }
 
-    public static Engine newInstance(Writer writer) {
-        return new JSEngine(writer);
-    }
-
-    public static Engine newInstance(OutputStream outputStream) {
-        return new JSEngine(new OutputStreamWriter(outputStream));
+    public static Engine newInstance() {
+        return new JSEngine();
     }
 
     @Override
-    public void eval(Reader reader) {
+    public Engine eval(Reader reader) {
         try {
             engine.eval(reader);
         } catch (ScriptException e) {
             throw new ScriptingException(e);
         }
+        return this;
     }
 
     @Override
-    public void put(String name, String value) {
-        engine.put(name, value);
+    public Engine put(String key, Object value) {
+        engine.put(key, value);
+        return this;
+    }
+
+    @Override
+    public Engine setWriter(Writer writer) {
+        engine.getContext().setWriter(writer);
+        return this;
     }
 }
