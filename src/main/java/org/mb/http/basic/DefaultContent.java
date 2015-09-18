@@ -51,4 +51,19 @@ public class DefaultContent implements Content {
     public String toString() {
         return toString(TO_STRING_MAX_LENGTH);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if(this == obj) {
+            return true;
+        }
+        if(!(obj instanceof DefaultContent)) {
+            return false;
+        }
+        DefaultContent content = (DefaultContent)obj;
+        if(this.source != content.source) {
+            return false;
+        }
+        return true;
+    }
 }
