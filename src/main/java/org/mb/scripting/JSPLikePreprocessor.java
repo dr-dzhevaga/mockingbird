@@ -1,5 +1,7 @@
 package org.mb.scripting;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import java.io.IOException;
 import java.io.Reader;
 
@@ -75,7 +77,8 @@ public class JSPLikePreprocessor extends Reader {
                             textIsOpen = true;
                             processed.append(state.startScript);
                         }
-                        processed.append((char) previous);
+                        // TODO: not effective way to escape chars
+                        processed.append(StringEscapeUtils.escapeJavaScript(String.valueOf((char)previous)));
                     }
                     break;
                 case MACRO:
