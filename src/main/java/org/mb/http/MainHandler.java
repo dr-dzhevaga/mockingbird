@@ -7,6 +7,7 @@ import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
 import org.mb.http.mapping.ResponseDataMapping;
 import org.mb.scripting.JSPLikeProcessor;
+import org.mb.scripting.ScriptingException;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
 import sun.org.mozilla.javascript.internal.Scriptable;
@@ -41,9 +42,9 @@ public class MainHandler implements Handler {
         return response.setContent(new Content() {
             @Override
             public void writeTo(OutputStream outputStream) throws IOException {
+                Writer writer = new OutputStreamWriter(outputStream, Charsets.UTF_8);
                 try(
                     Reader reader = new InputStreamReader(inputStream, Charsets.UTF_8);
-                    Writer writer = new OutputStreamWriter(outputStream, Charsets.UTF_8);
                 ) {
                     JSPLikeProcessor.from(reader).
                             put(PARSING, parsingResult).
