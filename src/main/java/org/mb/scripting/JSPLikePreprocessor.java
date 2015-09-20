@@ -1,7 +1,5 @@
 package org.mb.scripting;
 
-import org.apache.commons.lang.StringEscapeUtils;
-
 import java.io.IOException;
 import java.io.Reader;
 
@@ -16,14 +14,14 @@ public class JSPLikePreprocessor extends Reader {
         MACRO( "%=", "print(",   ");\n"),
         SCRIPT("<%", "",         "\n");
 
-        final String startMacro;
-        final String startScript;
-        final String endScript;
+        final String openMacro;
+        final String openScript;
+        final String closeScript;
 
-        State(String startMacro, String startScript, String endScript) {
-            this.startMacro = startMacro;
-            this.startScript = startScript;
-            this.endScript = endScript;
+        State(String openMacro, String openScript, String closeScript) {
+            this.openMacro = openMacro;
+            this.openScript = openScript;
+            this.closeScript = closeScript;
         }
     }
 
@@ -31,26 +29,26 @@ public class JSPLikePreprocessor extends Reader {
     private State state = TEXT;
     private int previous = -1;
     private int current = -1;
-    private StringBuilder processed = new StringBuilder();
-    private boolean textIsOpen;
+    private StringBuilder processedBuff = new StringBuilder();
+    private boolean textIsOpened;
 
     public JSPLikePreprocessor(Reader reader) {
         this.reader = reader;
     }
 
     @Override
-    public int read(char[] cbuf, int off, int len) throws IOException {
+    public int read(char[] dest, int destOff, int length) throws IOException {
         initCurrent();
 
-        while(processed.length() < len) {
+        while(processedBuff.length() < length) {
             readNext();
             if(current == -1) {
                 if(previous != -1) {
                     if (state == TEXT) {
-                        if(!textIsOpen) {
-                            processed.append(state.startScript);
+                        if(!textIsOpened) {
+                            processedBuff.append(state.openScript);
                         }
-                        processed.append((char) previous).append(state.endScript);
+                        processedBuff.append(escapeJS((char) previous)).append(state.closeScript);
                     }
                     previous = -1;
                 }
@@ -59,53 +57,57 @@ public class JSPLikePreprocessor extends Reader {
 
             switch (state) {
                 case TEXT:
-                    if(startWith(SCRIPT.startMacro)) {
-                        if(textIsOpen) {
-                            textIsOpen = false;
-                            processed.append(state.endScript);
+                    if(startsWith(SCRIPT.openMacro)) {
+                        if(textIsOpened) {
+                            textIsOpened = false;
+                            processedBuff.append(state.closeScript);
                         }
                         readNext();
-                        if(startWith(MACRO.startMacro)) {
+                        if(startsWith(MACRO.openMacro)) {
                             state = MACRO;
                             readNext();
                         } else {
                             state = SCRIPT;
                         }
-                        processed.append(state.startScript);
+                        processedBuff.append(state.openScript);
                     } else {
-                        if(!textIsOpen) {
-                            textIsOpen = true;
-                            processed.append(state.startScript);
+                        if(!textIsOpened) {
+                            textIsOpened = true;
+                            processedBuff.append(state.openScript);
                         }
-                        // TODO: not effective way to escape chars
-                        processed.append(StringEscapeUtils.escapeJavaScript(String.valueOf((char)previous)));
+                        processedBuff.append(escapeJS((char) previous));
                     }
                     break;
                 case MACRO:
                 case SCRIPT:
-                    if(startWith(TEXT.startMacro)) {
-                        processed.append(state.endScript);
+                    if(startsWith(TEXT.openMacro)) {
+                        processedBuff.append(state.closeScript);
                         state = TEXT;
                         readNext();
                     } else {
-                        processed.append((char) previous);
+                        processedBuff.append((char) previous);
                     }
                     break;
             }
         }
 
-        if(processed.length() == 0) {
+        if(processedBuff.length() == 0) {
             return  -1;
-        } else if(processed.length() > len) {
-            System.arraycopy(processed.toString().toCharArray(), 0, cbuf, off, len);
-            processed = new StringBuilder(processed.substring(len));
-            return len;
+        } else if(processedBuff.length() > length) {
+            System.arraycopy(processedBuff.toString().toCharArray(), 0, dest, destOff, length);
+            processedBuff = new StringBuilder(processedBuff.substring(length));
+            return length;
         } else {
-            int processedLength = processed.length();
-            System.arraycopy(processed.toString().toCharArray(), 0, cbuf, off, processedLength);
-            processed = new StringBuilder();
+            int processedLength = processedBuff.length();
+            System.arraycopy(processedBuff.toString().toCharArray(), 0, dest, destOff, processedLength);
+            processedBuff = new StringBuilder();
             return processedLength;
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        reader.close();
     }
 
     private void initCurrent() throws IOException {
@@ -119,12 +121,35 @@ public class JSPLikePreprocessor extends Reader {
         current = reader.read();
     }
 
-    private boolean startWith(String pattern) {
+    private boolean startsWith(String pattern) {
         return previous == pattern.charAt(0) && current == pattern.charAt(1);
     }
 
-    @Override
-    public void close() throws IOException {
-        reader.close();
+    private char[] escapeJS(char ch) {
+        if(ch < 40) {
+            switch(ch) {
+                case '\'':
+                    return "\\'".toCharArray();
+                case '"':
+                    return "\\\"".toCharArray();
+                default:
+                    if(ch < 32) {
+                        return toHex(ch);
+                    }
+            }
+        }
+        return new char[] {ch};
+    }
+
+    private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
+
+    private char[] toHex(char ch) {
+        char[] r = new char[4];
+        r[3] = HEX_DIGITS[ch & 0xF];
+        ch >>>= 4;
+        r[2] = HEX_DIGITS[ch & 0xF];
+        r[1] = 'x';
+        r[0] = '\\';
+        return r;
     }
 }
