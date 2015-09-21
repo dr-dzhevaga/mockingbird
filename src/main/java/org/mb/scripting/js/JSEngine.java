@@ -13,7 +13,7 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 public class JSEngine implements Engine {
-    private final static String ENGINE_NAME = "JavaScript";
+    private final static String ENGINE_NAME = "nashorn";
     private final static Syntax syntax = new JSSyntax();
     private final static ScriptEngineManager factory = new ScriptEngineManager();
     private final ScriptEngine engine;

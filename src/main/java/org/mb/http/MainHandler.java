@@ -45,8 +45,8 @@ public class MainHandler implements Handler {
                     Reader reader = new InputStreamReader(inputStream, Charsets.UTF_8);
                 ) {
                     JSPLikeProcessor.from(reader).
-                            put(PARSING, JavaToJSConverter.convertMap(parsingResult)).
-                            put(REQUEST, JavaToJSConverter.convertRequest(request)).
+                            put(PARSING, parsingResult).
+                            put(REQUEST, request.toMap()).
                             print(writer);
                 }
             }
