@@ -1,7 +1,6 @@
 package org.mb.scripting.js;
 
-import org.mb.scripting.EngineRules;
-import sun.org.mozilla.javascript.internal.NativeObject;
+import org.mb.scripting.Syntax;
 
 import java.util.List;
 import java.util.Map;
@@ -9,7 +8,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 21.09.2015.
  */
-public class JSEngineRules implements EngineRules {
+public class JSSyntax implements Syntax {
     private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
     private static final String OPEN_PRINT = "print(";
     private static final String CLOSE_PRINT = ");\n";
@@ -62,25 +61,6 @@ public class JSEngineRules implements EngineRules {
     @Override
     public char[] closeScript() {
         return CLOSE_SCRIPT.toCharArray();
-    }
-
-    @Override
-    public Object toNativeObject(Map<String, ?> map) {
-        NativeObject nativeObject = new NativeObject() {
-            @Override
-            public Object getDefaultValue(Class<?> var1)  {
-                return toString();
-            }
-        };
-        for (Map.Entry<String,?> entry : map.entrySet()) {
-            nativeObject.defineProperty(entry.getKey(), entry.getValue(), NativeObject.READONLY);
-        }
-        return nativeObject;
-    }
-
-    @Override
-    public Object toNativeArray(List<String> list) {
-        return list.toArray();
     }
 
     private char[] toHex(char ch) {

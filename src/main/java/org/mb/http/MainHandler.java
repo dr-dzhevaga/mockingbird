@@ -7,7 +7,6 @@ import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
 import org.mb.http.mapping.ResponseDataMapping;
 import org.mb.jspl.JSPLikeProcessor;
-import org.mb.scripting.js.JavaToJSConverter;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
 
@@ -38,7 +37,7 @@ public class MainHandler implements Handler {
         parsingResult.putAll(requestParsing.parse(request.getContent()));
 
         final InputStream inputStream = response.getContent().getStream();
-        return response.setContent(new Content() {
+        Response resultResponse = response.setContent(new Content() {
             @Override
             public void writeTo(OutputStream outputStream) throws IOException {
                 Writer writer = new OutputStreamWriter(outputStream, Charsets.UTF_8);
@@ -48,7 +47,7 @@ public class MainHandler implements Handler {
                     JSPLikeProcessor.from(reader).
                             put(PARSING, JavaToJSConverter.convertMap(parsingResult)).
                             put(REQUEST, JavaToJSConverter.convertRequest(request)).
-                            process(writer);
+                            print(writer);
                 }
             }
 
@@ -57,5 +56,6 @@ public class MainHandler implements Handler {
                 return response.getContent().getStream();
             }
         });
+        return resultResponse;
     }
 }

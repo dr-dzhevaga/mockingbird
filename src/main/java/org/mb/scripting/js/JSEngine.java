@@ -1,7 +1,7 @@
 package org.mb.scripting.js;
 
 import org.mb.scripting.Engine;
-import org.mb.scripting.EngineRules;
+import org.mb.scripting.Syntax;
 import org.mb.scripting.ScriptingException;
 
 import javax.script.ScriptEngine;
@@ -14,7 +14,7 @@ import java.io.*;
  */
 public class JSEngine implements Engine {
     private final static String ENGINE_NAME = "JavaScript";
-    private final static EngineRules engineRules = new JSEngineRules();
+    private final static Syntax syntax = new JSSyntax();
     private final static ScriptEngineManager factory = new ScriptEngineManager();
     private final ScriptEngine engine;
 
@@ -49,7 +49,7 @@ public class JSEngine implements Engine {
     }
 
     @Override
-    public EngineRules getRules() {
-        return engineRules;
+    public Syntax getRules() {
+        return syntax;
     }
 }

@@ -27,7 +27,7 @@ public class JSPLikeProcessor {
         return this;
     }
 
-    public JSPLikeProcessor process(Writer writer) throws IOException {
+    public JSPLikeProcessor print(Writer writer) throws IOException {
         try(Reader scriptReader = new JSPLikePreprocessor(jspReader, engine.getRules())) {
             engine.setWriter(writer).eval(scriptReader);
         }

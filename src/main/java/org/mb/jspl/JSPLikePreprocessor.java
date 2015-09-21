@@ -1,6 +1,6 @@
 package org.mb.jspl;
 
-import org.mb.scripting.EngineRules;
+import org.mb.scripting.Syntax;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -13,8 +13,8 @@ import static org.mb.jspl.JSPLikePreprocessor.State.*;
 public class JSPLikePreprocessor extends Reader {
     protected enum State {
         TEXT("%>"),
-        MACRO("%="),
-        SCRIPT("<%");
+        SCRIPT("<%"),
+        MACRO("%=");
 
         final String start;
 
@@ -24,16 +24,16 @@ public class JSPLikePreprocessor extends Reader {
     }
 
     private final Reader reader;
-    private final EngineRules engineRules;
+    private final Syntax syntax;
     private State state = TEXT;
     private StringBuilder processedBuff = new StringBuilder();
     private int previous = -1;
     private int current = -1;
     private boolean textIsOpened;
 
-    public JSPLikePreprocessor(Reader reader, EngineRules engineRules) {
+    public JSPLikePreprocessor(Reader reader, Syntax syntax) {
         this.reader = reader;
-        this.engineRules = engineRules;
+        this.syntax = syntax;
     }
 
     @Override
@@ -46,14 +46,12 @@ public class JSPLikePreprocessor extends Reader {
                 if(previous != -1) {
                     if (state == TEXT) {
                         if(!textIsOpened) {
-                            processedBuff.
-                                    append(engineRules.openPrint()).
-                                    append(engineRules.openLiteral());
+                            processedBuff.append(syntax.openPrint()).
+                                    append(syntax.openLiteral());
                         }
-                        processedBuff.
-                                append(engineRules.escapeLiteral((char) previous)).
-                                append(engineRules.closeLiteral()).
-                                append(engineRules.closePrint());
+                        processedBuff.append(syntax.escapeLiteral((char) previous)).
+                                append(syntax.closeLiteral()).
+                                append(syntax.closePrint());
                     }
                     previous = -1;
                 }
@@ -65,54 +63,45 @@ public class JSPLikePreprocessor extends Reader {
                     if(startsWith(SCRIPT.start)) {
                         if(textIsOpened) {
                             textIsOpened = false;
-                            processedBuff.
-                                    append(engineRules.closeLiteral()).
-                                    append(engineRules.closePrint());
+                            processedBuff.append(syntax.closeLiteral()).
+                                    append(syntax.closePrint());
                         }
                         readNext();
                         if(startsWith(MACRO.start)) {
                             state = MACRO;
-                            processedBuff.
-                                    append(engineRules.openPrint());
+                            processedBuff.append(syntax.openPrint());
                             readNext();
                         } else {
                             state = SCRIPT;
-                            processedBuff.
-                                    append(engineRules.openScript());
+                            processedBuff.append(syntax.openScript());
                         }
                     } else {
                         if(!textIsOpened) {
                             textIsOpened = true;
-                            processedBuff.
-                                    append(engineRules.openPrint()).
-                                    append(engineRules.openLiteral());
+                            processedBuff.append(syntax.openPrint()).
+                                    append(syntax.openLiteral());
                         }
-                        processedBuff.
-                                append(engineRules.escapeLiteral((char) previous));
+                        processedBuff.append(syntax.escapeLiteral((char) previous));
                     }
                     break;
 
                 case MACRO:
                     if(startsWith(TEXT.start)) {
-                        processedBuff.
-                                append(engineRules.closePrint());
+                        processedBuff.append(syntax.closePrint());
                         state = TEXT;
                         readNext();
                     } else {
-                        processedBuff.
-                                append((char) previous);
+                        processedBuff.append((char) previous);
                     }
                     break;
 
                 case SCRIPT:
                     if(startsWith(TEXT.start)) {
-                        processedBuff.
-                                append(engineRules.closeScript());
+                        processedBuff.append(syntax.closeScript());
                         state = TEXT;
                         readNext();
                     } else {
-                        processedBuff.
-                                append((char) previous);
+                        processedBuff.append((char) previous);
                     }
                     break;
             }
