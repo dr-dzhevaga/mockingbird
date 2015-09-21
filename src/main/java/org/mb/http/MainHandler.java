@@ -6,8 +6,8 @@ import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
 import org.mb.http.mapping.ResponseDataMapping;
-import org.mb.scripting.JSPLikeProcessor;
-import org.mb.scripting.JavaToJSConverter;
+import org.mb.jspl.JSPLikeProcessor;
+import org.mb.scripting.js.JavaToJSConverter;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
 

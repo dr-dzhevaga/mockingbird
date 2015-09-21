@@ -1,39 +1,39 @@
-package org.mb.scripting;
+package org.mb.jspl;
+
+import org.mb.scripting.EngineRules;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import static org.mb.scripting.JSPLikePreprocessor.State.*;
+import static org.mb.jspl.JSPLikePreprocessor.State.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 public class JSPLikePreprocessor extends Reader {
     protected enum State {
-        TEXT(  "%>", "print(\"", "\");\n"),
-        MACRO( "%=", "print(",   ");\n"),
-        SCRIPT("<%", "",         "\n");
+        TEXT("%>"),
+        MACRO("%="),
+        SCRIPT("<%");
 
-        final String openMacro;
-        final String openScript;
-        final String closeScript;
+        final String start;
 
-        State(String openMacro, String openScript, String closeScript) {
-            this.openMacro = openMacro;
-            this.openScript = openScript;
-            this.closeScript = closeScript;
+        State(String start) {
+            this.start = start;
         }
     }
 
     private final Reader reader;
+    private final EngineRules engineRules;
     private State state = TEXT;
+    private StringBuilder processedBuff = new StringBuilder();
     private int previous = -1;
     private int current = -1;
-    private StringBuilder processedBuff = new StringBuilder();
     private boolean textIsOpened;
 
-    public JSPLikePreprocessor(Reader reader) {
+    public JSPLikePreprocessor(Reader reader, EngineRules engineRules) {
         this.reader = reader;
+        this.engineRules = engineRules;
     }
 
     @Override
@@ -46,9 +46,14 @@ public class JSPLikePreprocessor extends Reader {
                 if(previous != -1) {
                     if (state == TEXT) {
                         if(!textIsOpened) {
-                            processedBuff.append(state.openScript);
+                            processedBuff.
+                                    append(engineRules.openPrint()).
+                                    append(engineRules.openLiteral());
                         }
-                        processedBuff.append(escapeJS((char) previous)).append(state.closeScript);
+                        processedBuff.
+                                append(engineRules.escapeLiteral((char) previous)).
+                                append(engineRules.closeLiteral()).
+                                append(engineRules.closePrint());
                     }
                     previous = -1;
                 }
@@ -57,35 +62,57 @@ public class JSPLikePreprocessor extends Reader {
 
             switch (state) {
                 case TEXT:
-                    if(startsWith(SCRIPT.openMacro)) {
+                    if(startsWith(SCRIPT.start)) {
                         if(textIsOpened) {
                             textIsOpened = false;
-                            processedBuff.append(state.closeScript);
+                            processedBuff.
+                                    append(engineRules.closeLiteral()).
+                                    append(engineRules.closePrint());
                         }
                         readNext();
-                        if(startsWith(MACRO.openMacro)) {
+                        if(startsWith(MACRO.start)) {
                             state = MACRO;
+                            processedBuff.
+                                    append(engineRules.openPrint());
                             readNext();
                         } else {
                             state = SCRIPT;
+                            processedBuff.
+                                    append(engineRules.openScript());
                         }
-                        processedBuff.append(state.openScript);
                     } else {
                         if(!textIsOpened) {
                             textIsOpened = true;
-                            processedBuff.append(state.openScript);
+                            processedBuff.
+                                    append(engineRules.openPrint()).
+                                    append(engineRules.openLiteral());
                         }
-                        processedBuff.append(escapeJS((char) previous));
+                        processedBuff.
+                                append(engineRules.escapeLiteral((char) previous));
                     }
                     break;
+
                 case MACRO:
-                case SCRIPT:
-                    if(startsWith(TEXT.openMacro)) {
-                        processedBuff.append(state.closeScript);
+                    if(startsWith(TEXT.start)) {
+                        processedBuff.
+                                append(engineRules.closePrint());
                         state = TEXT;
                         readNext();
                     } else {
-                        processedBuff.append((char) previous);
+                        processedBuff.
+                                append((char) previous);
+                    }
+                    break;
+
+                case SCRIPT:
+                    if(startsWith(TEXT.start)) {
+                        processedBuff.
+                                append(engineRules.closeScript());
+                        state = TEXT;
+                        readNext();
+                    } else {
+                        processedBuff.
+                                append((char) previous);
                     }
                     break;
             }
@@ -123,33 +150,5 @@ public class JSPLikePreprocessor extends Reader {
 
     private boolean startsWith(String pattern) {
         return previous == pattern.charAt(0) && current == pattern.charAt(1);
-    }
-
-    private char[] escapeJS(char ch) {
-        if(ch < 40) {
-            switch(ch) {
-                case '\'':
-                    return "\\'".toCharArray();
-                case '"':
-                    return "\\\"".toCharArray();
-                default:
-                    if(ch < 32) {
-                        return toHex(ch);
-                    }
-            }
-        }
-        return new char[] {ch};
-    }
-
-    private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
-
-    private char[] toHex(char ch) {
-        char[] r = new char[4];
-        r[3] = HEX_DIGITS[ch & 0xF];
-        ch >>>= 4;
-        r[2] = HEX_DIGITS[ch & 0xF];
-        r[1] = 'x';
-        r[0] = '\\';
-        return r;
     }
 }

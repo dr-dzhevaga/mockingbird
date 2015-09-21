@@ -1,4 +1,8 @@
-package org.mb.scripting;
+package org.mb.jspl;
+
+import org.mb.scripting.Engine;
+import org.mb.scripting.EngineFactory;
+import org.mb.scripting.EngineType;
 
 import java.io.*;
 
@@ -11,7 +15,7 @@ public class JSPLikeProcessor {
 
     private JSPLikeProcessor(Reader jspReader) {
         this.jspReader = jspReader;
-        this.engine = JSEngine.newInstance();
+        this.engine = EngineFactory.newInstance(EngineType.JS);
     }
 
     public static JSPLikeProcessor from(Reader reader) {
@@ -24,7 +28,7 @@ public class JSPLikeProcessor {
     }
 
     public JSPLikeProcessor process(Writer writer) throws IOException {
-        try(Reader scriptReader = new JSPLikePreprocessor(jspReader)) {
+        try(Reader scriptReader = new JSPLikePreprocessor(jspReader, engine.getRules())) {
             engine.setWriter(writer).eval(scriptReader);
         }
         return this;

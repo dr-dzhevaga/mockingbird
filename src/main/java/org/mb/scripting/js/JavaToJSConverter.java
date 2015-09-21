@@ -1,4 +1,4 @@
-package org.mb.scripting;
+package org.mb.scripting.js;
 
 import com.google.common.collect.Maps;
 import org.mb.http.basic.Request;
@@ -10,6 +10,8 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 18.09.2015.
  */
+// TODO: make conversion by EngineRules
+@Deprecated
 public class JavaToJSConverter {
     public static Scriptable convertMap(Map<String, ?> map) {
         NativeObject nativeObject = new NativeObject() {
