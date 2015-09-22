@@ -14,7 +14,6 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 14.07.2015.
  */
-// TODO: test content matching if depends on it
 public class ResponseDataMappingTest {
     private static int DEFAULT_STATUS_CODE = 404;
     private static String DEFAULT_CONTENT = "Not found";
@@ -66,6 +65,7 @@ public class ResponseDataMappingTest {
         Request request = getRequest(Method.POST);
 
         Response responseAR = mapping.find(request, getContent()).getResponse();
+
         Assert.assertFalse(responseER.equals(responseAR));
     }
 
@@ -82,12 +82,13 @@ public class ResponseDataMappingTest {
         Request request2 = getRequest(Method.POST);
         Response responseAR1 = mapping.find(request1, getContent()).getResponse();
         Response responseAR2 = mapping.find(request2, getContent()).getResponse();
+
         Assert.assertTrue(responseER1.equals(responseAR1));
         Assert.assertTrue(responseER2.equals(responseAR2));
     }
 
     @Test
-    public void resolve_severalMatchedPatterns_returnFirstResponse() throws Exception {
+    public void resolve_severalMatchedPatterns_returnFirstPropperResponse() throws Exception {
         ResponseDataMapping mapping = new ResponseDataMapping();
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.GET, Method.POST);
@@ -101,6 +102,7 @@ public class ResponseDataMappingTest {
         Request request = getRequest(Method.GET);
 
         Response responseAR = mapping.find(request, getContent()).getResponse();
+
         Assert.assertTrue(responseER.equals(responseAR));
     }
 }

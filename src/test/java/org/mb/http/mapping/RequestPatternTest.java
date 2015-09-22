@@ -26,10 +26,11 @@ public class RequestPatternTest {
                 addMethod(Method.GET).
                 addQueryParameter("1", "1").
                 addHeader("1", "1").
+                addContentParameter("1", "1").
                 build();
     }
 
-    private Map<String, String> getContent() {
+    private Map<String, String> getParsingResult() {
         return Maps.newHashMap();
     }
 
@@ -38,7 +39,7 @@ public class RequestPatternTest {
         RequestPattern requestPattern = getEmptyRequestPattern();
         Request request = Request.newBuilder("/uri", Method.GET).build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertTrue(result);
     }
@@ -49,10 +50,11 @@ public class RequestPatternTest {
         Request request = Request.newBuilder("/uri", Method.GET).
                 addQueryParameter("1", "1").
                 addHeader("1", "1").
-                setContent("content").
                 build();
+        Map<String, String> parsingResult = getParsingResult();
+        parsingResult.put("1", "1");
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, parsingResult);
 
         Assert.assertTrue(result);
     }
@@ -69,7 +71,7 @@ public class RequestPatternTest {
                 setContent("content").
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertTrue(result);
     }
@@ -81,7 +83,7 @@ public class RequestPatternTest {
                 build();
         Request request = Request.newBuilder("/uri", Method.GET).build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -93,7 +95,7 @@ public class RequestPatternTest {
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -107,7 +109,7 @@ public class RequestPatternTest {
                 addQueryParameter("2", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -121,7 +123,7 @@ public class RequestPatternTest {
                 addQueryParameter("1", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -135,7 +137,7 @@ public class RequestPatternTest {
                 addQueryParameters("1", asList("1", "1")).
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -149,7 +151,7 @@ public class RequestPatternTest {
                 addQueryParameter("1", "1").
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -163,7 +165,7 @@ public class RequestPatternTest {
                 addHeader("2", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -177,7 +179,38 @@ public class RequestPatternTest {
                 addHeader("1", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getContent());
+        boolean result = requestPattern.matches(request, getParsingResult());
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void matches_missingContentValue_returnFalse() throws Exception {
+        RequestPattern requestPattern = RequestPattern.newBuilder().
+                addContentParameter("1", "1").
+                addContentParameter("2", "2").
+                build();
+        Request request = Request.newBuilder("/uri", Method.POST).
+                build();
+        Map<String, String> parsingResult = getParsingResult();
+        parsingResult.put("1", "1");
+
+        boolean result = requestPattern.matches(request, parsingResult);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
+    public void matches_wrongContentValue_returnFalse() throws Exception {
+        RequestPattern requestPattern = RequestPattern.newBuilder().
+                addContentParameter("1", "2").
+                build();
+        Request request = Request.newBuilder("/uri", Method.POST).
+                build();
+        Map<String, String> parsingResult = getParsingResult();
+        parsingResult.put("1", "1");
+
+        boolean result = requestPattern.matches(request, parsingResult);
 
         Assert.assertFalse(result);
     }
@@ -242,6 +275,16 @@ public class RequestPatternTest {
     }
 
     @Test
+    public void equals_notEqualContentParameter_returnFalse() throws Exception {
+        RequestPattern requestPattern1 = RequestPattern.newBuilder().addContentParameter("1", "1").build();
+        RequestPattern requestPattern2 = RequestPattern.newBuilder().addContentParameter("1", "2").build();
+
+        boolean result = requestPattern1.equals(requestPattern2);
+
+        Assert.assertFalse(result);
+    }
+
+    @Test
     public void hashCode_sameObject_equals() throws Exception {
         RequestPattern requestPattern = getFilledRequestPattern();
 
@@ -284,6 +327,14 @@ public class RequestPatternTest {
     public void hashCode_notEqualHeader_notEquals() throws Exception {
         RequestPattern requestPattern1 = RequestPattern.newBuilder().addHeader("1", "1").build();
         RequestPattern requestPattern2 = RequestPattern.newBuilder().addHeader("1", "2").build();
+
+        Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
+    }
+
+    @Test
+    public void hashCode_notEqualContentParameter_notEquals() throws Exception {
+        RequestPattern requestPattern1 = RequestPattern.newBuilder().addContentParameter("1", "1").build();
+        RequestPattern requestPattern2 = RequestPattern.newBuilder().addContentParameter("1", "2").build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }

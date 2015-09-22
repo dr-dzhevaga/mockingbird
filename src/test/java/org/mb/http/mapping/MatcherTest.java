@@ -8,7 +8,6 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 11.07.2015.
  */
-// TODO: test new mwthod
 public class MatcherTest {
 
     @Test
