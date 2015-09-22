@@ -1,6 +1,8 @@
 package org.mb.cli;
 
+import com.google.common.base.Joiner;
 import org.apache.commons.cli.*;
+import org.mb.settings.parsing.FileFormat;
 
 /**
  * Created by Dmitriy Dzhevaga on 04.07.2015.
@@ -12,13 +14,13 @@ public class CommonsCLI implements CLI {
     public static final String PORT = "p";
     public static final String FILE = "f";
     public static final String FORMAT = "ff";
+    public static final String FORMAT_ARGUMENTS = Joiner.on('|').join(FileFormat.values());
 
     InitialOption[] initialOptions = {
-        new InitialOption(HELP,   "help",                 "print this message",           "",          false),
-        new InitialOption(PORT,   "server-port",          "specify server port",          "port",      true),
-        new InitialOption(FILE,   "bindings-file",        "specify bindings file",        "file",      true),
-        // TODO: dynamic arguments names based on FileFormat enum
-        new InitialOption(FORMAT, "bindings-file-format", "specify bindings file format", "YAML|JSON", true)
+        new InitialOption(HELP,   "help",        "print this message",           "",               false),
+        new InitialOption(PORT,   "port",        "specify server port",          "port",           true),
+        new InitialOption(FILE,   "file",        "specify settings file",        "file",           true),
+        new InitialOption(FORMAT, "file-format", "specify settings file format", FORMAT_ARGUMENTS, true)
     };
 
     private final Options options = new Options();

@@ -123,7 +123,7 @@ public class RequestPattern {
         private Set<Method> methods = Sets.newHashSet();
         private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();
         private SetMultimap<String, String> headers = HashMultimap.create();
-        private Multimap<String, String> content = ArrayListMultimap.create();
+        private ListMultimap<String, String> content = ArrayListMultimap.create();
 
         public Builder setUriPattern(String uriPattern) {
             this.uriPattern = Pattern.compile(uriPattern);
@@ -182,7 +182,12 @@ public class RequestPattern {
             return this;
         }
 
-        public Builder addContentParameter(String name, Collection<String> values) {
+        public Builder addContentParameter(String name, String value) {
+            content.put(name, value);
+            return this;
+        }
+
+        public Builder addContentParameters(String name, Collection<String> values) {
             content.putAll(name, values);
             return this;
         }
