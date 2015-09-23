@@ -34,19 +34,29 @@ public class JSSyntax implements Syntax {
 
     @Override
     public char[] escapeLiteral(char ch) {
-        if(ch < 40) {
+        char[] r;
+        if(ch >'\\') {
+            r = new char[] {ch};
+        } else {
             switch(ch) {
+                case '\\':
+                    r = "\\\\".toCharArray();
+                    break;
                 case '\'':
-                    return "\\'".toCharArray();
+                    r = "\\'".toCharArray();
+                    break;
                 case '"':
-                    return "\\\"".toCharArray();
+                    r = "\\\"".toCharArray();
+                    break;
                 default:
                     if(ch < 32) {
-                        return toHex(ch);
+                        r = toHex(ch);
+                    } else {
+                        r = new char[] {ch};
                     }
             }
         }
-        return new char[] {ch};
+        return r;
     }
 
     @Override
