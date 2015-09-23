@@ -1,11 +1,11 @@
 package org.mb.scripting.js;
 
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.mb.scripting.Engine;
 import org.mb.scripting.Syntax;
 import org.mb.scripting.ScriptingException;
 
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.*;
 
@@ -13,13 +13,13 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 public class JSEngine implements Engine {
-    private final static String ENGINE_NAME = "nashorn";
+
     private final static Syntax syntax = new JSSyntax();
-    private final static ScriptEngineManager factory = new ScriptEngineManager();
+    private final static NashornScriptEngineFactory factory = new NashornScriptEngineFactory();;
     private final ScriptEngine engine;
 
     private JSEngine() {
-        engine = factory.getEngineByName(ENGINE_NAME);
+        engine = factory.getScriptEngine("--print-no-newline=true");
     }
 
     public static Engine newInstance() {
