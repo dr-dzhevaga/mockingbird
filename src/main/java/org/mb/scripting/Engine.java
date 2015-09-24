@@ -10,5 +10,5 @@ public interface Engine {
     Engine eval(Reader reader);
     Engine put(String key, Object value);
     Engine setWriter(Writer writer);
-    Syntax getRules();
+    ScriptPrinter getSyntaxPrinter();
 }

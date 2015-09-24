@@ -11,10 +11,10 @@ import java.io.*;
  */
 public class JSPLikeProcessor {
     private final Engine engine;
-    private final Reader jspReader;
+    private final Reader jsp;
 
-    private JSPLikeProcessor(Reader jspReader) {
-        this.jspReader = jspReader;
+    private JSPLikeProcessor(Reader jsp) {
+        this.jsp = jsp;
         this.engine = EngineFactory.newInstance(EngineType.JS);
     }
 
@@ -27,9 +27,9 @@ public class JSPLikeProcessor {
         return this;
     }
 
-    public JSPLikeProcessor print(Writer writer) throws IOException {
-        try(Reader scriptReader = new JSPLikePreprocessor(jspReader, engine.getRules())) {
-            engine.setWriter(writer).eval(scriptReader);
+    public JSPLikeProcessor print(Writer output) throws IOException {
+        try(Reader script = new JSPLikePreprocessor(jsp, engine.getSyntaxPrinter())) {
+            engine.setWriter(output).eval(script);
         }
         return this;
     }

@@ -2,7 +2,7 @@ package org.mb.scripting.js;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 import org.mb.scripting.Engine;
-import org.mb.scripting.Syntax;
+import org.mb.scripting.ScriptPrinter;
 import org.mb.scripting.ScriptingException;
 
 import javax.script.ScriptEngine;
@@ -13,9 +13,7 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 public class JSEngine implements Engine {
-
-    private final static Syntax syntax = new JSSyntax();
-    private final static NashornScriptEngineFactory factory = new NashornScriptEngineFactory();;
+    private final static NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     private final ScriptEngine engine;
 
     private JSEngine() {
@@ -49,7 +47,7 @@ public class JSEngine implements Engine {
     }
 
     @Override
-    public Syntax getRules() {
-        return syntax;
+    public ScriptPrinter getSyntaxPrinter() {
+        return new JSScriptPrinter();
     }
 }

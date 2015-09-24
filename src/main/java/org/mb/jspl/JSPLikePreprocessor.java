@@ -1,6 +1,6 @@
 package org.mb.jspl;
 
-import org.mb.scripting.Syntax;
+import org.mb.scripting.ScriptPrinter;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -23,17 +23,19 @@ public class JSPLikePreprocessor extends Reader {
         }
     }
 
-    private final Reader reader;
-    private final Syntax syntax;
+    private final static int BUFF_INITIAL_CAPACITY = 1024;
+    private final Reader jsp;
+    private final ScriptPrinter scriptPrinter;
     private State state = TEXT;
-    private StringBuilder processedBuff = new StringBuilder();
+    private StringBuilder processedBuff = new StringBuilder(BUFF_INITIAL_CAPACITY);
     private int previous = -1;
     private int current = -1;
     private boolean textIsOpened;
 
-    public JSPLikePreprocessor(Reader reader, Syntax syntax) {
-        this.reader = reader;
-        this.syntax = syntax;
+    public JSPLikePreprocessor(Reader jsp, ScriptPrinter scriptPrinter) {
+        this.jsp = jsp;
+        this.scriptPrinter = scriptPrinter;
+        this.scriptPrinter.setOutput(processedBuff);
     }
 
     @Override
@@ -46,12 +48,9 @@ public class JSPLikePreprocessor extends Reader {
                 if(previous != -1) {
                     if (state == TEXT) {
                         if(!textIsOpened) {
-                            processedBuff.append(syntax.openPrint()).
-                                    append(syntax.openLiteral());
+                            scriptPrinter.openPrintFunction().openLiteral();
                         }
-                        processedBuff.append(syntax.escapeLiteral((char) previous)).
-                                append(syntax.closeLiteral()).
-                                append(syntax.closePrint());
+                        scriptPrinter.appendLiteral((char) previous).closeLiteral().closePrintFunction();
                     }
                     previous = -1;
                 }
@@ -63,45 +62,43 @@ public class JSPLikePreprocessor extends Reader {
                     if(startsWith(SCRIPT.start)) {
                         if(textIsOpened) {
                             textIsOpened = false;
-                            processedBuff.append(syntax.closeLiteral()).
-                                    append(syntax.closePrint());
+                            scriptPrinter.closeLiteral().closePrintFunction();
                         }
                         readNext();
                         if(startsWith(MACRO.start)) {
                             state = MACRO;
-                            processedBuff.append(syntax.openPrint());
+                            scriptPrinter.openPrintFunction();
                             readNext();
                         } else {
                             state = SCRIPT;
-                            processedBuff.append(syntax.openScript());
+                            scriptPrinter.openScript();
                         }
                     } else {
                         if(!textIsOpened) {
                             textIsOpened = true;
-                            processedBuff.append(syntax.openPrint()).
-                                    append(syntax.openLiteral());
+                            scriptPrinter.openPrintFunction().openLiteral();
                         }
-                        processedBuff.append(syntax.escapeLiteral((char) previous));
+                        scriptPrinter.appendLiteral((char) previous);
                     }
                     break;
 
                 case MACRO:
                     if(startsWith(TEXT.start)) {
-                        processedBuff.append(syntax.closePrint());
+                        scriptPrinter.closePrintFunction();
                         state = TEXT;
                         readNext();
                     } else {
-                        processedBuff.append((char) previous);
+                        scriptPrinter.appendScript((char) previous);
                     }
                     break;
 
                 case SCRIPT:
                     if(startsWith(TEXT.start)) {
-                        processedBuff.append(syntax.closeScript());
+                        scriptPrinter.closeScript();
                         state = TEXT;
                         readNext();
                     } else {
-                        processedBuff.append((char) previous);
+                        scriptPrinter.appendScript((char) previous);
                     }
                     break;
             }
@@ -110,31 +107,31 @@ public class JSPLikePreprocessor extends Reader {
         if(processedBuff.length() == 0) {
             return  -1;
         } else if(processedBuff.length() > length) {
-            System.arraycopy(processedBuff.toString().toCharArray(), 0, dest, destOff, length);
-            processedBuff = new StringBuilder(processedBuff.substring(length));
+            processedBuff.getChars(0, length, dest, destOff);
+            processedBuff.delete(0, length);
             return length;
         } else {
             int processedLength = processedBuff.length();
-            System.arraycopy(processedBuff.toString().toCharArray(), 0, dest, destOff, processedLength);
-            processedBuff = new StringBuilder();
+            processedBuff.getChars(0, processedBuff.length(), dest, destOff);
+            processedBuff.setLength(0);
             return processedLength;
         }
     }
 
     @Override
     public void close() throws IOException {
-        reader.close();
+        jsp.close();
     }
 
     private void initCurrent() throws IOException {
         if(current == -1) {
-            current = reader.read();
+            current = jsp.read();
         }
     }
 
     private void readNext() throws IOException {
         previous = current;
-        current = reader.read();
+        current = jsp.read();
     }
 
     private boolean startsWith(String pattern) {
