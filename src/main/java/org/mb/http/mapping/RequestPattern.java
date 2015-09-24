@@ -1,16 +1,28 @@
 package org.mb.http.mapping;
 
 import com.google.common.collect.*;
+import org.apache.log4j.Logger;
 import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
 
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by Dmitriy Dzhevaga on 18.06.2015.
  */
 public class RequestPattern {
+    private static final String LOG_REQUEST_PATTERN = "Matching request with pattern:\n%s";
+    private static final String LOG_NOT_MATCHED = "%s is not matched";
+    private static final String LOG_MATCHED = "Request is matched";
+    public static final String URI = "Uri";
+    public static final String METHOD = "Method";
+    public static final String QUERY_PARAMETER = "Query parameter";
+    public static final String HEADER = "Header";
+    public static final String CONTENT = "Content";
+    private static final Logger Log = Logger.getLogger(RequestPattern.class);
+
     private static final String DEFAULT_URI_PATTERN = ".*";
 
     final private Pattern uriPattern;
@@ -32,29 +44,37 @@ public class RequestPattern {
     }
 
     public boolean matches(Request request, Map<String, String> content) {
-        java.util.regex.Matcher matcher = this.uriPattern.matcher(request.getURI());
+        Log.debug(String.format(LOG_REQUEST_PATTERN, this));
+
+        Matcher matcher = this.uriPattern.matcher(request.getURI());
         if(!matcher.matches()) {
+            Log.debug(String.format(LOG_NOT_MATCHED, URI));
             return false;
         }
 
         if(!this.methods.isEmpty()) {
             if(!this.methods.contains(request.getMethod())) {
+                Log.debug(String.format(LOG_NOT_MATCHED, METHOD));
                 return false;
             }
         }
 
-        if(!Matcher.withRules(this.queryParameters).matches(request.getQueryParameters())) {
+        if(!MultimapPattern.fromMultimap(this.queryParameters).matches(request.getQueryParameters())) {
+            Log.debug(String.format(LOG_NOT_MATCHED, QUERY_PARAMETER));
             return false;
         }
 
-        if(!Matcher.withRules(this.headers).matches(request.getHeaders())) {
+        if(!MultimapPattern.fromMultimap(this.headers).matches(request.getHeaders())) {
+            Log.debug(String.format(LOG_NOT_MATCHED, HEADER));
             return false;
         }
 
-        if(!Matcher.withRules(this.content).matches(content)) {
+        if(!MultimapPattern.fromMultimap(this.content).matches(content)) {
+            Log.debug(String.format(LOG_NOT_MATCHED, CONTENT));
             return false;
         }
 
+        Log.debug(LOG_MATCHED);
         return true;
     }
 
@@ -97,14 +117,14 @@ public class RequestPattern {
     }
 
     public static class Builder {
-        private Pattern uriPattern = Pattern.compile(DEFAULT_URI_PATTERN);
+        private java.util.regex.Pattern uriPattern = java.util.regex.Pattern.compile(DEFAULT_URI_PATTERN);
         private Set<Method> methods = Sets.newHashSet();
         private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();
         private SetMultimap<String, String> headers = HashMultimap.create();
         private ListMultimap<String, String> content = ArrayListMultimap.create();
 
         public Builder setUriPattern(String uriPattern) {
-            this.uriPattern = Pattern.compile(uriPattern);
+            this.uriPattern = java.util.regex.Pattern.compile(uriPattern);
             return this;
         }
 

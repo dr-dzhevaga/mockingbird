@@ -1,6 +1,7 @@
 package org.mb.settings;
 
 import com.google.common.base.Charsets;
+import org.apache.log4j.Logger;
 import org.mb.http.mapping.ResponseDataMapping;
 import org.mb.parsing.Parsing;
 import org.mb.settings.marshalling.Marshaller;
@@ -13,6 +14,8 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
 public class Settings {
+    private static final String LOG_GLOBAL_PARSING = "Global parsing:\n%s";
+
     private final ResponseDataMapping mapping;
     private final Parsing parsing;
 
@@ -26,7 +29,9 @@ public class Settings {
         InputStream is = new FileInputStream(filePath);
         try(Reader r = new InputStreamReader(is, Charsets.UTF_8)) {
             Object o = parser.parse(r);
-            return Marshaller.from(o).toSettings();
+            Settings settings = Marshaller.from(o).toSettings();
+            Logger.getLogger(Settings.class).info(String.format(LOG_GLOBAL_PARSING, settings.getParsing()));
+            return settings;
         }
     }
 

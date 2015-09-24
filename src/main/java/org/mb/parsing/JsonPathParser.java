@@ -1,11 +1,15 @@
 package org.mb.parsing;
 
 import com.jayway.jsonpath.*;
+import org.apache.log4j.Logger;
 
 /**
  * Created by Dmitriy Dzhevaga on 15.09.2015.
  */
 public class JsonPathParser extends AbstractParser {
+    private static final String LOG_PARSING_ERROR = "Text can not be parsed as JSON: %s";
+    private static final Logger Log = Logger.getLogger(JsonPathParser.class);
+
     private ReadContext readContext;
 
     public JsonPathParser(String text) {
@@ -14,13 +18,14 @@ public class JsonPathParser extends AbstractParser {
             Configuration configuration =  Configuration.defaultConfiguration().addOptions(Option.DEFAULT_PATH_LEAF_TO_NULL);
             readContext = JsonPath.parse(text, configuration);
         } catch (InvalidJsonException e) {
-            isValid = false;
+            Log.debug(String.format(LOG_PARSING_ERROR, e.toString()));
+            textIsParsed = false;
         }
     }
 
     @Override
     public String parse(String path) throws ParsingException {
-        if(isValid) {
+        if(textIsParsed) {
             Object result;
             try {
                 result = readContext.read(path);

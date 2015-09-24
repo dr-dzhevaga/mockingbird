@@ -1,5 +1,6 @@
 package org.mb.parsing;
 
+import org.apache.log4j.Logger;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -18,24 +19,34 @@ import java.io.StringReader;
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
 public class XpathParser extends AbstractParser {
+    private static final String LOG_PARSING_ERROR = "Text can not be parsed as XML: %s";
+    private static final Logger Log = Logger.getLogger(XpathParser.class);
+
+    private static final DocumentBuilderFactory factory;
+    private static final XPathFactory xpathFactory;
+
     private Document document;
+
+    static {
+        factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        xpathFactory = XPathFactory.newInstance();
+    }
 
     public XpathParser(String text) {
         super(text);
-        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(new InputSource(new StringReader(text)));
         } catch (ParserConfigurationException | SAXException | IOException e) {
-            isValid = false;
+            Log.debug(String.format(LOG_PARSING_ERROR, e.toString()));
+            textIsParsed = false;
         }
     }
 
     @Override
     public String parse(String path) throws ParsingException {
-        if(isValid) {
-            XPathFactory xpathFactory = XPathFactory.newInstance();
+        if(textIsParsed) {
             XPath xpath = xpathFactory.newXPath();
             try {
                 XPathExpression expr = xpath.compile(path);

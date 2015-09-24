@@ -8,7 +8,7 @@ import java.util.Map;
  */
 public abstract class AbstractParser implements Parser {
     protected final String text;
-    protected boolean isValid = true;
+    protected boolean textIsParsed = true;
 
     public AbstractParser(String text) {
         this.text = text;
@@ -17,7 +17,7 @@ public abstract class AbstractParser implements Parser {
     @Override
     public Map<String, String> parse(Map<String, String> paths) throws ParsingException {
         Map<String, String> results = new HashMap<>(paths.size());
-        if(isValid) {
+        if(textIsParsed) {
             for (Map.Entry<String, String> path : paths.entrySet()) {
                 results.put(path.getKey(), parse(path.getValue()));
             }

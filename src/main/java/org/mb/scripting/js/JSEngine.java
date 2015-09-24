@@ -47,7 +47,7 @@ public class JSEngine implements Engine {
     }
 
     @Override
-    public ScriptPrinter getSyntaxPrinter() {
+    public ScriptPrinter getScriptPrinter() {
         return new JSScriptPrinter();
     }
 }

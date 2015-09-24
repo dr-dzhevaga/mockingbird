@@ -8,14 +8,14 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 11.07.2015.
  */
-public class MatcherTest {
+public class MultimapPatternTest {
 
     @Test
     public void matchesMap_emptyRules_returnTrue() throws Exception {
         Map<String, String> checked = Maps.newHashMap();
         SetMultimap<String, String> rules = HashMultimap.create();
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -26,7 +26,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -38,7 +38,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -51,7 +51,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -63,7 +63,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("2", "2");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -75,7 +75,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -88,7 +88,7 @@ public class MatcherTest {
         rules.put("1", "1");
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -100,7 +100,7 @@ public class MatcherTest {
         SetMultimap<String, String> checked = HashMultimap.create();
         SetMultimap<String, String> rules = HashMultimap.create();
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -111,7 +111,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -123,7 +123,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -136,7 +136,7 @@ public class MatcherTest {
         Multimap<String, String> rules = ArrayListMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertTrue(result);
     }
@@ -148,7 +148,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("2", "2");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -160,7 +160,7 @@ public class MatcherTest {
         Multimap<String, String> rules = HashMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -173,7 +173,7 @@ public class MatcherTest {
         rules.put("1", "1");
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }
@@ -186,7 +186,7 @@ public class MatcherTest {
         Multimap<String, String> rules = ArrayListMultimap.create();
         rules.put("1", "1");
 
-        boolean result = Matcher.withRules(rules).matches(checked);
+        boolean result = MultimapPattern.fromMultimap(rules).matches(checked);
 
         Assert.assertFalse(result);
     }

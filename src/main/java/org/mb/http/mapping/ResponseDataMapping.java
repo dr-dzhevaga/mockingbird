@@ -15,12 +15,17 @@ import java.util.Map;
 public class ResponseDataMapping {
     private static final int    DEFAULT_RESPONSE_STATUS_CODE  = 404;
     private static final String DEFAULT_RESPONSE_CONTENT      = "Not found";
+    private static final String LOG_MAPPING_IS_ADDED          = "Mapping is added\n" +
+                                                                "*Request pattern:\n" +
+                                                                "%s\n" +
+                                                                "*Response:\n" +
+                                                                "%s%n" +
+                                                                "*Parsing:\n" +
+                                                                "%s%n";
+    private static final String LOG_RESPONSE_IS_FOUND         = "Response is found in mapping";
+    private static final String LOG_RESPONSE_IS_NOT_FOUND     = "Response is not found in mapping, default response will be used";
+    private static final Logger Log = Logger.getLogger(ResponseDataMapping.class);
 
-    private static final String LOG_MAPPING_IS_ADDED        = "Mapping is added%nRequest pattern:%n%s%nResponse:%n%s";
-    private static final String LOG_RESPONSE_IS_FOUND       = "Response is found in mapping";
-    private static final String LOG_RESPONSE_IS_NOT_FOUND   = "Response is not found in mapping, default response will be used";
-
-    final static private Logger Log = Logger.getLogger(ResponseDataMapping.class);
     private LinkedHashMap<RequestPattern, ResponseData> mapping = Maps.newLinkedHashMap();
     private final ResponseData defaultResponseData;
 
@@ -34,7 +39,7 @@ public class ResponseDataMapping {
 
     public void addMapping(RequestPattern requestPattern, Response response, Parsing parsing) {
         mapping.put(requestPattern, new ResponseData(response, parsing));
-        Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response));
+        Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
     }
 
     public ResponseData find(Request request, Map<String, String> content) {

@@ -51,7 +51,7 @@ public class JSScriptPrinter implements ScriptPrinter {
 
     @Override
     public ScriptPrinter appendLiteral(char ch) throws IOException {
-        CharSequence escaped = null;
+        String escaped = null;
         if(ch <= '\\') {
             switch(ch) {
                 case '\\':
@@ -100,13 +100,13 @@ public class JSScriptPrinter implements ScriptPrinter {
         return this;
     }
 
-    private CharSequence toHex(char ch) {
+    private String toHex(char ch) {
         char[] r = new char[4];
         r[3] = HEX_DIGITS[ch & 0xF];
         ch >>>= 4;
         r[2] = HEX_DIGITS[ch & 0xF];
         r[1] = 'x';
         r[0] = '\\';
-        return CharBuffer.wrap(r);
+        return String.valueOf(r);
     }
 }

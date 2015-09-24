@@ -1,5 +1,6 @@
 package org.mb.jspl;
 
+import org.apache.log4j.Logger;
 import org.mb.scripting.ScriptPrinter;
 
 import java.io.IOException;
@@ -16,14 +17,17 @@ public class JSPLikePreprocessor extends Reader {
         SCRIPT("<%"),
         MACRO("%=");
 
-        final String start;
+        private final String start;
 
         State(String start) {
             this.start = start;
         }
     }
+    private static final String LOG_PROCESSED_SCRIPT = "Processed jsp-like template:\n%s";
+    private static final Logger Log = Logger.getLogger(JSPLikePreprocessor.class);
 
     private final static int BUFF_INITIAL_CAPACITY = 1024;
+
     private final Reader jsp;
     private final ScriptPrinter scriptPrinter;
     private State state = TEXT;
@@ -107,10 +111,16 @@ public class JSPLikePreprocessor extends Reader {
         if(processedBuff.length() == 0) {
             return  -1;
         } else if(processedBuff.length() > length) {
+            if(Log.isDebugEnabled()) {
+                Log.debug(String.format(LOG_PROCESSED_SCRIPT, processedBuff.substring(0, length)));
+            }
             processedBuff.getChars(0, length, dest, destOff);
             processedBuff.delete(0, length);
             return length;
         } else {
+            if(Log.isDebugEnabled()) {
+                Log.debug(String.format(LOG_PROCESSED_SCRIPT, processedBuff.substring(0, processedBuff.length())));
+            }
             int processedLength = processedBuff.length();
             processedBuff.getChars(0, processedBuff.length(), dest, destOff);
             processedBuff.setLength(0);
