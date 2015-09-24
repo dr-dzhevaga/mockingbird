@@ -3,6 +3,7 @@ package org.mb.http.basic;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
@@ -46,26 +47,15 @@ public class Response {
         if(!(obj instanceof Response)) {
             return false;
         }
-        Response response = (Response)obj;
-        if(this.getStatusCode() != response.getStatusCode()) {
-            return false;
-        }
-        if(!this.getHeaders().equals(response.getHeaders())) {
-            return false;
-        }
-        if(!this.content.equals(response.content)) {
-            return false;
-        }
-        return true;
+        final Response other = (Response)obj;
+        return Objects.equals(this.statusCode, other.statusCode)
+                && Objects.equals(this.headers, other.headers)
+                && Objects.equals(this.content, other.content);
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + this.statusCode;
-        result = 31 * result + this.headers.hashCode();
-        result = 31 * result + this.content.hashCode();
-        return result;
+        return Objects.hash(statusCode, headers, content);
     }
 
     @Override

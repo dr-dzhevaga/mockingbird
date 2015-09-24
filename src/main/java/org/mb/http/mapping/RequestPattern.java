@@ -63,42 +63,20 @@ public class RequestPattern {
         if(this == obj) {
             return true;
         }
-
         if(!(obj instanceof RequestPattern)) {
             return false;
         }
-
-        RequestPattern requestPattern = (RequestPattern)obj;
-        if(!requestPattern.uriPattern.pattern().equals(this.uriPattern.pattern())) {
-            return false;
-        }
-        if(!requestPattern.methods.equals(this.methods)) {
-            return false;
-        }
-        if(!requestPattern.headers.equals(this.headers)) {
-            return false;
-        }
-        if(!requestPattern.queryParameters.equals(this.queryParameters)) {
-            return false;
-        }
-        if(!requestPattern.queryParameters.equals(this.queryParameters)) {
-            return false;
-        }
-        if(!requestPattern.content.equals(this.content)) {
-            return false;
-        }
-        return true;
+        final RequestPattern other = (RequestPattern)obj;
+        return Objects.equals(this.uriPattern.pattern(), other.uriPattern.pattern())
+                && Objects.equals(this.methods, other.methods)
+                && Objects.equals(this.headers, other.headers)
+                && Objects.equals(this.queryParameters, other.queryParameters)
+                && Objects.equals(this.content, other.content);
     }
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + this.queryParameters.hashCode();
-        result = 31 * result + this.headers.hashCode();
-        result = 31 * result + this.methods.hashCode();
-        result = 31 * result + this.uriPattern.pattern().hashCode();
-        result = 31 * result + this.content.hashCode();
-        return result;
+        return Objects.hash(queryParameters, headers, methods, uriPattern.pattern(), content);
     }
 
     @Override

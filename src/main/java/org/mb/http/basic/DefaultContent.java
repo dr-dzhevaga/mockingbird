@@ -5,6 +5,7 @@ import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 
 import java.io.*;
+import java.util.Objects;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.09.2015.
@@ -60,10 +61,12 @@ public class DefaultContent implements Content {
         if(!(obj instanceof DefaultContent)) {
             return false;
         }
-        DefaultContent content = (DefaultContent)obj;
-        if(this.source != content.source) {
-            return false;
-        }
-        return true;
+        final DefaultContent other = (DefaultContent)obj;
+        return  Objects.equals(this.source, other.source);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(source);
     }
 }
