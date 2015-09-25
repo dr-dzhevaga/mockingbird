@@ -22,19 +22,13 @@ public class XpathParser extends AbstractParser {
     private static final String LOG_PARSING_ERROR = "Text can not be parsed as XML: %s";
     private static final Logger Log = Logger.getLogger(XpathParser.class);
 
-    private static final DocumentBuilderFactory factory;
-    private static final XPathFactory xpathFactory;
-
+    private final XPathFactory xpathFactory = XPathFactory.newInstance();
     private Document document;
-
-    static {
-        factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(true);
-        xpathFactory = XPathFactory.newInstance();
-    }
 
     public XpathParser(String text) {
         super(text);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
         try {
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(new InputSource(new StringReader(text)));
