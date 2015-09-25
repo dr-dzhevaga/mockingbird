@@ -23,7 +23,7 @@ public class JSPLikePreprocessor extends Reader {
             this.start = start;
         }
     }
-    private static final String LOG_PROCESSED_SCRIPT = "Processed jsp-like template:\n%s";
+    private static final String LOG_OUTPUT = "Jsp-like template after preprocessing:\n%s";
     private static final Logger Log = Logger.getLogger(JSPLikePreprocessor.class);
 
     private final static int BUFF_INITIAL_CAPACITY = 1024;
@@ -112,16 +112,16 @@ public class JSPLikePreprocessor extends Reader {
             return  -1;
         } else if(processedBuff.length() > length) {
             if(Log.isDebugEnabled()) {
-                Log.debug(String.format(LOG_PROCESSED_SCRIPT, processedBuff.substring(0, length)));
+                Log.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, length)));
             }
             processedBuff.getChars(0, length, dest, destOff);
             processedBuff.delete(0, length);
             return length;
         } else {
-            if(Log.isDebugEnabled()) {
-                Log.debug(String.format(LOG_PROCESSED_SCRIPT, processedBuff.substring(0, processedBuff.length())));
-            }
             int processedLength = processedBuff.length();
+            if(Log.isDebugEnabled()) {
+                Log.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, processedLength)));
+            }
             processedBuff.getChars(0, processedBuff.length(), dest, destOff);
             processedBuff.setLength(0);
             return processedLength;

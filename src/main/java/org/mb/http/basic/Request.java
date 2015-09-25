@@ -64,15 +64,15 @@ public class Request {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tMethod: %s", getMethod()));
-        builder.append(String.format("%n\tURI: %s", getURI()));
+        builder.append(String.format("\n\tURI: %s", getURI()));
         if(!getQueryParameters().isEmpty()) {
-            builder.append(String.format("%n\tQuery parameters: %s", getQueryParameters()));
+            builder.append(String.format("\n\tQuery parameters: %s", getQueryParameters()));
         }
         if(!getHeaders().isEmpty()) {
-            builder.append(String.format("%n\tHeaders: %s", getHeaders()));
+            builder.append(String.format("\n\tHeaders: %s", getHeaders()));
         }
         if(!getContent().isEmpty()) {
-            builder.append(String.format("%n\tContent: %s", getContent()));
+            builder.append(String.format("\n\tContent: %s", getContent()));
         }
         return builder.toString();
     }

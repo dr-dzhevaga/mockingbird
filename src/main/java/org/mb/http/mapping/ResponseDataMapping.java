@@ -16,12 +16,11 @@ public class ResponseDataMapping {
     private static final int    DEFAULT_RESPONSE_STATUS_CODE  = 404;
     private static final String DEFAULT_RESPONSE_CONTENT      = "Not found";
     private static final String LOG_MAPPING_IS_ADDED          = "Mapping is added\n" +
-                                                                "*Request pattern:\n" +
+                                                                "Request pattern:\n" +
                                                                 "%s\n" +
-                                                                "*Response:\n" +
-                                                                "%s%n" +
-                                                                "*Parsing:\n" +
-                                                                "%s%n";
+                                                                "Response:\n" +
+                                                                "%s\n" +
+                                                                "Request parsing: %s";
     private static final String LOG_RESPONSE_IS_FOUND         = "Response is found in mapping";
     private static final String LOG_RESPONSE_IS_NOT_FOUND     = "Response is not found in mapping, default response will be used";
     private static final Logger Log = Logger.getLogger(ResponseDataMapping.class);

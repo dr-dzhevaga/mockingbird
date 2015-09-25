@@ -14,8 +14,6 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
 public class Settings {
-    private static final String LOG_GLOBAL_PARSING = "Global parsing:\n%s";
-
     private final ResponseDataMapping mapping;
     private final Parsing parsing;
 
@@ -30,7 +28,6 @@ public class Settings {
         try(Reader r = new InputStreamReader(is, Charsets.UTF_8)) {
             Object o = parser.parse(r);
             Settings settings = Marshaller.from(o).toSettings();
-            Logger.getLogger(Settings.class).info(String.format(LOG_GLOBAL_PARSING, settings.getParsing()));
             return settings;
         }
     }

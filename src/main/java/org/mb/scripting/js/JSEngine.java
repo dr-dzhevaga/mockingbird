@@ -1,6 +1,7 @@
 package org.mb.scripting.js;
 
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.apache.log4j.Logger;
 import org.mb.scripting.Engine;
 import org.mb.scripting.ScriptPrinter;
 import org.mb.scripting.ScriptingException;
@@ -13,6 +14,7 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
 public class JSEngine implements Engine {
+    private static final Logger Log = Logger.getLogger(JSEngine.class);
     private final static NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
     private final ScriptEngine engine;
 
@@ -29,6 +31,7 @@ public class JSEngine implements Engine {
         try {
             engine.eval(reader);
         } catch (ScriptException e) {
+            Log.error(e);
             throw new ScriptingException(e);
         }
         return this;

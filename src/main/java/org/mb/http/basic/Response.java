@@ -63,11 +63,11 @@ public class Response {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tStatus code: %s", getStatusCode()));
         if(!getHeaders().isEmpty()) {
-            builder.append(String.format("%n\tHeaders: %s", getHeaders()));
+            builder.append(String.format("\n\tHeaders: %s", getHeaders()));
         }
         String content = getContent().toString();
         if(!content.isEmpty()) {
-            builder.append(String.format("%n\tContent: %s", content));
+            builder.append(String.format("\n\tContent: %s", content));
         }
         return builder.toString();
     }

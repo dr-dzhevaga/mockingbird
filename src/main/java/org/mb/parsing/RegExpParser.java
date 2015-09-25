@@ -1,5 +1,7 @@
 package org.mb.parsing;
 
+import org.apache.log4j.Logger;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -8,6 +10,8 @@ import java.util.regex.PatternSyntaxException;
  * Created by Dmitriy Dzhevaga on 15.09.2015.
  */
 public class RegExpParser extends AbstractParser {
+    private static final Logger Log = Logger.getLogger(RegExpParser.class);
+
     public RegExpParser(String text) {
         super(text);
     }
@@ -18,6 +22,7 @@ public class RegExpParser extends AbstractParser {
         try {
             p = Pattern.compile(path);
         } catch (PatternSyntaxException e) {
+            Log.error(e);
             throw  new ParsingException(e);
         }
         Matcher m = p.matcher(text);

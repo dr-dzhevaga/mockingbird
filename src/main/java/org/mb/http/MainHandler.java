@@ -18,10 +18,9 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
 public class MainHandler implements Handler {
-    private final static String LOG_REQUEST = "Request is received:\n%s";
-    private final static String LOG_PARSING_RESULT_FIRST = "Parsing result after processing with global parsing:\n%s";
+    private final static String LOG_REQUEST = "Request:\n%s";
     private final static String LOG_RESPONSE = "Response:\n%s";
-    private final static String LOG_PARSING_RESULT_SECOND = "Parsing result after processing with request parsing:\n%s";
+    private static final String LOG_GLOBAL_PARSING = "Global parsing:\n%s";
     private static final Logger Log = Logger.getLogger(MainHandler.class);
 
     private final static String PARSING = "parsing";
@@ -31,6 +30,7 @@ public class MainHandler implements Handler {
 
     public MainHandler(Settings settings) {
         this.settings = settings;
+        Log.info(String.format(LOG_GLOBAL_PARSING, settings.getParsing()));
     }
 
     @Override
@@ -39,16 +39,14 @@ public class MainHandler implements Handler {
 
         Parsing globalParsing = settings.getParsing();
         final Map<String, String> parsingResult = globalParsing.parse(request.getContent());
-        Log.debug(String.format(LOG_PARSING_RESULT_FIRST, parsingResult));
 
         ResponseDataMapping.ResponseData responseData = settings.getMapping().find(request, parsingResult);
         final Response response = responseData.getResponse();
-        final InputStream inputStream = response.getContent().getStream();
         Log.info(String.format(LOG_RESPONSE, response));
+        final InputStream inputStream = response.getContent().getStream();
 
         Parsing requestParsing = responseData.getParsing();
         parsingResult.putAll(requestParsing.parse(request.getContent()));
-        Log.debug(String.format(LOG_PARSING_RESULT_SECOND, parsingResult));
 
         Response resultResponse = response.setContent(new Content() {
             @Override
@@ -66,7 +64,7 @@ public class MainHandler implements Handler {
 
             @Override
             public InputStream getStream() {
-                return response.getContent().getStream();
+                throw new UnsupportedOperationException();
             }
         });
         return resultResponse;

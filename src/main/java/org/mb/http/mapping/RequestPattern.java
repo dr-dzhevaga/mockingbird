@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
  * Created by Dmitriy Dzhevaga on 18.06.2015.
  */
 public class RequestPattern {
-    private static final String LOG_REQUEST_PATTERN = "Matching request with pattern:\n%s";
+    private static final String LOG_REQUEST_PATTERN = "Matching with pattern:\n%s";
     private static final String LOG_NOT_MATCHED = "%s is not matched";
     private static final String LOG_MATCHED = "Request is matched";
     public static final String URI = "Uri";
@@ -103,15 +103,15 @@ public class RequestPattern {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tMethod: %s", methods));
-        builder.append(String.format("%n\tURI pattern: %s", uriPattern));
+        builder.append(String.format("\n\tURI pattern: %s", uriPattern));
         if(!queryParameters.isEmpty()) {
-            builder.append(String.format("%n\tQuery parameters: %s", queryParameters));
+            builder.append(String.format("\n\tQuery parameters: %s", queryParameters));
         }
         if(!headers.isEmpty()) {
-            builder.append(String.format("%n\tHeaders: %s", headers));
+            builder.append(String.format("\n\tHeaders: %s", headers));
         }
         if(!content.isEmpty()) {
-            builder.append(String.format("%n\tContent: %s", content));
+            builder.append(String.format("\n\tContent: %s", content));
         }
         return builder.toString();
     }
