@@ -1,4 +1,4 @@
-package org.mb.http.mapping;
+package org.mb.http.mapping.utils;
 
 import com.google.common.collect.Multimap;
 import java.util.Map;
@@ -14,7 +14,7 @@ public class MultimapPattern<T1, T2> {
         this.pattern = pattern;
     }
 
-    public static <T1, T2> MultimapPattern<T1, T2> fromMultimap(Multimap<T1, T2> pattern) {
+    public static <T1, T2> MultimapPattern<T1, T2> from(Multimap<T1, T2> pattern) {
         return new MultimapPattern<>(pattern);
     }
 

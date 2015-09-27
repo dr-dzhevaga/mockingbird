@@ -4,35 +4,34 @@ import com.google.common.collect.*;
 import org.apache.log4j.Logger;
 import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
+import org.mb.http.mapping.utils.MultimapPattern;
+import org.mb.http.mapping.utils.RegexPattern;
 
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Dmitriy Dzhevaga on 18.06.2015.
  */
 public class RequestPattern {
     private static final String LOG_REQUEST_PATTERN = "Matching with pattern:\n%s";
-    private static final String LOG_NOT_MATCHED = "%s is not matched";
+    private static final String LOG_URI_NOT_MATCHED = "Uri is not matched";
+    private static final String LOG_METHOD_NOT_MATCHED = "Method is not matched";
+    private static final String LOG_QUERY_PARAMETER_NOT_MATCHED = "Query parameter is not matched";
+    private static final String LOG_HEADER_NOT_MATCHED = "Header is not matched";
+    private static final String LOG_CONTENT_NOT_MATCHED = "Content is not matched";
     private static final String LOG_MATCHED = "Request is matched";
-    public static final String URI = "Uri";
-    public static final String METHOD = "Method";
-    public static final String QUERY_PARAMETER = "Query parameter";
-    public static final String HEADER = "Header";
-    public static final String CONTENT = "Content";
     private static final Logger Log = Logger.getLogger(RequestPattern.class);
 
     private static final String DEFAULT_URI_PATTERN = ".*";
 
-    final private Pattern uriPattern;
+    final private RegexPattern uriRegexPattern;
     final private Set<Method> methods;
     final private ListMultimap<String, String> queryParameters;
     final private SetMultimap<String, String> headers;
-    final private Multimap<String, String> content;
+    final private Map<String, RegexPattern> content;
 
-    private RequestPattern(Pattern uriPattern, Set<Method> methods, ListMultimap<String, String> queryParameters, SetMultimap<String, String> headers, Multimap<String, String> content) {
-        this.uriPattern = uriPattern;
+    private RequestPattern(RegexPattern uriRegexPattern, Set<Method> methods, ListMultimap<String, String> queryParameters, SetMultimap<String, String> headers, Map<String, RegexPattern> content) {
+        this.uriRegexPattern = uriRegexPattern;
         this.methods = methods;
         this.queryParameters = queryParameters;
         this.headers = headers;
@@ -46,32 +45,35 @@ public class RequestPattern {
     public boolean matches(Request request, Map<String, String> content) {
         Log.debug(String.format(LOG_REQUEST_PATTERN, this));
 
-        Matcher matcher = this.uriPattern.matcher(request.getURI());
-        if(!matcher.matches()) {
-            Log.debug(String.format(LOG_NOT_MATCHED, URI));
+        if(!this.uriRegexPattern.matches(request.getURI())) {
+            Log.debug(LOG_URI_NOT_MATCHED);
             return false;
         }
 
         if(!this.methods.isEmpty()) {
             if(!this.methods.contains(request.getMethod())) {
-                Log.debug(String.format(LOG_NOT_MATCHED, METHOD));
+                Log.debug(LOG_METHOD_NOT_MATCHED);
                 return false;
             }
         }
 
-        if(!MultimapPattern.fromMultimap(this.queryParameters).matches(request.getQueryParameters())) {
-            Log.debug(String.format(LOG_NOT_MATCHED, QUERY_PARAMETER));
+        if(!MultimapPattern.from(this.queryParameters).matches(request.getQueryParameters())) {
+            Log.debug(LOG_QUERY_PARAMETER_NOT_MATCHED);
             return false;
         }
 
-        if(!MultimapPattern.fromMultimap(this.headers).matches(request.getHeaders())) {
-            Log.debug(String.format(LOG_NOT_MATCHED, HEADER));
+        if(!MultimapPattern.from(this.headers).matches(request.getHeaders())) {
+            Log.debug(LOG_HEADER_NOT_MATCHED);
             return false;
         }
 
-        if(!MultimapPattern.fromMultimap(this.content).matches(content)) {
-            Log.debug(String.format(LOG_NOT_MATCHED, CONTENT));
-            return false;
+        for(Map.Entry<String, RegexPattern> entry : this.content.entrySet()) {
+            RegexPattern regexPattern = entry.getValue();
+            String value = content.get(entry.getKey());
+            if(!regexPattern.matches(value)) {
+                Log.debug(LOG_CONTENT_NOT_MATCHED);
+                return false;
+            }
         }
 
         Log.debug(LOG_MATCHED);
@@ -87,7 +89,7 @@ public class RequestPattern {
             return false;
         }
         final RequestPattern other = (RequestPattern)obj;
-        return Objects.equals(this.uriPattern.pattern(), other.uriPattern.pattern())
+        return Objects.equals(this.uriRegexPattern, other.uriRegexPattern)
                 && Objects.equals(this.methods, other.methods)
                 && Objects.equals(this.headers, other.headers)
                 && Objects.equals(this.queryParameters, other.queryParameters)
@@ -96,14 +98,14 @@ public class RequestPattern {
 
     @Override
     public int hashCode() {
-        return Objects.hash(queryParameters, headers, methods, uriPattern.pattern(), content);
+        return Objects.hash(queryParameters, headers, methods, uriRegexPattern, content);
     }
 
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tMethod: %s", methods));
-        builder.append(String.format("\n\tURI pattern: %s", uriPattern));
+        builder.append(String.format("\n\tLOG_URI pattern: %s", uriRegexPattern));
         if(!queryParameters.isEmpty()) {
             builder.append(String.format("\n\tQuery parameters: %s", queryParameters));
         }
@@ -117,14 +119,14 @@ public class RequestPattern {
     }
 
     public static class Builder {
-        private java.util.regex.Pattern uriPattern = java.util.regex.Pattern.compile(DEFAULT_URI_PATTERN);
+        private RegexPattern uriRegexPattern = RegexPattern.from(DEFAULT_URI_PATTERN);
         private Set<Method> methods = Sets.newHashSet();
         private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();
         private SetMultimap<String, String> headers = HashMultimap.create();
-        private ListMultimap<String, String> content = ArrayListMultimap.create();
+        private Map<String, RegexPattern> contentParameters = Maps.newHashMap();
 
-        public Builder setUriPattern(String uriPattern) {
-            this.uriPattern = java.util.regex.Pattern.compile(uriPattern);
+        public Builder setUriRegex(String uriRegex) {
+            this.uriRegexPattern = RegexPattern.from(uriRegex);
             return this;
         }
 
@@ -180,23 +182,20 @@ public class RequestPattern {
             return this;
         }
 
-        public Builder addContentParameter(String name, String value) {
-            content.put(name, value);
+        public Builder addContentParameter(String name, String valueRegex) {
+            contentParameters.put(name, RegexPattern.from(valueRegex));
             return this;
         }
 
-        public Builder addContentParameters(String name, Collection<String> values) {
-            content.putAll(name, values);
-            return this;
-        }
-
-        public Builder addContentParameters(Multimap<String, String> parameters) {
-            content.putAll(parameters);
+        public Builder addContentParameters(Map<String, String> parameters) {
+            for(Map.Entry<String, String> entry : parameters.entrySet()) {
+                addContentParameter(entry.getKey(), entry.getValue());
+            }
             return this;
         }
 
         public RequestPattern build() {
-            return new RequestPattern(uriPattern, methods, queryParameters, headers, content);
+            return new RequestPattern(uriRegexPattern, methods, queryParameters, headers, contentParameters);
         }
     }
 }

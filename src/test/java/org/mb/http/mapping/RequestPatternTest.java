@@ -22,11 +22,11 @@ public class RequestPatternTest {
 
     private RequestPattern getFilledRequestPattern() {
         return RequestPattern.newBuilder().
-                setUriPattern("/uri").
+                setUriRegex("/uri").
                 addMethod(Method.GET).
                 addQueryParameter("1", "1").
                 addHeader("1", "1").
-                addContentParameter("1", "1").
+                addContentParameter("1", "\\d").
                 build();
     }
 
@@ -62,7 +62,7 @@ public class RequestPatternTest {
     @Test
     public void matches_patternContainsRequest_returnTrue() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                setUriPattern("/uri/.*").
+                setUriRegex("/uri/.*").
                 addMethods(asList(Method.GET, Method.POST)).
                 addHeaders("1", asList("1", "2")).
                 build();
@@ -79,7 +79,7 @@ public class RequestPatternTest {
     @Test
     public void matches_wrongUri_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                setUriPattern("/uri/uri").
+                setUriRegex("/uri/uri").
                 build();
         Request request = Request.newBuilder("/uri", Method.GET).build();
 
@@ -187,8 +187,8 @@ public class RequestPatternTest {
     @Test
     public void matches_missingContentValue_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                addContentParameter("1", "1").
-                addContentParameter("2", "2").
+                addContentParameter("1", "\\d").
+                addContentParameter("2", "\\d").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
                 build();
@@ -203,7 +203,7 @@ public class RequestPatternTest {
     @Test
     public void matches_wrongContentValue_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                addContentParameter("1", "2").
+                addContentParameter("1", "\\s").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
                 build();
@@ -236,8 +236,8 @@ public class RequestPatternTest {
 
     @Test
     public void equals_notEqualUri_returnFalse() throws Exception {
-        RequestPattern requestPattern1 = RequestPattern.newBuilder().setUriPattern("/uri1").build();
-        RequestPattern requestPattern2 = RequestPattern.newBuilder().setUriPattern("/uri2").build();
+        RequestPattern requestPattern1 = RequestPattern.newBuilder().setUriRegex("/uri1").build();
+        RequestPattern requestPattern2 = RequestPattern.newBuilder().setUriRegex("/uri2").build();
 
         boolean result = requestPattern1.equals(requestPattern2);
 
@@ -276,8 +276,8 @@ public class RequestPatternTest {
 
     @Test
     public void equals_notEqualContentParameter_returnFalse() throws Exception {
-        RequestPattern requestPattern1 = RequestPattern.newBuilder().addContentParameter("1", "1").build();
-        RequestPattern requestPattern2 = RequestPattern.newBuilder().addContentParameter("1", "2").build();
+        RequestPattern requestPattern1 = RequestPattern.newBuilder().addContentParameter("1", "\\d").build();
+        RequestPattern requestPattern2 = RequestPattern.newBuilder().addContentParameter("1", "\\w").build();
 
         boolean result = requestPattern1.equals(requestPattern2);
 
@@ -301,8 +301,8 @@ public class RequestPatternTest {
 
     @Test
     public void hashCode_notEqualUri_notEquals() throws Exception {
-        RequestPattern requestPattern1 = RequestPattern.newBuilder().setUriPattern("/uri1").build();
-        RequestPattern requestPattern2 = RequestPattern.newBuilder().setUriPattern("/uri2").build();
+        RequestPattern requestPattern1 = RequestPattern.newBuilder().setUriRegex("/uri1").build();
+        RequestPattern requestPattern2 = RequestPattern.newBuilder().setUriRegex("/uri2").build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }
@@ -333,8 +333,8 @@ public class RequestPatternTest {
 
     @Test
     public void hashCode_notEqualContentParameter_notEquals() throws Exception {
-        RequestPattern requestPattern1 = RequestPattern.newBuilder().addContentParameter("1", "1").build();
-        RequestPattern requestPattern2 = RequestPattern.newBuilder().addContentParameter("1", "2").build();
+        RequestPattern requestPattern1 = RequestPattern.newBuilder().addContentParameter("1", "\\d").build();
+        RequestPattern requestPattern2 = RequestPattern.newBuilder().addContentParameter("1", "\\w").build();
 
         Assert.assertNotEquals(requestPattern1.hashCode(), requestPattern2.hashCode());
     }

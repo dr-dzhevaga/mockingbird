@@ -62,7 +62,7 @@ public class Marshaller extends BaseMarshaller {
         Object uriObject = httpRequestPatternMap.get(URI);
         String uri = from(uriObject).toStr();
         if(!uri.isEmpty()) {
-            builder.setUriPattern(uri);
+            builder.setUriRegex(uri);
         }
 
         Object methodObject = httpRequestPatternMap.get(METHOD);
@@ -75,7 +75,7 @@ public class Marshaller extends BaseMarshaller {
         builder.addHeaders(from(headerObject).toMultimapOfType(String.class, String.class));
 
         Object contentObject = httpRequestPatternMap.get(CONTENT);
-        builder.addContentParameters(from(contentObject).toMultimapOfType(String.class, String.class));
+        builder.addContentParameters(from(contentObject).toMapOfType(String.class, String.class));
 
         return builder.build();
     }
