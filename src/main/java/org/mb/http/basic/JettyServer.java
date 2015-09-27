@@ -2,11 +2,10 @@ package org.mb.http.basic;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
-import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
+import org.apache.log4j.Logger;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -16,6 +15,9 @@ import java.util.*;
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
 public class JettyServer implements Server {
+    private static final String LOG_NO_RESPONSE_ERROR = "No response will be sent";
+    private static final Logger Log = Logger.getLogger(JettyServer.class);
+
     private org.eclipse.jetty.server.Server jettyServer;
 
     public static Server newInstance(int port) {
@@ -46,6 +48,9 @@ public class JettyServer implements Server {
                     writeResponse(response, httpServletResponse);
                     httpRequest.setHandled(true);
                 } catch (Exception e) {
+                    if(httpServletResponse.isCommitted()) {
+                        Log.error(LOG_NO_RESPONSE_ERROR);
+                    }
                     throw new RuntimeException(e);
                 }
             }
