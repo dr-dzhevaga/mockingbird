@@ -12,6 +12,7 @@ public class Request {
     public static final String METHOD = "method";
     public static final String HEADERS = "headers";
     public static final String QUERY_PARAMETERS = "queryParameters";
+    public static final String CONTENT = "content";
 
     final private String uri;
     final private Method method;
@@ -57,6 +58,7 @@ public class Request {
         map.put(METHOD, method.toString());
         map.put(HEADERS, headers);
         map.put(QUERY_PARAMETERS, queryParameters.asMap());
+        map.put(CONTENT, content);
         return map;
     }
 
