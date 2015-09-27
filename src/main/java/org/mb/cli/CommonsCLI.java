@@ -15,12 +15,14 @@ public class CommonsCLI implements CLI {
     public static final String FILE = "f";
     public static final String FORMAT = "ff";
     public static final String FORMAT_ARGUMENTS = Joiner.on('|').join(FileFormat.values());
+    public static final String DEBUG = "d";
 
     InitialOption[] initialOptions = {
         new InitialOption(HELP,   "help",        "print this message",           "",               false),
         new InitialOption(PORT,   "port",        "specify server port",          "port",           true),
         new InitialOption(FILE,   "file",        "specify settings file",        "file",           true),
-        new InitialOption(FORMAT, "file-format", "specify settings file format", FORMAT_ARGUMENTS, true)
+        new InitialOption(FORMAT, "file-format", "specify settings file format", FORMAT_ARGUMENTS, true),
+        new InitialOption(DEBUG,  "debug",       "enable debug mode",            "",               false)
     };
 
     private final Options options = new Options();

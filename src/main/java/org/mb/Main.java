@@ -1,5 +1,7 @@
 package org.mb;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.mb.http.MainHandler;
 import org.mb.http.basic.Server;
 import org.mb.http.basic.JettyServer;
@@ -30,10 +32,15 @@ public class Main {
         int serverPort = Integer.parseInt(cli.getOptionValue(PORT));
         String filePath = cli.getOptionValue(FILE);
         FileFormat fileFormat = FileFormat.of(cli.getOptionValue(FORMAT));
+        boolean debug = cli.hasOption(DEBUG);
 
         if(printHelp) {
             cli.printHelp();
             return;
+        }
+
+        if(debug) {
+            Logger.getLogger("org.mb").setLevel(Level.DEBUG);
         }
 
         Settings settings = Settings.load(filePath, fileFormat);
