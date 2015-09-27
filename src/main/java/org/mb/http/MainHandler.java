@@ -6,7 +6,7 @@ import org.mb.http.basic.Content;
 import org.mb.http.basic.Request;
 import org.mb.http.basic.Response;
 import org.mb.http.basic.Handler;
-import org.mb.http.mapping.ResponseDataMapping;
+import org.mb.http.mapping.Mapping;
 import org.mb.jspl.JSPLikeProcessor;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
@@ -40,10 +40,10 @@ public class MainHandler implements Handler {
         Parsing globalParsing = settings.getParsing();
         final Map<String, String> parsingResult = globalParsing.parse(request.getContent());
 
-        ResponseDataMapping.ResponseData responseData = settings.getMapping().find(request, parsingResult);
+        Mapping.ResponseData responseData = settings.getMapping().resolve(request, parsingResult);
         final Response response = responseData.getResponse();
-        Log.info(String.format(LOG_RESPONSE, response));
         final InputStream inputStream = response.getContent().getStream();
+        Log.info(String.format(LOG_RESPONSE, response));
 
         Parsing requestParsing = responseData.getParsing();
         parsingResult.putAll(requestParsing.parse(request.getContent()));

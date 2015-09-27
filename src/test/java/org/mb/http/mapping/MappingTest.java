@@ -14,7 +14,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 14.07.2015.
  */
-public class ResponseDataMappingTest {
+public class MappingTest {
     private static int DEFAULT_STATUS_CODE = 404;
     private static String DEFAULT_CONTENT = "Not found";
 
@@ -47,31 +47,31 @@ public class ResponseDataMappingTest {
 
     @Test
     public void resolve_emptyMapping_returnDefaultResponse() throws Exception {
-        ResponseDataMapping mapping = new ResponseDataMapping();
+        Mapping mapping = new Mapping();
         Request request = getRequest(Method.GET);
         Response defaultResponse = getDefaultResponse();
 
-        Response response = mapping.find(request, getContent()).getResponse();
+        Response response = mapping.resolve(request, getContent()).getResponse();
 
         Assert.assertTrue(response.equals(defaultResponse));
     }
 
     @Test
     public void resolve_noMatchedPattern_returnDefaultResponse() throws Exception {
-        ResponseDataMapping mapping = new ResponseDataMapping();
+        Mapping mapping = new Mapping();
         RequestPattern requestPattern = getRequestPattern(Method.GET);
         Response responseER = getResponse(1);
         mapping.addMapping(requestPattern, responseER, getBulkParser());
         Request request = getRequest(Method.POST);
 
-        Response responseAR = mapping.find(request, getContent()).getResponse();
+        Response responseAR = mapping.resolve(request, getContent()).getResponse();
 
         Assert.assertFalse(responseER.equals(responseAR));
     }
 
     @Test
     public void resolve_matchedPattern_returnProperResponse() throws Exception {
-        ResponseDataMapping mapping = new ResponseDataMapping();
+        Mapping mapping = new Mapping();
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.POST);
         Response responseER1 = getResponse(1);
@@ -80,8 +80,8 @@ public class ResponseDataMappingTest {
         mapping.addMapping(requestPattern2, responseER2, getBulkParser());
         Request request1 = getRequest(Method.GET);
         Request request2 = getRequest(Method.POST);
-        Response responseAR1 = mapping.find(request1, getContent()).getResponse();
-        Response responseAR2 = mapping.find(request2, getContent()).getResponse();
+        Response responseAR1 = mapping.resolve(request1, getContent()).getResponse();
+        Response responseAR2 = mapping.resolve(request2, getContent()).getResponse();
 
         Assert.assertTrue(responseER1.equals(responseAR1));
         Assert.assertTrue(responseER2.equals(responseAR2));
@@ -89,7 +89,7 @@ public class ResponseDataMappingTest {
 
     @Test
     public void resolve_severalMatchedPatterns_returnFirstPropperResponse() throws Exception {
-        ResponseDataMapping mapping = new ResponseDataMapping();
+        Mapping mapping = new Mapping();
         RequestPattern requestPattern1 = getRequestPattern(Method.GET);
         RequestPattern requestPattern2 = getRequestPattern(Method.GET, Method.POST);
         RequestPattern requestPattern3 = getRequestPattern(Method.GET, Method.POST, Method.PUT);
@@ -101,7 +101,7 @@ public class ResponseDataMappingTest {
         mapping.addMapping(requestPattern3, response2, getBulkParser());
         Request request = getRequest(Method.GET);
 
-        Response responseAR = mapping.find(request, getContent()).getResponse();
+        Response responseAR = mapping.resolve(request, getContent()).getResponse();
 
         Assert.assertTrue(responseER.equals(responseAR));
     }

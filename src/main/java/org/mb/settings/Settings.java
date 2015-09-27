@@ -1,8 +1,7 @@
 package org.mb.settings;
 
 import com.google.common.base.Charsets;
-import org.apache.log4j.Logger;
-import org.mb.http.mapping.ResponseDataMapping;
+import org.mb.http.mapping.Mapping;
 import org.mb.parsing.Parsing;
 import org.mb.settings.marshalling.Marshaller;
 import org.mb.settings.marshalling.MarshallingException;
@@ -14,10 +13,10 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 12.09.2015.
  */
 public class Settings {
-    private final ResponseDataMapping mapping;
+    private final Mapping mapping;
     private final Parsing parsing;
 
-    public Settings(ResponseDataMapping mapping, Parsing parsing) {
+    public Settings(Mapping mapping, Parsing parsing) {
         this.mapping = mapping;
         this.parsing = parsing;
     }
@@ -36,7 +35,7 @@ public class Settings {
         return parsing;
     }
 
-    public ResponseDataMapping getMapping() {
+    public Mapping getMapping() {
         return mapping;
     }
 }

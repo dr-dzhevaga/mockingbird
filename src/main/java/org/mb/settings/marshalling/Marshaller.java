@@ -1,6 +1,6 @@
 package org.mb.settings.marshalling;
 
-import org.mb.http.mapping.ResponseDataMapping;
+import org.mb.http.mapping.Mapping;
 import org.mb.http.mapping.RequestPattern;
 import org.mb.http.basic.Response;
 import org.mb.parsing.Parsing;
@@ -35,13 +35,13 @@ public class Marshaller extends BaseMarshaller {
 
     public Settings toSettings() throws MarshallingException {
         Map settingsMap = toType(Map.class, true);
-        ResponseDataMapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
+        Mapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
         Parsing parsing = from(settingsMap.get(PARSING)).toParsing();
         return new Settings(mapping, parsing);
     }
 
-    public ResponseDataMapping toHTTPMapping() throws MarshallingException {
-        ResponseDataMapping responseDataMapping = new ResponseDataMapping();
+    public Mapping toHTTPMapping() throws MarshallingException {
+        Mapping mapping = new Mapping();
 
         List httpMappingList = toType(List.class, true);
         for(Object httpMappingObject : httpMappingList) {
@@ -49,9 +49,9 @@ public class Marshaller extends BaseMarshaller {
             RequestPattern requestPattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
             Response response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
             Parsing parsing = from(httpMappingMap.get(PARSING)).toParsing();
-            responseDataMapping.addMapping(requestPattern, response, parsing);
+            mapping.addMapping(requestPattern, response, parsing);
         }
-        return responseDataMapping;
+        return mapping;
     }
 
     public RequestPattern toHTTPRequestPattern() throws MarshallingException {

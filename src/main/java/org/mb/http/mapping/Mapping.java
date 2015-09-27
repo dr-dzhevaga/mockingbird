@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 19.06.2015.
  */
-public class ResponseDataMapping {
+public class Mapping {
     private static final int    DEFAULT_RESPONSE_STATUS_CODE  = 404;
     private static final String DEFAULT_RESPONSE_CONTENT      = "Not found";
     private static final String LOG_MAPPING_IS_ADDED          = "Mapping is added\n" +
@@ -23,12 +23,12 @@ public class ResponseDataMapping {
                                                                 "Request parsing: %s";
     private static final String LOG_RESPONSE_IS_FOUND         = "Response is found in mapping";
     private static final String LOG_RESPONSE_IS_NOT_FOUND     = "Response is not found in mapping, default response will be used";
-    private static final Logger Log = Logger.getLogger(ResponseDataMapping.class);
+    private static final Logger Log = Logger.getLogger(Mapping.class);
 
     private LinkedHashMap<RequestPattern, ResponseData> mapping = Maps.newLinkedHashMap();
     private final ResponseData defaultResponseData;
 
-    public ResponseDataMapping() {
+    public Mapping() {
         Response defaultResponse = Response.newBuilder().
                 setStatusCode(DEFAULT_RESPONSE_STATUS_CODE).
                 setContent(DEFAULT_RESPONSE_CONTENT).
@@ -41,7 +41,7 @@ public class ResponseDataMapping {
         Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
     }
 
-    public ResponseData find(Request request, Map<String, String> content) {
+    public ResponseData resolve(Request request, Map<String, String> content) {
         for(Map.Entry<RequestPattern, ResponseData> mappingEntry : mapping.entrySet()) {
             if(mappingEntry.getKey().matches(request, content)) {
                 Log.info(LOG_RESPONSE_IS_FOUND);
