@@ -13,7 +13,6 @@ import static java.util.Arrays.asList;
 /**
  * Created by Dmitriy Dzhevaga on 12.07.2015.
  */
-// TODO: test content matching
 public class RequestPatternTest {
 
     private RequestPattern getEmptyRequestPattern() {
@@ -30,8 +29,15 @@ public class RequestPatternTest {
                 build();
     }
 
-    private Map<String, String> getParsingResult() {
+    private Map<String, String> getEmptyParsingResult() {
         return Maps.newHashMap();
+    }
+
+
+    private Map<String, String> getParsingResult(String name, String value) {
+        Map<String, String> map = Maps.newHashMap();
+        map.put(name, value);
+        return map;
     }
 
     @Test
@@ -39,20 +45,19 @@ public class RequestPatternTest {
         RequestPattern requestPattern = getEmptyRequestPattern();
         Request request = Request.newBuilder("/uri", Method.GET).build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertTrue(result);
     }
 
     @Test
-    public void matches_requestEqualsPattern_returnTrue() throws Exception {
+    public void matches_requestIsTheSameAsPattern_returnTrue() throws Exception {
         RequestPattern requestPattern = getFilledRequestPattern();
         Request request = Request.newBuilder("/uri", Method.GET).
                 addQueryParameter("1", "1").
                 addHeader("1", "1").
                 build();
-        Map<String, String> parsingResult = getParsingResult();
-        parsingResult.put("1", "1");
+        Map<String, String> parsingResult = getParsingResult("1", "1");
 
         boolean result = requestPattern.matches(request, parsingResult);
 
@@ -60,18 +65,20 @@ public class RequestPatternTest {
     }
 
     @Test
-    public void matches_patternContainsRequest_returnTrue() throws Exception {
+    public void matches_patternIsWiderThenRequest_returnTrue() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
                 setUriRegex("/uri/.*").
                 addMethods(asList(Method.GET, Method.POST)).
                 addHeaders("1", asList("1", "2")).
+                addContentParameter("1", "\\d").
                 build();
         Request request = Request.newBuilder("/uri/uri", Method.GET).
                 addHeader("1", "1").
                 setContent("content").
                 build();
+        Map<String, String> parsingResult = getParsingResult("1", "1");
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, parsingResult);
 
         Assert.assertTrue(result);
     }
@@ -83,7 +90,7 @@ public class RequestPatternTest {
                 build();
         Request request = Request.newBuilder("/uri", Method.GET).build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -95,7 +102,7 @@ public class RequestPatternTest {
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -109,7 +116,7 @@ public class RequestPatternTest {
                 addQueryParameter("2", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -123,35 +130,7 @@ public class RequestPatternTest {
                 addQueryParameter("1", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
-
-        Assert.assertFalse(result);
-    }
-
-    @Test
-    public void matches_extraDuplicateQueryParameterInRequest_returnFalse() throws Exception {
-        RequestPattern requestPattern = RequestPattern.newBuilder().
-                addQueryParameter("1", "1").
-                build();
-        Request request = Request.newBuilder("/uri", Method.POST).
-                addQueryParameters("1", asList("1", "1")).
-                build();
-
-        boolean result = requestPattern.matches(request, getParsingResult());
-
-        Assert.assertFalse(result);
-    }
-
-    @Test
-    public void matches_missingDuplicateQueryParameterInRequest_returnFalse() throws Exception {
-        RequestPattern requestPattern = RequestPattern.newBuilder().
-                addQueryParameters("1", asList("1", "1")).
-                build();
-        Request request = Request.newBuilder("/uri", Method.POST).
-                addQueryParameter("1", "1").
-                build();
-
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -165,7 +144,7 @@ public class RequestPatternTest {
                 addHeader("2", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -179,7 +158,7 @@ public class RequestPatternTest {
                 addHeader("1", "2").
                 build();
 
-        boolean result = requestPattern.matches(request, getParsingResult());
+        boolean result = requestPattern.matches(request, getEmptyParsingResult());
 
         Assert.assertFalse(result);
     }
@@ -192,8 +171,7 @@ public class RequestPatternTest {
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
                 build();
-        Map<String, String> parsingResult = getParsingResult();
-        parsingResult.put("1", "1");
+        Map<String, String> parsingResult = getParsingResult("1", "1");
 
         boolean result = requestPattern.matches(request, parsingResult);
 
@@ -207,8 +185,7 @@ public class RequestPatternTest {
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
                 build();
-        Map<String, String> parsingResult = getParsingResult();
-        parsingResult.put("1", "1");
+        Map<String, String> parsingResult = getParsingResult("1", "1");
 
         boolean result = requestPattern.matches(request, parsingResult);
 

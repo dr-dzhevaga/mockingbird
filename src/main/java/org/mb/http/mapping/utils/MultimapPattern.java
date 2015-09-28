@@ -28,9 +28,7 @@ public class MultimapPattern<T1, T2> {
 
     public boolean matches(Multimap<T1, T2> checked) {
         for (T1 key : pattern.keySet()) {
-            if(pattern.get(key).size() != checked.get(key).size())
-                return false;
-            if(!(pattern.get(key).containsAll(checked.get(key)) && checked.get(key).containsAll(pattern.get(key))))
+            if(checked.get(key).isEmpty() || !pattern.get(key).containsAll(checked.get(key)))
                 return false;
         }
         return true;
