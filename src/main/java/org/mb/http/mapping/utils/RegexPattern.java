@@ -37,4 +37,9 @@ public class RegexPattern {
     public int hashCode() {
         return Objects.hash(this.pattern.pattern());
     }
+
+    @Override
+    public String toString() {
+        return pattern.pattern();
+    }
 }

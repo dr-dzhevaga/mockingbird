@@ -105,7 +105,7 @@ public class RequestPattern {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tMethod: %s", methods));
-        builder.append(String.format("\n\tLOG_URI pattern: %s", uriRegexPattern));
+        builder.append(String.format("\n\tUri pattern: %s", uriRegexPattern));
         if(!queryParameters.isEmpty()) {
             builder.append(String.format("\n\tQuery parameters: %s", queryParameters));
         }
