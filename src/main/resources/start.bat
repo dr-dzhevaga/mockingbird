@@ -1,0 +1,1 @@
+java -jar ${project.build.finalName}.jar -f settings.json -ff JSON -p 8080

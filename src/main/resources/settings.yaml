@@ -1,0 +1,6 @@
+---
+  mapping: 
+    - 
+      request: {}
+      response: 
+        content: "Hello, world!"
