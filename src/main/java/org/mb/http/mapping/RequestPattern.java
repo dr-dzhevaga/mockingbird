@@ -4,7 +4,7 @@ import com.google.common.collect.*;
 import org.apache.log4j.Logger;
 import org.mb.http.basic.Method;
 import org.mb.http.basic.Request;
-import org.mb.http.mapping.utils.MultimapPattern;
+import org.mb.http.mapping.utils.RegexPatternMap;
 import org.mb.http.mapping.utils.RegexPattern;
 
 import java.util.*;
@@ -26,11 +26,11 @@ public class RequestPattern {
 
     final private RegexPattern uriRegexPattern;
     final private Set<Method> methods;
-    final private ListMultimap<String, String> queryParameters;
-    final private SetMultimap<String, String> headers;
-    final private Map<String, RegexPattern> content;
+    final private RegexPatternMap queryParameters;
+    final private RegexPatternMap headers;
+    final private RegexPatternMap content;
 
-    private RequestPattern(RegexPattern uriRegexPattern, Set<Method> methods, ListMultimap<String, String> queryParameters, SetMultimap<String, String> headers, Map<String, RegexPattern> content) {
+    private RequestPattern(RegexPattern uriRegexPattern, Set<Method> methods, RegexPatternMap queryParameters, RegexPatternMap headers, RegexPatternMap content) {
         this.uriRegexPattern = uriRegexPattern;
         this.methods = methods;
         this.queryParameters = queryParameters;
@@ -57,23 +57,19 @@ public class RequestPattern {
             }
         }
 
-        if(!MultimapPattern.from(this.queryParameters).matches(request.getQueryParameters())) {
+        if(!this.queryParameters.matches(request.getQueryParameters())) {
             Log.debug(LOG_QUERY_PARAMETER_NOT_MATCHED);
             return false;
         }
 
-        if(!MultimapPattern.from(this.headers).matches(request.getHeaders())) {
+        if(!this.headers.matches(request.getHeaders())) {
             Log.debug(LOG_HEADER_NOT_MATCHED);
             return false;
         }
 
-        for(Map.Entry<String, RegexPattern> entry : this.content.entrySet()) {
-            RegexPattern regexPattern = entry.getValue();
-            String value = content.get(entry.getKey());
-            if(!regexPattern.matches(value)) {
-                Log.debug(LOG_CONTENT_NOT_MATCHED);
-                return false;
-            }
+        if(!this.content.matches(content)) {
+            Log.debug(LOG_CONTENT_NOT_MATCHED);
+            return false;
         }
 
         Log.debug(LOG_MATCHED);
@@ -121,9 +117,9 @@ public class RequestPattern {
     public static class Builder {
         private RegexPattern uriRegexPattern = RegexPattern.from(DEFAULT_URI_PATTERN);
         private Set<Method> methods = Sets.newHashSet();
-        private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();
-        private SetMultimap<String, String> headers = HashMultimap.create();
-        private Map<String, RegexPattern> contentParameters = Maps.newHashMap();
+        private RegexPatternMap queryParameters = RegexPatternMap.newInstance();
+        private RegexPatternMap headers = RegexPatternMap.newInstance();
+        private RegexPatternMap contentParameters = RegexPatternMap.newInstance();
 
         public Builder setUriRegex(String uriRegex) {
             this.uriRegexPattern = RegexPattern.from(uriRegex);
@@ -152,45 +148,33 @@ public class RequestPattern {
             return this;
         }
 
-        public Builder addQueryParameter(String name, String values) {
-            this.queryParameters.put(name, values);
+        public Builder addQueryParameter(String name, String valueRegex) {
+            this.queryParameters.add(name, valueRegex);
             return this;
         }
 
-        public Builder addQueryParameters(Multimap<String, String> parameters) {
-            this.queryParameters.putAll(parameters);
+        public Builder addQueryParameters(Map<String, String> parameters) {
+            this.queryParameters.addAll(parameters);
             return this;
         }
 
-        public Builder addQueryParameters(String name, Collection<String> values) {
-            this.queryParameters.putAll(name, values);
+        public Builder addHeader(String name, String valueRegex) {
+            this.headers.add(name, valueRegex);
             return this;
         }
 
-        public Builder addHeader(String name, String value) {
-            this.headers.put(name, value);
-            return this;
-        }
-
-        public Builder addHeaders(Multimap<String, String> parameters) {
-            this.headers.putAll(parameters);
-            return this;
-        }
-
-        public Builder addHeaders(String name, Collection<String> values) {
-            this.headers.putAll(name, values);
+        public Builder addHeaders(Map<String, String> parameters) {
+            this.headers.addAll(parameters);
             return this;
         }
 
         public Builder addContentParameter(String name, String valueRegex) {
-            contentParameters.put(name, RegexPattern.from(valueRegex));
+            this.contentParameters.add(name, valueRegex);
             return this;
         }
 
         public Builder addContentParameters(Map<String, String> parameters) {
-            for(Map.Entry<String, String> entry : parameters.entrySet()) {
-                addContentParameter(entry.getKey(), entry.getValue());
-            }
+            this.contentParameters.addAll(parameters);
             return this;
         }
 

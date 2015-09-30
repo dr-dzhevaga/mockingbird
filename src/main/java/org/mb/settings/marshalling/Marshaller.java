@@ -69,10 +69,10 @@ public class Marshaller extends BaseMarshaller {
         builder.addMethodsAsStrings(from(methodObject).toListOfType(String.class));
 
         Object queryParameterObject = httpRequestPatternMap.get(QUERY_PARAMETER);
-        builder.addQueryParameters(from(queryParameterObject).toMultimapOfType(String.class, String.class));
+        builder.addQueryParameters(from(queryParameterObject).toMapOfType(String.class, String.class));
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
-        builder.addHeaders(from(headerObject).toMultimapOfType(String.class, String.class));
+        builder.addHeaders(from(headerObject).toMapOfType(String.class, String.class));
 
         Object contentObject = httpRequestPatternMap.get(CONTENT);
         builder.addContentParameters(from(contentObject).toMapOfType(String.class, String.class));

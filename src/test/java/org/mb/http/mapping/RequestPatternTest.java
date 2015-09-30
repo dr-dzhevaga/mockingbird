@@ -69,10 +69,12 @@ public class RequestPatternTest {
         RequestPattern requestPattern = RequestPattern.newBuilder().
                 setUriRegex("/uri/.*").
                 addMethods(asList(Method.GET, Method.POST)).
-                addHeaders("1", asList("1", "2")).
+                addQueryParameter("1", "\\d").
+                addHeader("1", "\\d").
                 addContentParameter("1", "\\d").
                 build();
         Request request = Request.newBuilder("/uri/uri", Method.GET).
+                addQueryParameter("1", "1").
                 addHeader("1", "1").
                 setContent("content").
                 build();
@@ -111,9 +113,10 @@ public class RequestPatternTest {
     public void matches_missingQueryParameter_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
                 addQueryParameter("1", "1").
+                addQueryParameter("2", "2").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
-                addQueryParameter("2", "2").
+                addQueryParameter("1", "1").
                 build();
 
         boolean result = requestPattern.matches(request, getEmptyParsingResult());
@@ -124,10 +127,10 @@ public class RequestPatternTest {
     @Test
     public void matches_wrongQueryParameterValue_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                addQueryParameter("1", "1").
+                addQueryParameter("1", "\\s").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
-                addQueryParameter("1", "2").
+                addQueryParameter("1", "1").
                 build();
 
         boolean result = requestPattern.matches(request, getEmptyParsingResult());
@@ -139,9 +142,10 @@ public class RequestPatternTest {
     public void matches_missingHeader_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
                 addHeader("1", "1").
+                addHeader("2", "2").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
-                addHeader("2", "2").
+                addHeader("1", "1").
                 build();
 
         boolean result = requestPattern.matches(request, getEmptyParsingResult());
@@ -152,7 +156,7 @@ public class RequestPatternTest {
     @Test
     public void matches_wrongHeaderValue_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                addHeader("1", "1").
+                addHeader("1", "\\s").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
                 addHeader("1", "2").
@@ -166,8 +170,8 @@ public class RequestPatternTest {
     @Test
     public void matches_missingContentValue_returnFalse() throws Exception {
         RequestPattern requestPattern = RequestPattern.newBuilder().
-                addContentParameter("1", "\\d").
-                addContentParameter("2", "\\d").
+                addContentParameter("1", "1").
+                addContentParameter("2", "2").
                 build();
         Request request = Request.newBuilder("/uri", Method.POST).
                 build();
