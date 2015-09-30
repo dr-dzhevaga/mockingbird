@@ -1,5 +1,6 @@
 package org.mb.http.mapping;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.log4j.Logger;
 import org.mb.http.basic.Request;
@@ -7,6 +8,7 @@ import org.mb.http.basic.Response;
 import org.mb.parsing.Parsing;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,38 +27,42 @@ public class Mapping {
     private static final String LOG_RESPONSE_IS_NOT_FOUND     = "Response is not found in mapping, default response will be used";
     private static final Logger Log = Logger.getLogger(Mapping.class);
 
-    private LinkedHashMap<RequestPattern, ResponseData> mapping = Maps.newLinkedHashMap();
-    private final ResponseData defaultResponseData;
+    private List<MappingEntry> mapping = Lists.newArrayList();
+    private final MappingEntry defaultMappingEntry;
 
     public Mapping() {
         Response defaultResponse = Response.newBuilder().
                 setStatusCode(DEFAULT_RESPONSE_STATUS_CODE).
                 setContent(DEFAULT_RESPONSE_CONTENT).
                 build();
-        defaultResponseData = new ResponseData(defaultResponse, new Parsing());
+        RequestPattern requestPattern = RequestPattern.newBuilder().build();
+        Parsing parsing = new Parsing();
+        defaultMappingEntry = new MappingEntry(requestPattern, defaultResponse, parsing);
     }
 
     public void addMapping(RequestPattern requestPattern, Response response, Parsing parsing) {
-        mapping.put(requestPattern, new ResponseData(response, parsing));
+        mapping.add(new MappingEntry(requestPattern, response, parsing));
         Log.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
     }
 
-    public ResponseData resolve(Request request, Map<String, String> content) {
-        for(Map.Entry<RequestPattern, ResponseData> mappingEntry : mapping.entrySet()) {
-            if(mappingEntry.getKey().matches(request, content)) {
+    public MappingEntry resolve(Request request, Map<String, String> content) {
+        for(MappingEntry mappingEntry : mapping) {
+            if(mappingEntry.getRequestPattern().matches(request, content)) {
                 Log.info(LOG_RESPONSE_IS_FOUND);
-                return mappingEntry.getValue();
+                return mappingEntry;
             }
         }
         Log.info(LOG_RESPONSE_IS_NOT_FOUND);
-        return defaultResponseData;
+        return defaultMappingEntry;
     }
 
-    public static class ResponseData {
+    public static class MappingEntry {
+        private final RequestPattern requestPattern;
         private final Response response;
         private final Parsing parsing;
 
-        private ResponseData(Response response, Parsing parsing) {
+        private MappingEntry(RequestPattern requestPattern, Response response, Parsing parsing) {
+            this.requestPattern = requestPattern;
             this.response = response;
             this.parsing = parsing;
         }
@@ -67,6 +73,10 @@ public class Mapping {
 
         public Response getResponse() {
             return response;
+        }
+
+        private RequestPattern getRequestPattern() {
+            return requestPattern;
         }
     }
 }

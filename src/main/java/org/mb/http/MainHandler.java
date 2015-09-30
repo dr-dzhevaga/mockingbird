@@ -40,12 +40,12 @@ public class MainHandler implements Handler {
         Parsing globalParsing = settings.getParsing();
         final Map<String, String> parsingResult = globalParsing.parse(request.getContent());
 
-        Mapping.ResponseData responseData = settings.getMapping().resolve(request, parsingResult);
-        final Response response = responseData.getResponse();
+        Mapping.MappingEntry mappingEntry = settings.getMapping().resolve(request, parsingResult);
+        final Response response = mappingEntry.getResponse();
         final InputStream inputStream = response.getContent().getStream();
         Log.info(String.format(LOG_RESPONSE, response));
 
-        Parsing requestParsing = responseData.getParsing();
+        Parsing requestParsing = mappingEntry.getParsing();
         parsingResult.putAll(requestParsing.parse(request.getContent()));
 
         Response resultResponse = response.setContent(new Content() {
