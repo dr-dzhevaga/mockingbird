@@ -8,11 +8,11 @@ import java.util.Map;
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
 public class Request {
-    public static final String URI = "uri";
-    public static final String METHOD = "method";
-    public static final String HEADERS = "headers";
-    public static final String QUERY_PARAMETERS = "queryParameters";
-    public static final String CONTENT = "content";
+    public static final String URI      = "uri";
+    public static final String METHOD   = "method";
+    public static final String HEADER   = "header";
+    public static final String QUERY    = "query";
+    public static final String CONTENT  = "content";
 
     final private String uri;
     final private Method method;
@@ -56,8 +56,8 @@ public class Request {
         Map<String, Object> map = Maps.newHashMap();
         map.put(URI, uri);
         map.put(METHOD, method.toString());
-        map.put(HEADERS, headers);
-        map.put(QUERY_PARAMETERS, queryParameters.asMap());
+        map.put(HEADER, headers);
+        map.put(QUERY, queryParameters.asMap());
         map.put(CONTENT, content);
         return map;
     }

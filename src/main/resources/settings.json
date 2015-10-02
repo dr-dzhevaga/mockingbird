@@ -2,6 +2,7 @@
   "mapping":[
     {
       "request":{
+        "method":"GET"
       },
       "response":{
         "content":"Hello, world!"

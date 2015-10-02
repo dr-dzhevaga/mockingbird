@@ -20,9 +20,9 @@ public class Marshaller extends BaseMarshaller {
     private final static String RESPONSE        = "response";
     private final static String URI             = "url";
     private final static String METHOD          = "method";
-    private final static String QUERY_PARAMETER = "queryParameter";
+    private final static String QUERY           = "query";
     private final static String HEADER          = "header";
-    private final static String STATUS_CODE     = "statusCode";
+    private final static String STATUS          = "status";
     private final static String CONTENT         = "content";
 
     private Marshaller(Object o) {
@@ -68,7 +68,7 @@ public class Marshaller extends BaseMarshaller {
         Object methodObject = httpRequestPatternMap.get(METHOD);
         builder.addMethodsAsStrings(from(methodObject).toListOfType(String.class));
 
-        Object queryParameterObject = httpRequestPatternMap.get(QUERY_PARAMETER);
+        Object queryParameterObject = httpRequestPatternMap.get(QUERY);
         builder.addQueryParameters(from(queryParameterObject).toMapOfType(String.class, String.class));
 
         Object headerObject = httpRequestPatternMap.get(HEADER);
@@ -85,7 +85,7 @@ public class Marshaller extends BaseMarshaller {
 
         Response.Builder builder = Response.newBuilder();
 
-        Object statusCodeObject = httpResponseMap.get(STATUS_CODE);
+        Object statusCodeObject = httpResponseMap.get(STATUS);
         String statusCode = from(statusCodeObject).toStr();
         if(!statusCode.isEmpty()) {
             builder.setStatusCode(statusCode);
