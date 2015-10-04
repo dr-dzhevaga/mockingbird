@@ -10,7 +10,7 @@ Mockingbird is a tool for stubbing/mocking of web services (REST/SOAP/etc) over 
 
 # How to start #
 1. Mockingbird works with jre 1.8. Please check your jre version before you start.
-2. Download the archive.
+2. Download mockingbird-x.x.x.zip from the [latest release](https://github.com/dr-dzhevaga/mockingbird/releases) and unzip its content.
 3. Execute start.bat for Windows or start.sh for Linux.
 4. Navigate to [http://localhost:8080/hello-world](http://localhost:8080/hello-world) in a browser to get the stubbed response.
 
