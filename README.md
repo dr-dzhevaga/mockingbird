@@ -1,7 +1,7 @@
 [![Build Status](https://travis-ci.org/dr-dzhevaga/mockingbird.svg?branch=develop)](https://travis-ci.org/dr-dzhevaga/mockingbird)
 
 # What is mockingbird #
-Mockingbird is a tool for stubbing/mocking of web services (REST/SOAP/etc) over HTTP(S) protocol with flexible configuration and dynamic responses.
+Mockingbird is a tool for stubbing/mocking of web services (REST/SOAP/etc) over HTTP protocol with flexible configuration and dynamic responses.
 
 # Features #
 * Flexible request-response mapping based on request parameters (method, uri, query parameters, headers, content)
