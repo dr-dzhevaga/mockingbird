@@ -1,11 +1,12 @@
 {
-  "mapping":[
+  "mapping": [
     {
-      "request":{
-        "method":"GET"
+      "request": {
+        "uri": "/hello-world",
+        "method": "GET"
       },
-      "response":{
-        "content":"Hello, world!"
+      "response": {
+        "content": "Hello, world!"
       }
     }
   ]

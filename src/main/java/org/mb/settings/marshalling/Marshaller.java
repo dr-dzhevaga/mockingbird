@@ -18,7 +18,7 @@ public class Marshaller extends BaseMarshaller {
     private final static String PARSING         = "parsing";
     private final static String REQUEST         = "request";
     private final static String RESPONSE        = "response";
-    private final static String URI             = "url";
+    private final static String URI             = "uri";
     private final static String METHOD          = "method";
     private final static String QUERY           = "query";
     private final static String HEADER          = "header";

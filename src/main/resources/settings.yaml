@@ -1,6 +1,7 @@
   mapping:
     - 
       request:
+        uri: /hello-world
         method: GET
       response: 
         content: "Hello, world!"
