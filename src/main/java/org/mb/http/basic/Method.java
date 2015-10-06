@@ -20,7 +20,7 @@ public enum Method {
         return this.name();
     }
 
-    public static Method of(String name) {
+    public static Method of(final String name) {
         return EnumUtils.valueOf(Method.class, name);
     }
 }

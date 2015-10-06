@@ -25,11 +25,11 @@ public final class JettyServer implements Server {
 
     private final org.eclipse.jetty.server.Server jettyServer;
 
-    public static Server newInstance(int port) {
+    public static Server newInstance(final int port) {
         return new JettyServer(port);
     }
 
-    private JettyServer(int port) {
+    private JettyServer(final int port) {
         jettyServer = new org.eclipse.jetty.server.Server(port);
     }
 
@@ -46,7 +46,10 @@ public final class JettyServer implements Server {
     public void setHandler(final Handler handler) {
         jettyServer.setHandler(new AbstractHandler() {
             @Override
-            public void handle(String s, org.eclipse.jetty.server.Request httpRequest, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
+            public void handle(final String s,
+                               final org.eclipse.jetty.server.Request httpRequest,
+                               final HttpServletRequest httpServletRequest,
+                               final HttpServletResponse httpServletResponse) {
                 try {
                     Request request = readRequest(httpServletRequest);
                     Response response = handler.handle(request);
@@ -62,7 +65,7 @@ public final class JettyServer implements Server {
         });
     }
 
-    private Request readRequest(HttpServletRequest srcRequest) throws IOException {
+    private Request readRequest(final HttpServletRequest srcRequest) throws IOException {
         Request.Builder builder = Request.newBuilder(srcRequest.getRequestURI(), Method.of(srcRequest.getMethod()));
 
         Enumeration<String> headerNames = srcRequest.getHeaderNames();
@@ -89,7 +92,7 @@ public final class JettyServer implements Server {
         return builder.build();
     }
 
-    private void writeResponse(Response srcResponse, HttpServletResponse dstResponse) throws IOException {
+    private void writeResponse(final Response srcResponse, final HttpServletResponse dstResponse) throws Exception {
         dstResponse.setStatus(srcResponse.getStatusCode());
 
         for (Map.Entry<String, String> header : srcResponse.getHeaders().entrySet()) {

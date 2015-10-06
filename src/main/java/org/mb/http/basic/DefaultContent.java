@@ -22,13 +22,13 @@ public final class DefaultContent implements Content {
     private final String source;
     private final boolean sourceIsFilePath;
 
-    public DefaultContent(String source) {
+    public DefaultContent(final String source) {
         this.source = source;
         sourceIsFilePath = new File(source).exists();
     }
 
     @Override
-    public void writeTo(OutputStream outputStream) throws IOException {
+    public void writeTo(final OutputStream outputStream) throws IOException {
         try (InputStream inputStream = getStream()) {
             ByteStreams.copy(inputStream, outputStream);
         }
@@ -47,7 +47,7 @@ public final class DefaultContent implements Content {
         }
     }
 
-    private String toString(int maxLength) {
+    private String toString(final int maxLength) {
         try (InputStream stream = getStream()) {
             return CharStreams.toString(new InputStreamReader(ByteStreams.limit(stream, maxLength), Charsets.UTF_8));
         } catch (IOException e) {
@@ -61,7 +61,7 @@ public final class DefaultContent implements Content {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

@@ -4,11 +4,11 @@ package org.mb.settings.marshalling;
  * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
 public class MarshallingException extends Exception {
-    public MarshallingException(Throwable e) {
+    public MarshallingException(final Throwable e) {
         super(e);
     }
 
-    public MarshallingException(String message) {
+    public MarshallingException(final String message) {
         super(message);
     }
 }

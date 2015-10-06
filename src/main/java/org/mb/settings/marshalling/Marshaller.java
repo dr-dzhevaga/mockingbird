@@ -13,23 +13,23 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
-public class Marshaller extends BaseMarshaller {
-    private final static String MAPPING         = "mapping";
-    private final static String PARSING         = "parsing";
-    private final static String REQUEST         = "request";
-    private final static String RESPONSE        = "response";
-    private final static String URI             = "uri";
-    private final static String METHOD          = "method";
-    private final static String QUERY           = "query";
-    private final static String HEADER          = "header";
-    private final static String STATUS          = "status";
-    private final static String CONTENT         = "content";
+public final class Marshaller extends BaseMarshaller {
+    private static final String MAPPING         = "mapping";
+    private static final String PARSING         = "parsing";
+    private static final String REQUEST         = "request";
+    private static final String RESPONSE        = "response";
+    private static final String URI             = "uri";
+    private static final String METHOD          = "method";
+    private static final String QUERY           = "query";
+    private static final String HEADER          = "header";
+    private static final String STATUS          = "status";
+    private static final String CONTENT         = "content";
 
-    private Marshaller(Object o) {
+    private Marshaller(final Object o) {
         super(o);
     }
 
-    public static Marshaller from(Object o) {
+    public static Marshaller from(final Object o) {
         return new Marshaller(o);
     }
 

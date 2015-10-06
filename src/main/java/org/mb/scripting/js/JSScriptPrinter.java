@@ -3,13 +3,11 @@ package org.mb.scripting.js;
 import org.mb.scripting.ScriptPrinter;
 
 import java.io.IOException;
-import java.io.Writer;
-import java.nio.CharBuffer;
 
 /**
  * Created by Dmitriy Dzhevaga on 21.09.2015.
  */
-public class JSScriptPrinter implements ScriptPrinter {
+public final class JSScriptPrinter implements ScriptPrinter {
     private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
     private static final String OPEN_PRINT = "print(";
     private static final String CLOSE_PRINT = ");\n";
@@ -21,7 +19,7 @@ public class JSScriptPrinter implements ScriptPrinter {
     private Appendable output;
 
     @Override
-    public ScriptPrinter setOutput(Appendable output) {
+    public ScriptPrinter setOutput(final Appendable output) {
         this.output = output;
         return this;
     }
@@ -50,22 +48,22 @@ public class JSScriptPrinter implements ScriptPrinter {
     }
 
     @Override
-    public ScriptPrinter appendLiteral(char ch) throws IOException {
+    public ScriptPrinter appendLiteral(final char ch) throws IOException {
         String escaped = null;
         if (ch <= '\\') {
-            switch(ch) {
+            switch (ch) {
                 case '\\':
                     escaped = "\\\\";
                     break;
                 case '\'':
-                    escaped= "\\'";
+                    escaped = "\\'";
                     break;
                 case '"':
                     escaped = "\\\"";
                     break;
                 default:
-                    if (ch < 32) {
-                        escaped = toHex(ch);
+                    if (ch < ' ') {
+                        escaped = String.format("\\x%02X", (int) ch);
                     }
             }
         }
@@ -89,7 +87,7 @@ public class JSScriptPrinter implements ScriptPrinter {
     }
 
     @Override
-    public ScriptPrinter appendScript(char ch) throws IOException {
+    public ScriptPrinter appendScript(final char ch) throws IOException {
         output.append(ch);
         return this;
     }
@@ -98,15 +96,5 @@ public class JSScriptPrinter implements ScriptPrinter {
     public ScriptPrinter closeScript() throws IOException {
         output.append(CLOSE_SCRIPT);
         return this;
-    }
-
-    private String toHex(char ch) {
-        char[] r = new char[4];
-        r[3] = HEX_DIGITS[ch & 0xF];
-        ch >>>= 4;
-        r[2] = HEX_DIGITS[ch & 0xF];
-        r[1] = 'x';
-        r[0] = '\\';
-        return String.valueOf(r);
     }
 }

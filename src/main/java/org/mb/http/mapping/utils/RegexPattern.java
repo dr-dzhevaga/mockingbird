@@ -6,30 +6,30 @@ import java.util.regex.Pattern;
 /**
  * Created by Dmitriy Dzhevaga on 28.09.2015.
  */
-public class RegexPattern {
+public final class RegexPattern {
     private final Pattern pattern;
 
-    private RegexPattern(String regex) {
+    private RegexPattern(final String regex) {
         this.pattern = Pattern.compile(regex);
     }
 
-    public static RegexPattern from(String regex) {
+    public static RegexPattern from(final String regex) {
         return new RegexPattern(regex);
     }
 
-    public boolean matches(String string) {
+    public boolean matches(final String string) {
         return string != null && pattern.matcher(string).matches();
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (!(obj instanceof RegexPattern)) {
             return false;
         }
-        final RegexPattern other = (RegexPattern)obj;
+        final RegexPattern other = (RegexPattern) obj;
         return Objects.equals(this.pattern.pattern(), other.pattern.pattern());
     }
 

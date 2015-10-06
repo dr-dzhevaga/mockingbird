@@ -54,7 +54,7 @@ public final class CommonsCLI implements CLI {
     }
 
     @Override
-    public void parse(String[] args) throws ParsingException {
+    public void parse(final String[] args) throws ParsingException {
         CommandLineParser parser = new DefaultParser();
         try {
             commandLine = parser.parse(options, args);
@@ -65,7 +65,7 @@ public final class CommonsCLI implements CLI {
     }
 
     @Override
-    public boolean hasOption(String opt) {
+    public boolean hasOption(final String opt) {
         if (!isParsed) {
             throw new IllegalStateException();
         }
@@ -73,7 +73,7 @@ public final class CommonsCLI implements CLI {
     }
 
     @Override
-    public String getOptionValue(String opt) {
+    public String getOptionValue(final String opt) {
         if (!isParsed) {
             throw new IllegalStateException();
         }
@@ -93,7 +93,8 @@ public final class CommonsCLI implements CLI {
         public final String argumentName;
         public final boolean isRequired;
 
-        private InitialOption(String name, String longName, String description, String argumentName, boolean isRequired) {
+        private InitialOption(final String name, final String longName, final String description,
+                              final String argumentName, final boolean isRequired) {
             this.name = name;
             this.longName = longName;
             this.description = description;

@@ -14,7 +14,7 @@ public enum FileFormat {
         return this.name();
     }
 
-    public static FileFormat of(String name) throws IllegalArgumentException {
+    public static FileFormat of(final String name) {
         return EnumUtils.valueOf(FileFormat.class, name);
     }
 }

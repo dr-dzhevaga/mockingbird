@@ -5,8 +5,10 @@ import org.mb.scripting.js.JSEngine;
 /**
  * Created by Dmitriy Dzhevaga on 21.09.2015.
  */
-public class EngineFactory {
-    public static Engine newInstance(EngineType engineType) {
+public final class EngineFactory {
+    private EngineFactory() { }
+
+    public static Engine newInstance(final EngineType engineType) {
         switch (engineType) {
             case JS:
                 return JSEngine.newInstance();

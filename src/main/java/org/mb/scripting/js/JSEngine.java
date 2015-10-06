@@ -8,18 +8,19 @@ import org.mb.scripting.ScriptingException;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptException;
-import java.io.*;
+import java.io.Reader;
+import java.io.Writer;
 
 /**
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
-public class JSEngine implements Engine {
-    private static final Logger Log = Logger.getLogger(JSEngine.class);
-    private final static NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+public final class JSEngine implements Engine {
+    private static final Logger LOG = Logger.getLogger(JSEngine.class);
+    private static final NashornScriptEngineFactory FACTORY = new NashornScriptEngineFactory();
     private final ScriptEngine engine;
 
     private JSEngine() {
-        engine = factory.getScriptEngine("--print-no-newline=true");
+        engine = FACTORY.getScriptEngine("--print-no-newline=true");
     }
 
     public static Engine newInstance() {
@@ -27,24 +28,24 @@ public class JSEngine implements Engine {
     }
 
     @Override
-    public Engine eval(Reader reader) {
+    public Engine eval(final Reader reader) throws ScriptingException {
         try {
             engine.eval(reader);
         } catch (ScriptException e) {
-            Log.error(e);
+            LOG.error(e);
             throw new ScriptingException(e);
         }
         return this;
     }
 
     @Override
-    public Engine put(String key, Object value) {
+    public Engine put(final String key, final Object value) {
         engine.put(key, value);
         return this;
     }
 
     @Override
-    public Engine setWriter(Writer writer) {
+    public Engine setWriter(final Writer writer) {
         engine.getContext().setWriter(writer);
         return this;
     }

@@ -7,12 +7,12 @@ import java.io.Reader;
 /**
  * Created by Dmitriy Dzhevaga on 27.06.2015.
  */
-public class YAMLParser implements Parser {
+public final class YAMLParser implements Parser {
 
-    public YAMLParser() {}
+    public YAMLParser() { }
 
     @Override
-    public Object parse(Reader inputFile) throws ParsingException {
+    public Object parse(final Reader inputFile) throws ParsingException {
         final YamlReader parser = new YamlReader(inputFile);
         try {
             return parser.read();

@@ -10,7 +10,7 @@ import java.util.Objects;
 /**
  * Created by Dmitriy Dzhevaga on 05.07.2015.
  */
-public class RegexPatternMap {
+public final class RegexPatternMap {
 
     private final Map<String, RegexPattern> patternMap;
 
@@ -22,17 +22,17 @@ public class RegexPatternMap {
         return new RegexPatternMap();
     }
 
-    public void add(String name, String valueRegex) {
+    public void add(final String name, final String valueRegex) {
         patternMap.put(name, RegexPattern.from(valueRegex));
     }
 
-    public void addAll(Map<String, String> parameters) {
+    public void addAll(final Map<String, String> parameters) {
         for (Map.Entry<String, String> entry : parameters.entrySet()) {
             add(entry.getKey(), entry.getValue());
         }
     }
 
-    public boolean matches(Map<String, String> checkedMap) {
+    public boolean matches(final Map<String, String> checkedMap) {
         for (Map.Entry<String, RegexPattern> entry : this.patternMap.entrySet()) {
             RegexPattern regexPattern = entry.getValue();
             String value = checkedMap.get(entry.getKey());
@@ -43,7 +43,7 @@ public class RegexPatternMap {
         return true;
     }
 
-    public boolean matches(Multimap<String, String> checkedMap) {
+    public boolean matches(final Multimap<String, String> checkedMap) {
         for (Map.Entry<String, RegexPattern> entry : this.patternMap.entrySet()) {
             RegexPattern regexPattern = entry.getValue();
             if (!checkedMap.containsKey(entry.getKey())) {
@@ -64,14 +64,14 @@ public class RegexPatternMap {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (!(obj instanceof RegexPatternMap)) {
             return false;
         }
-        final RegexPatternMap other = (RegexPatternMap)obj;
+        final RegexPatternMap other = (RegexPatternMap) obj;
         return Objects.equals(this.patternMap, other.patternMap);
     }
 

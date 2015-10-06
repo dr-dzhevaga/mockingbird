@@ -23,7 +23,11 @@ public final class Request {
     private final Map<String, String> headers;
     private final String content;
 
-    private Request(String uri, Method method, ListMultimap<String, String> queryParameters, Map<String, String> headers, String content) {
+    private Request(final String uri,
+                    final Method method,
+                    final ListMultimap<String, String> queryParameters,
+                    final Map<String, String> headers,
+                    final String content) {
         this.uri = uri;
         this.method = method;
         this.queryParameters = queryParameters;
@@ -31,7 +35,7 @@ public final class Request {
         this.content = content;
     }
 
-    public static Builder newBuilder(String uri, Method method) {
+    public static Builder newBuilder(final String uri, final Method method) {
         return new Builder(uri, method);
     }
 
@@ -89,32 +93,32 @@ public final class Request {
         private Map<String, String> headers = Maps.newHashMap();;
         private String content = "";
 
-        private Builder(String uri, Method method) {
+        private Builder(final String uri, final Method method) {
             this.uri = uri;
             this.method = method;
         }
 
-        public Builder addQueryParameter(String name, String value) {
+        public Builder addQueryParameter(final String name, final String value) {
             this.queryParameters.put(name, value);
             return this;
         }
 
-        public Builder addQueryParameters(String name, Collection<String> values) {
+        public Builder addQueryParameters(final String name, final Collection<String> values) {
             this.queryParameters.putAll(name, values);
             return this;
         }
 
-        public Builder addHeader(String name, String value) {
+        public Builder addHeader(final String name, final String value) {
             this.headers.put(name, value);
             return this;
         }
 
-        public Builder addHeaders(Map<String, String> parameters) {
+        public Builder addHeaders(final Map<String, String> parameters) {
             this.headers.putAll(parameters);
             return this;
         }
 
-        public Builder setContent(String content) {
+        public Builder setContent(final String content) {
             this.content = content;
             return this;
         }

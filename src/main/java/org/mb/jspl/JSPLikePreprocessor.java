@@ -6,12 +6,14 @@ import org.mb.scripting.ScriptPrinter;
 import java.io.IOException;
 import java.io.Reader;
 
-import static org.mb.jspl.JSPLikePreprocessor.State.*;
+import static org.mb.jspl.JSPLikePreprocessor.State.MACRO;
+import static org.mb.jspl.JSPLikePreprocessor.State.SCRIPT;
+import static org.mb.jspl.JSPLikePreprocessor.State.TEXT;
 
 /**
  * Created by Dmitriy Dzhevaga on 16.09.2015.
  */
-public class JSPLikePreprocessor extends Reader {
+public final class JSPLikePreprocessor extends Reader {
     protected enum State {
         TEXT("%>"),
         SCRIPT("<%"),
@@ -19,14 +21,14 @@ public class JSPLikePreprocessor extends Reader {
 
         private final String start;
 
-        State(String start) {
+        State(final String start) {
             this.start = start;
         }
     }
     private static final String LOG_OUTPUT = "Jsp-like template after preprocessing:%n%s";
-    private static final Logger Log = Logger.getLogger(JSPLikePreprocessor.class);
+    private static final Logger LOG = Logger.getLogger(JSPLikePreprocessor.class);
 
-    private final static int BUFF_INITIAL_CAPACITY = 1024;
+    private static final int BUFF_INITIAL_CAPACITY = 1024;
 
     private final Reader jsp;
     private final ScriptPrinter scriptPrinter;
@@ -36,14 +38,14 @@ public class JSPLikePreprocessor extends Reader {
     private int current = -1;
     private boolean textIsOpened;
 
-    public JSPLikePreprocessor(Reader jsp, ScriptPrinter scriptPrinter) {
+    public JSPLikePreprocessor(final Reader jsp, final ScriptPrinter scriptPrinter) {
         this.jsp = jsp;
         this.scriptPrinter = scriptPrinter;
         this.scriptPrinter.setOutput(processedBuff);
     }
 
     @Override
-    public int read(char[] dest, int destOff, int length) throws IOException {
+    public int read(final char[] dest, final int destOff, final int length) throws IOException {
         initCurrent();
 
         while (processedBuff.length() < length) {
@@ -105,22 +107,24 @@ public class JSPLikePreprocessor extends Reader {
                         scriptPrinter.appendScript((char) previous);
                     }
                     break;
+                default:
+                    throw new IllegalStateException();
             }
         }
 
         if (processedBuff.length() == 0) {
             return  -1;
         } else if (processedBuff.length() > length) {
-            if (Log.isDebugEnabled()) {
-                Log.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, length)));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, length)));
             }
             processedBuff.getChars(0, length, dest, destOff);
             processedBuff.delete(0, length);
             return length;
         } else {
             int processedLength = processedBuff.length();
-            if (Log.isDebugEnabled()) {
-                Log.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, processedLength)));
+            if (LOG.isDebugEnabled()) {
+                LOG.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, processedLength)));
             }
             processedBuff.getChars(0, processedBuff.length(), dest, destOff);
             processedBuff.setLength(0);
@@ -144,7 +148,7 @@ public class JSPLikePreprocessor extends Reader {
         current = jsp.read();
     }
 
-    private boolean startsWith(String pattern) {
+    private boolean startsWith(final String pattern) {
         return previous == pattern.charAt(0) && current == pattern.charAt(1);
     }
 }

@@ -15,7 +15,7 @@ public final class Response {
     private final Map<String, String> headers;
     private final Content content;
 
-    private Response(int statusCode, Map<String, String> headers, Content content) {
+    private Response(final int statusCode, final Map<String, String> headers, final Content content) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.content = content;
@@ -37,12 +37,12 @@ public final class Response {
         return content;
     }
 
-    public Response setContent(Content content) {
+    public Response setContent(final Content content) {
         return new Response(this.getStatusCode(), this.getHeaders(), content);
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -79,27 +79,27 @@ public final class Response {
         private Map<String, String> headers = Maps.newHashMap();;
         private Content content = new DefaultContent("");
 
-        public Builder setStatusCode(int statusCode) {
+        public Builder setStatusCode(final int statusCode) {
             this.statusCode = statusCode;
             return this;
         }
 
-        public Builder setStatusCode(String statusCode) {
+        public Builder setStatusCode(final String statusCode) {
             this.statusCode = Integer.parseInt(statusCode);
             return this;
         }
 
-        public Builder addHeader(String name, String value) {
+        public Builder addHeader(final String name, final String value) {
             this.headers.put(name, value);
             return this;
         }
 
-        public Builder addHeaders(Map<String, String> parameters) {
+        public Builder addHeaders(final Map<String, String> parameters) {
             this.headers.putAll(parameters);
             return this;
         }
 
-        public Builder setContent(String content) {
+        public Builder setContent(final String content) {
             this.content = new DefaultContent(content);
             return this;
         }

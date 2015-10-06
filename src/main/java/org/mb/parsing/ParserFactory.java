@@ -3,8 +3,10 @@ package org.mb.parsing;
 /**
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
-public class ParserFactory {
-    public static Parser newParser(PathType pathType, String inputText) throws IllegalArgumentException {
+public final class ParserFactory {
+    private ParserFactory() { }
+
+    public static Parser newParser(final PathType pathType, final String inputText) {
         switch (pathType) {
             case Xpath:
                 return new XpathParser(inputText);
@@ -12,7 +14,8 @@ public class ParserFactory {
                 return new RegExpParser(inputText);
             case JSONPath:
                 return new JsonPathParser(inputText);
+            default:
+                throw new IllegalArgumentException("Unsupported parser path type: " + pathType.toString());
         }
-        throw new IllegalArgumentException("Unsupported parser path type: " + pathType.toString());
     }
 }

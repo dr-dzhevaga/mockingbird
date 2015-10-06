@@ -11,14 +11,19 @@ import org.mb.cli.ParsingException;
 import org.mb.settings.Settings;
 import org.mb.settings.parsing.FileFormat;
 
-import static org.mb.cli.CommonsCLI.*;
+import static org.mb.cli.CommonsCLI.DEBUG;
+import static org.mb.cli.CommonsCLI.FILE;
+import static org.mb.cli.CommonsCLI.FORMAT;
+import static org.mb.cli.CommonsCLI.HELP;
+import static org.mb.cli.CommonsCLI.PORT;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public class Main {
-    public static void main(String[] args) throws Exception {
+public final class Main {
+    private Main() { }
 
+    public static void main(final String[] args) throws Exception {
         CLI cli = CommonsCLI.newInstance();
         try {
             cli.parse(args);

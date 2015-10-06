@@ -13,7 +13,7 @@ public enum EngineType {
         return this.name();
     }
 
-    public static EngineType of(String name) throws IllegalArgumentException {
+    public static EngineType of(final String name) {
         return EnumUtils.valueOf(EngineType.class, name);
     }
 }

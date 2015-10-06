@@ -15,7 +15,7 @@ public enum PathType {
         return this.name();
     }
 
-    public static PathType of(String name) throws IllegalArgumentException {
+    public static PathType of(final String name) {
         return EnumUtils.valueOf(PathType.class, name);
     }
 }

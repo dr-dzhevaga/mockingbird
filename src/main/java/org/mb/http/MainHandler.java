@@ -17,13 +17,12 @@ import java.io.Writer;
 import java.io.Reader;
 import java.io.OutputStreamWriter;
 import java.io.InputStreamReader;
-import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
-public class MainHandler implements Handler {
+public final class MainHandler implements Handler {
     private static final String LOG_REQUEST = "Request:%n%s";
     private static final String LOG_RESPONSE = "Response:%n%s";
     private static final String LOG_GLOBAL_PARSING = "Global parsing:%n%s";
@@ -34,13 +33,13 @@ public class MainHandler implements Handler {
 
     private final Settings settings;
 
-    public MainHandler(Settings settings) {
+    public MainHandler(final Settings settings) {
         this.settings = settings;
         LOG.info(String.format(LOG_GLOBAL_PARSING, settings.getParsing()));
     }
 
     @Override
-    public Response handle(final Request request) {
+    public Response handle(final Request request) throws Exception {
         LOG.info(String.format(LOG_REQUEST, request));
 
         Parsing globalParsing = settings.getParsing();
@@ -56,7 +55,7 @@ public class MainHandler implements Handler {
 
         Response resultResponse = response.setContent(new Content() {
             @Override
-            public void writeTo(OutputStream outputStream) throws IOException {
+            public void writeTo(final OutputStream outputStream) throws Exception {
                 Writer writer = new OutputStreamWriter(outputStream, Charsets.UTF_8);
                 try (
                     Reader reader = new InputStreamReader(inputStream, Charsets.UTF_8);

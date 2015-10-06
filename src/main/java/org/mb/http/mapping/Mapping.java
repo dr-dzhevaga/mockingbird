@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Created by Dmitriy Dzhevaga on 19.06.2015.
  */
-public class Mapping {
+public final class Mapping {
     private static final int    DEFAULT_RESPONSE_STATUS_CODE  = 404;
     private static final String DEFAULT_RESPONSE_CONTENT      = "Not found";
     private static final String LOG_MAPPING_IS_ADDED          = "Mapping is added%n"
@@ -38,12 +38,15 @@ public class Mapping {
         defaultMappingEntry = new MappingEntry(requestPattern, defaultResponse, parsing);
     }
 
-    public void addMapping(RequestPattern requestPattern, Response response, Parsing parsing) {
+    public void addMapping(final RequestPattern requestPattern,
+                           final Response response,
+                           final Parsing parsing) {
         mapping.add(new MappingEntry(requestPattern, response, parsing));
         LOG.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
     }
 
-    public MappingEntry resolve(Request request, Map<String, String> content) {
+    public MappingEntry resolve(final Request request,
+                                final Map<String, String> content) {
         for (MappingEntry mappingEntry : mapping) {
             if (mappingEntry.getRequestPattern().matches(request, content)) {
                 LOG.info(LOG_RESPONSE_IS_FOUND);
@@ -59,7 +62,9 @@ public class Mapping {
         private final Response response;
         private final Parsing parsing;
 
-        private MappingEntry(RequestPattern requestPattern, Response response, Parsing parsing) {
+        private MappingEntry(final RequestPattern requestPattern,
+                             final Response response,
+                             final Parsing parsing) {
             this.requestPattern = requestPattern;
             this.response = response;
             this.parsing = parsing;

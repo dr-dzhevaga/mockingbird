@@ -1,7 +1,6 @@
 package org.mb.scripting;
 
 import java.io.IOException;
-import java.io.Writer;
 
 /**
  * Created by Dmitriy Dzhevaga on 21.09.2015.
