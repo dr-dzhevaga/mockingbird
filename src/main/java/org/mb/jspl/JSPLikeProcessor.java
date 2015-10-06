@@ -11,7 +11,7 @@ import java.io.*;
  * Created by Dmitriy Dzhevaga on 17.09.2015.
  */
 public class JSPLikeProcessor {
-    private static final String LOG_OUTPUT = "Jsp-like template after processing:\n%s";
+    private static final String LOG_OUTPUT = "Jsp-like template after processing:%n%s";
     private static final Logger Log = Logger.getLogger(JSPLikeProcessor.class);
 
     private final Engine engine;
@@ -32,8 +32,8 @@ public class JSPLikeProcessor {
     }
 
     public JSPLikeProcessor print(Writer output) throws IOException {
-        try(Reader script = new JSPLikePreprocessor(jsp, engine.getScriptPrinter())) {
-            if(!Log.isDebugEnabled()) {
+        try (Reader script = new JSPLikePreprocessor(jsp, engine.getScriptPrinter())) {
+            if (!Log.isDebugEnabled()) {
                 engine.setWriter(output).eval(script);
             } else {
                 Writer writer = new StringWriter();

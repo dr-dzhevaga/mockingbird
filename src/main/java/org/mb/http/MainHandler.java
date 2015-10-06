@@ -11,31 +11,37 @@ import org.mb.jspl.JSPLikeProcessor;
 import org.mb.settings.Settings;
 import org.mb.parsing.Parsing;
 
-import java.io.*;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
+import java.io.Reader;
+import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.io.IOException;
 import java.util.Map;
 
 /**
  * Created by Dmitriy Dzhevaga on 11.09.2015.
  */
 public class MainHandler implements Handler {
-    private final static String LOG_REQUEST = "Request:\n%s";
-    private final static String LOG_RESPONSE = "Response:\n%s";
-    private static final String LOG_GLOBAL_PARSING = "Global parsing:\n%s";
-    private static final Logger Log = Logger.getLogger(MainHandler.class);
+    private static final String LOG_REQUEST = "Request:%n%s";
+    private static final String LOG_RESPONSE = "Response:%n%s";
+    private static final String LOG_GLOBAL_PARSING = "Global parsing:%n%s";
+    private static final Logger LOG = Logger.getLogger(MainHandler.class);
 
-    private final static String PARSING = "parsing";
-    private final static String REQUEST = "request";
+    private static final String PARSING = "parsing";
+    private static final String REQUEST = "request";
 
     private final Settings settings;
 
     public MainHandler(Settings settings) {
         this.settings = settings;
-        Log.info(String.format(LOG_GLOBAL_PARSING, settings.getParsing()));
+        LOG.info(String.format(LOG_GLOBAL_PARSING, settings.getParsing()));
     }
 
     @Override
     public Response handle(final Request request) {
-        Log.info(String.format(LOG_REQUEST, request));
+        LOG.info(String.format(LOG_REQUEST, request));
 
         Parsing globalParsing = settings.getParsing();
         final Map<String, String> parsingResult = globalParsing.parse(request.getContent());
@@ -43,7 +49,7 @@ public class MainHandler implements Handler {
         Mapping.MappingEntry mappingEntry = settings.getMapping().resolve(request, parsingResult);
         final Response response = mappingEntry.getResponse();
         final InputStream inputStream = response.getContent().getStream();
-        Log.info(String.format(LOG_RESPONSE, response));
+        LOG.info(String.format(LOG_RESPONSE, response));
 
         Parsing requestParsing = mappingEntry.getParsing();
         parsingResult.putAll(requestParsing.parse(request.getContent()));
@@ -52,7 +58,7 @@ public class MainHandler implements Handler {
             @Override
             public void writeTo(OutputStream outputStream) throws IOException {
                 Writer writer = new OutputStreamWriter(outputStream, Charsets.UTF_8);
-                try(
+                try (
                     Reader reader = new InputStreamReader(inputStream, Charsets.UTF_8);
                 ) {
                     JSPLikeProcessor.from(reader).

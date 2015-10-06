@@ -44,7 +44,7 @@ public class XpathParser extends AbstractParser {
 
     @Override
     public String parse(String path) throws ParsingException {
-        if(textIsParsed) {
+        if (textIsParsed) {
             XPath xpath = xpathFactory.newXPath();
             try {
                 XPathExpression expr = xpath.compile(path);

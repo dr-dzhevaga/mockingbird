@@ -8,20 +8,22 @@ import java.util.Objects;
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public class Response {
+public final class Response {
     private static final int DEFAULT_STATUS_CODE    = 200;
 
-    final private int statusCode;
-    final private Map<String, String> headers;
-    final private Content content;
+    private final int statusCode;
+    private final Map<String, String> headers;
+    private final Content content;
 
-    protected Response(int statusCode, Map<String, String> headers, Content content) {
+    private Response(int statusCode, Map<String, String> headers, Content content) {
         this.statusCode = statusCode;
         this.headers = headers;
         this.content = content;
     }
 
-    public static Builder newBuilder() {return new Builder();}
+    public static Builder newBuilder() {
+        return new Builder();
+    }
 
     public int getStatusCode() {
         return statusCode;
@@ -41,13 +43,13 @@ public class Response {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof Response)) {
+        if (!(obj instanceof Response)) {
             return false;
         }
-        final Response other = (Response)obj;
+        final Response other = (Response) obj;
         return Objects.equals(this.statusCode, other.statusCode)
                 && Objects.equals(this.headers, other.headers)
                 && Objects.equals(this.content, other.content);
@@ -62,17 +64,17 @@ public class Response {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tStatus code: %s", getStatusCode()));
-        if(!getHeaders().isEmpty()) {
-            builder.append(String.format("\n\tHeaders: %s", getHeaders()));
+        if (!getHeaders().isEmpty()) {
+            builder.append(String.format("%n\tHeaders: %s", getHeaders()));
         }
         String content = getContent().toString();
-        if(!content.isEmpty()) {
-            builder.append(String.format("\n\tContent: %s", content));
+        if (!content.isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", content));
         }
         return builder.toString();
     }
 
-    public static class Builder {
+    public static final class Builder {
         private int statusCode = DEFAULT_STATUS_CODE;
         private Map<String, String> headers = Maps.newHashMap();;
         private Content content = new DefaultContent("");

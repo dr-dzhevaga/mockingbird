@@ -34,12 +34,12 @@ public class Main {
         FileFormat fileFormat = FileFormat.of(cli.getOptionValue(FORMAT));
         boolean debug = cli.hasOption(DEBUG);
 
-        if(printHelp) {
+        if (printHelp) {
             cli.printHelp();
             return;
         }
 
-        if(debug) {
+        if (debug) {
             Logger.getLogger("org.mb").setLevel(Level.DEBUG);
         }
 

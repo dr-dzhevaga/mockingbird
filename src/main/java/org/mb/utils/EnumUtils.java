@@ -9,8 +9,8 @@ public class EnumUtils {
     private static final String NO_ENUM_CONSTANT = "No enum constant <%s>. One of %s is expected.";
     
     public static  <T extends Enum<T>> T valueOf(Class<T> enumClass, String name) {
-        for(T value : enumClass.getEnumConstants()) {
-            if(value.name().compareToIgnoreCase(name) == 0) {
+        for (T value : enumClass.getEnumConstants()) {
+            if (value.name().compareToIgnoreCase(name) == 0) {
                 return value;
             }
         }

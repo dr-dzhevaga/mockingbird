@@ -13,7 +13,7 @@ import java.util.*;
  * Created by Dmitriy Dzhevaga on 18.06.2015.
  */
 public class RequestPattern {
-    private static final String LOG_REQUEST_PATTERN = "Matching with pattern:\n%s";
+    private static final String LOG_REQUEST_PATTERN = "Matching with pattern:%n%s";
     private static final String LOG_URI_NOT_MATCHED = "Uri is not matched";
     private static final String LOG_METHOD_NOT_MATCHED = "Method is not matched";
     private static final String LOG_QUERY_PARAMETER_NOT_MATCHED = "Query parameter is not matched";
@@ -45,29 +45,29 @@ public class RequestPattern {
     public boolean matches(Request request, Map<String, String> content) {
         Log.debug(String.format(LOG_REQUEST_PATTERN, this));
 
-        if(!this.uriRegexPattern.matches(request.getURI())) {
+        if (!this.uriRegexPattern.matches(request.getURI())) {
             Log.debug(LOG_URI_NOT_MATCHED);
             return false;
         }
 
-        if(!this.methods.isEmpty()) {
-            if(!this.methods.contains(request.getMethod())) {
+        if (!this.methods.isEmpty()) {
+            if (!this.methods.contains(request.getMethod())) {
                 Log.debug(LOG_METHOD_NOT_MATCHED);
                 return false;
             }
         }
 
-        if(!this.queryParameters.matches(request.getQueryParameters())) {
+        if (!this.queryParameters.matches(request.getQueryParameters())) {
             Log.debug(LOG_QUERY_PARAMETER_NOT_MATCHED);
             return false;
         }
 
-        if(!this.headers.matches(request.getHeaders())) {
+        if (!this.headers.matches(request.getHeaders())) {
             Log.debug(LOG_HEADER_NOT_MATCHED);
             return false;
         }
 
-        if(!this.content.matches(content)) {
+        if (!this.content.matches(content)) {
             Log.debug(LOG_CONTENT_NOT_MATCHED);
             return false;
         }
@@ -78,10 +78,10 @@ public class RequestPattern {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof RequestPattern)) {
+        if (!(obj instanceof RequestPattern)) {
             return false;
         }
         final RequestPattern other = (RequestPattern)obj;
@@ -101,15 +101,15 @@ public class RequestPattern {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tMethod: %s", methods));
-        builder.append(String.format("\n\tUri pattern: %s", uriRegexPattern));
-        if(!queryParameters.isEmpty()) {
-            builder.append(String.format("\n\tQuery parameters: %s", queryParameters));
+        builder.append(String.format("%n\tUri pattern: %s", uriRegexPattern));
+        if (!queryParameters.isEmpty()) {
+            builder.append(String.format("%n\tQuery parameters: %s", queryParameters));
         }
-        if(!headers.isEmpty()) {
-            builder.append(String.format("\n\tHeaders: %s", headers));
+        if (!headers.isEmpty()) {
+            builder.append(String.format("%n\tHeaders: %s", headers));
         }
-        if(!content.isEmpty()) {
-            builder.append(String.format("\n\tContent: %s", content));
+        if (!content.isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", content));
         }
         return builder.toString();
     }
@@ -142,7 +142,7 @@ public class RequestPattern {
         }
 
         public Builder addMethodsAsStrings(Collection<String> methods) {
-            for(String method : methods) {
+            for (String method : methods) {
                 addMethod(method);
             }
             return this;

@@ -17,7 +17,7 @@ public abstract class AbstractParser implements Parser {
     @Override
     public Map<String, String> parse(Map<String, String> paths) throws ParsingException {
         Map<String, String> results = new HashMap<>(paths.size());
-        if(textIsParsed) {
+        if (textIsParsed) {
             for (Map.Entry<String, String> path : paths.entrySet()) {
                 results.put(path.getKey(), parse(path.getValue()));
             }

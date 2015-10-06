@@ -25,7 +25,7 @@ public class JsonPathParser extends AbstractParser {
 
     @Override
     public String parse(String path) throws ParsingException {
-        if(textIsParsed) {
+        if (textIsParsed) {
             Object result;
             try {
                 result = readContext.read(path);

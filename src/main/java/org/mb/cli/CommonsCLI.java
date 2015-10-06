@@ -1,23 +1,29 @@
 package org.mb.cli;
 
 import com.google.common.base.Joiner;
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.ParseException;
 import org.mb.settings.parsing.FileFormat;
 
 /**
  * Created by Dmitriy Dzhevaga on 04.07.2015.
  */
-public class CommonsCLI implements CLI {
+public final class CommonsCLI implements CLI {
     private static final String COMMAND_LINE_SYNTAX     = "java mockingbird.jar";
 
     public static final String HELP = "?";
     public static final String PORT = "p";
     public static final String FILE = "f";
     public static final String FORMAT = "ff";
-    public static final String FORMAT_ARGUMENTS = Joiner.on('|').join(FileFormat.values());
     public static final String DEBUG = "d";
+    private static final String FORMAT_ARGUMENTS = Joiner.on('|').join(FileFormat.values());
 
-    InitialOption[] initialOptions = {
+    private final InitialOption[] initialOptions = {
         new InitialOption(HELP,   "help",        "print this message",           "",               false),
         new InitialOption(PORT,   "port",        "specify server port",          "port",           true),
         new InitialOption(FILE,   "file",        "specify settings file",        "file",           true),
@@ -34,12 +40,12 @@ public class CommonsCLI implements CLI {
     }
 
     private CommonsCLI() {
-        for(InitialOption initialOption : initialOptions) {
+        for (InitialOption initialOption : initialOptions) {
             Option.Builder builder = Option.builder(initialOption.name);
             builder.longOpt(initialOption.longName);
             builder.desc(initialOption.description);
             builder.required(initialOption.isRequired);
-            if(!initialOption.argumentName.isEmpty()) {
+            if (!initialOption.argumentName.isEmpty()) {
                 builder.hasArg(true);
                 builder.argName(initialOption.argumentName);
             }
@@ -60,13 +66,17 @@ public class CommonsCLI implements CLI {
 
     @Override
     public boolean hasOption(String opt) {
-        if(!isParsed) throw new IllegalStateException();
+        if (!isParsed) {
+            throw new IllegalStateException();
+        }
         return commandLine.hasOption(opt);
     }
 
     @Override
     public String getOptionValue(String opt) {
-        if(!isParsed) throw new IllegalStateException();
+        if (!isParsed) {
+            throw new IllegalStateException();
+        }
         return commandLine.getOptionValue(opt);
     }
 
@@ -76,12 +86,12 @@ public class CommonsCLI implements CLI {
         formatter.printHelp(COMMAND_LINE_SYNTAX, options, true);
     }
 
-    private static class InitialOption {
-        final String name;
-        final String longName;
-        final String description;
-        final String argumentName;
-        final boolean isRequired;
+    private static final class InitialOption {
+        public final String name;
+        public final String longName;
+        public final String description;
+        public final String argumentName;
+        public final boolean isRequired;
 
         private InitialOption(String name, String longName, String description, String argumentName, boolean isRequired) {
             this.name = name;

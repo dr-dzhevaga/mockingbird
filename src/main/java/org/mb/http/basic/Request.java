@@ -1,24 +1,27 @@
 package org.mb.http.basic;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Maps;
+
 import java.util.Collection;
 import java.util.Map;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public class Request {
+public final class Request {
     public static final String URI      = "uri";
     public static final String METHOD   = "method";
     public static final String HEADER   = "header";
     public static final String QUERY    = "query";
     public static final String CONTENT  = "content";
 
-    final private String uri;
-    final private Method method;
-    final private ListMultimap<String, String> queryParameters;
-    final private Map<String, String> headers;
-    final private String content;
+    private final String uri;
+    private final Method method;
+    private final ListMultimap<String, String> queryParameters;
+    private final Map<String, String> headers;
+    private final String content;
 
     private Request(String uri, Method method, ListMultimap<String, String> queryParameters, Map<String, String> headers, String content) {
         this.uri = uri;
@@ -66,20 +69,20 @@ public class Request {
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("\tMethod: %s", getMethod()));
-        builder.append(String.format("\n\tURI: %s", getURI()));
-        if(!getQueryParameters().isEmpty()) {
-            builder.append(String.format("\n\tQuery parameters: %s", getQueryParameters()));
+        builder.append(String.format("%n\tURI: %s", getURI()));
+        if (!getQueryParameters().isEmpty()) {
+            builder.append(String.format("%n\tQuery parameters: %s", getQueryParameters()));
         }
-        if(!getHeaders().isEmpty()) {
-            builder.append(String.format("\n\tHeaders: %s", getHeaders()));
+        if (!getHeaders().isEmpty()) {
+            builder.append(String.format("%n\tHeaders: %s", getHeaders()));
         }
-        if(!getContent().isEmpty()) {
-            builder.append(String.format("\n\tContent: %s", getContent()));
+        if (!getContent().isEmpty()) {
+            builder.append(String.format("%n\tContent: %s", getContent()));
         }
         return builder.toString();
     }
 
-    public static class Builder {
+    public static final class Builder {
         private String uri;
         private Method method;
         private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();;

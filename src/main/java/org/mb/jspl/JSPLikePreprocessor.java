@@ -23,7 +23,7 @@ public class JSPLikePreprocessor extends Reader {
             this.start = start;
         }
     }
-    private static final String LOG_OUTPUT = "Jsp-like template after preprocessing:\n%s";
+    private static final String LOG_OUTPUT = "Jsp-like template after preprocessing:%n%s";
     private static final Logger Log = Logger.getLogger(JSPLikePreprocessor.class);
 
     private final static int BUFF_INITIAL_CAPACITY = 1024;
@@ -46,12 +46,12 @@ public class JSPLikePreprocessor extends Reader {
     public int read(char[] dest, int destOff, int length) throws IOException {
         initCurrent();
 
-        while(processedBuff.length() < length) {
+        while (processedBuff.length() < length) {
             readNext();
-            if(current == -1) {
-                if(previous != -1) {
+            if (current == -1) {
+                if (previous != -1) {
                     if (state == TEXT) {
-                        if(!textIsOpened) {
+                        if (!textIsOpened) {
                             scriptPrinter.openPrintFunction().openLiteral();
                         }
                         scriptPrinter.appendLiteral((char) previous).closeLiteral().closePrintFunction();
@@ -63,13 +63,13 @@ public class JSPLikePreprocessor extends Reader {
 
             switch (state) {
                 case TEXT:
-                    if(startsWith(SCRIPT.start)) {
-                        if(textIsOpened) {
+                    if (startsWith(SCRIPT.start)) {
+                        if (textIsOpened) {
                             textIsOpened = false;
                             scriptPrinter.closeLiteral().closePrintFunction();
                         }
                         readNext();
-                        if(startsWith(MACRO.start)) {
+                        if (startsWith(MACRO.start)) {
                             state = MACRO;
                             scriptPrinter.openPrintFunction();
                             readNext();
@@ -78,7 +78,7 @@ public class JSPLikePreprocessor extends Reader {
                             scriptPrinter.openScript();
                         }
                     } else {
-                        if(!textIsOpened) {
+                        if (!textIsOpened) {
                             textIsOpened = true;
                             scriptPrinter.openPrintFunction().openLiteral();
                         }
@@ -87,7 +87,7 @@ public class JSPLikePreprocessor extends Reader {
                     break;
 
                 case MACRO:
-                    if(startsWith(TEXT.start)) {
+                    if (startsWith(TEXT.start)) {
                         scriptPrinter.closePrintFunction();
                         state = TEXT;
                         readNext();
@@ -97,7 +97,7 @@ public class JSPLikePreprocessor extends Reader {
                     break;
 
                 case SCRIPT:
-                    if(startsWith(TEXT.start)) {
+                    if (startsWith(TEXT.start)) {
                         scriptPrinter.closeScript();
                         state = TEXT;
                         readNext();
@@ -108,10 +108,10 @@ public class JSPLikePreprocessor extends Reader {
             }
         }
 
-        if(processedBuff.length() == 0) {
+        if (processedBuff.length() == 0) {
             return  -1;
-        } else if(processedBuff.length() > length) {
-            if(Log.isDebugEnabled()) {
+        } else if (processedBuff.length() > length) {
+            if (Log.isDebugEnabled()) {
                 Log.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, length)));
             }
             processedBuff.getChars(0, length, dest, destOff);
@@ -119,7 +119,7 @@ public class JSPLikePreprocessor extends Reader {
             return length;
         } else {
             int processedLength = processedBuff.length();
-            if(Log.isDebugEnabled()) {
+            if (Log.isDebugEnabled()) {
                 Log.debug(String.format(LOG_OUTPUT, processedBuff.substring(0, processedLength)));
             }
             processedBuff.getChars(0, processedBuff.length(), dest, destOff);
@@ -134,7 +134,7 @@ public class JSPLikePreprocessor extends Reader {
     }
 
     private void initCurrent() throws IOException {
-        if(current == -1) {
+        if (current == -1) {
             current = jsp.read();
         }
     }

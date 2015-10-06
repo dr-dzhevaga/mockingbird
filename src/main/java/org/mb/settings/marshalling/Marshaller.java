@@ -44,7 +44,7 @@ public class Marshaller extends BaseMarshaller {
         Mapping mapping = new Mapping();
 
         List httpMappingList = toType(List.class, true);
-        for(Object httpMappingObject : httpMappingList) {
+        for (Object httpMappingObject : httpMappingList) {
             Map httpMappingMap = from(httpMappingObject).toType(Map.class, true);
             RequestPattern requestPattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
             Response response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
@@ -61,7 +61,7 @@ public class Marshaller extends BaseMarshaller {
 
         Object uriObject = httpRequestPatternMap.get(URI);
         String uri = from(uriObject).toStr();
-        if(!uri.isEmpty()) {
+        if (!uri.isEmpty()) {
             builder.setUriRegex(uri);
         }
 
@@ -87,7 +87,7 @@ public class Marshaller extends BaseMarshaller {
 
         Object statusCodeObject = httpResponseMap.get(STATUS);
         String statusCode = from(statusCodeObject).toStr();
-        if(!statusCode.isEmpty()) {
+        if (!statusCode.isEmpty()) {
             builder.setStatusCode(statusCode);
         }
 
@@ -96,7 +96,7 @@ public class Marshaller extends BaseMarshaller {
 
         Object contentObject = httpResponseMap.get(CONTENT);
         String content = from(contentObject).toStr();
-        if(!content.isEmpty()) {
+        if (!content.isEmpty()) {
             builder.setContent(content);
         }
 
@@ -107,7 +107,7 @@ public class Marshaller extends BaseMarshaller {
         Parsing parsing = new Parsing();
 
         Map<String, Map> map = toMapOfType(String.class, Map.class);
-        for(Map.Entry<String, Map> entry : map.entrySet()) {
+        for (Map.Entry<String, Map> entry : map.entrySet()) {
             PathType pathType = PathType.of(entry.getKey());
             Map<String, String> paths = from(entry.getValue()).toMapOfType(String.class, String.class);
             parsing.addParsing(pathType, paths);

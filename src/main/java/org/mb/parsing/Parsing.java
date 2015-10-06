@@ -25,8 +25,8 @@ public class Parsing {
 
     public Map<String, String> parse(String text) throws ParsingException {
         Map<String, String> parsingResult = Maps.newHashMap();
-        if(!Strings.isNullOrEmpty(text)) {
-            for(PathType pathType : parsing.rowKeySet()) {
+        if (!Strings.isNullOrEmpty(text)) {
+            for (PathType pathType : parsing.rowKeySet()) {
                 Parser parser = ParserFactory.newParser(pathType, text);
                 Map<String, String> paths = parsing.row(pathType);
                 parsingResult.putAll(parser.parse(paths));

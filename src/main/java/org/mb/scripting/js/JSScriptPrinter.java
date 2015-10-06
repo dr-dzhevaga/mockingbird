@@ -52,7 +52,7 @@ public class JSScriptPrinter implements ScriptPrinter {
     @Override
     public ScriptPrinter appendLiteral(char ch) throws IOException {
         String escaped = null;
-        if(ch <= '\\') {
+        if (ch <= '\\') {
             switch(ch) {
                 case '\\':
                     escaped = "\\\\";
@@ -64,12 +64,12 @@ public class JSScriptPrinter implements ScriptPrinter {
                     escaped = "\\\"";
                     break;
                 default:
-                    if(ch < 32) {
+                    if (ch < 32) {
                         escaped = toHex(ch);
                     }
             }
         }
-        if(escaped == null) {
+        if (escaped == null) {
             output.append(ch);
         } else {
             output.append(escaped);

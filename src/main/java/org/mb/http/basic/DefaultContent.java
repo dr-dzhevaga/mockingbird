@@ -4,14 +4,21 @@ import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
 import java.util.Objects;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.09.2015.
  */
-public class DefaultContent implements Content {
-    private final static int TO_STRING_MAX_LENGTH = 1024;
+public final class DefaultContent implements Content {
+    private static final int TO_STRING_MAX_LENGTH = 1024;
     private final String source;
     private final boolean sourceIsFilePath;
 
@@ -22,14 +29,14 @@ public class DefaultContent implements Content {
 
     @Override
     public void writeTo(OutputStream outputStream) throws IOException {
-        try(InputStream inputStream = getStream()) {
+        try (InputStream inputStream = getStream()) {
             ByteStreams.copy(inputStream, outputStream);
         }
     }
 
     @Override
     public InputStream getStream() {
-        if(sourceIsFilePath) {
+        if (sourceIsFilePath) {
             try {
                 return new FileInputStream(source);
             } catch (FileNotFoundException e) {
@@ -41,7 +48,7 @@ public class DefaultContent implements Content {
     }
 
     private String toString(int maxLength) {
-        try(InputStream stream = getStream()) {
+        try (InputStream stream = getStream()) {
             return CharStreams.toString(new InputStreamReader(ByteStreams.limit(stream, maxLength), Charsets.UTF_8));
         } catch (IOException e) {
             return e.getMessage();
@@ -55,13 +62,13 @@ public class DefaultContent implements Content {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof DefaultContent)) {
+        if (!(obj instanceof DefaultContent)) {
             return false;
         }
-        final DefaultContent other = (DefaultContent)obj;
+        final DefaultContent other = (DefaultContent) obj;
         return  Objects.equals(this.source, other.source);
     }
 

@@ -33,10 +33,10 @@ public class RegexPatternMap {
     }
 
     public boolean matches(Map<String, String> checkedMap) {
-        for(Map.Entry<String, RegexPattern> entry : this.patternMap.entrySet()) {
+        for (Map.Entry<String, RegexPattern> entry : this.patternMap.entrySet()) {
             RegexPattern regexPattern = entry.getValue();
             String value = checkedMap.get(entry.getKey());
-            if(!regexPattern.matches(value)) {
+            if (!regexPattern.matches(value)) {
                 return false;
             }
         }
@@ -46,7 +46,7 @@ public class RegexPatternMap {
     public boolean matches(Multimap<String, String> checkedMap) {
         for (Map.Entry<String, RegexPattern> entry : this.patternMap.entrySet()) {
             RegexPattern regexPattern = entry.getValue();
-            if(!checkedMap.containsKey(entry.getKey())) {
+            if (!checkedMap.containsKey(entry.getKey())) {
                 return false;
             }
             Collection<String> values = checkedMap.get(entry.getKey());
@@ -65,10 +65,10 @@ public class RegexPatternMap {
 
     @Override
     public boolean equals(Object obj) {
-        if(this == obj) {
+        if (this == obj) {
             return true;
         }
-        if(!(obj instanceof RegexPatternMap)) {
+        if (!(obj instanceof RegexPatternMap)) {
             return false;
         }
         final RegexPatternMap other = (RegexPatternMap)obj;
