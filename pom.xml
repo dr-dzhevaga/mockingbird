@@ -37,11 +37,11 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>2.13</version>
                 <configuration>
-                    <violationIgnore>javadoc, LineLength, NewlineAtEndOfFile, FinalParameters, HiddenField</violationIgnore>
+                    <violationIgnore>javadoc, LineLength, NewlineAtEndOfFile, HiddenField, VisibilityModifier</violationIgnore>
                 </configuration>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -59,9 +59,12 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
                 <version>3.0.1</version>
+                <configuration>
+                    <classFilesDirectory>/lib</classFilesDirectory>
+                </configuration>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <phase>compile</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
@@ -80,6 +83,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
                 <configuration>
                     <archive>
                         <manifest>
