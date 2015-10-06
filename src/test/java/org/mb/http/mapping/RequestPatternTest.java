@@ -1,6 +1,8 @@
 package org.mb.http.mapping;
 
 import com.google.common.collect.Maps;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mb.http.basic.Method;
@@ -14,6 +16,10 @@ import static java.util.Arrays.asList;
  * Created by Dmitriy Dzhevaga on 12.07.2015.
  */
 public class RequestPatternTest {
+    static
+    {
+        Logger.getLogger("org.mb").setLevel(Level.ERROR);
+    }
 
     private RequestPattern getEmptyRequestPattern() {
         return RequestPattern.newBuilder().build();

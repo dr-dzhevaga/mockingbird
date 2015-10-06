@@ -1,9 +1,12 @@
 package org.mb.jspl;
 
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mb.scripting.ScriptingException;
 
 import java.io.*;
 import java.util.Arrays;
@@ -14,9 +17,13 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 public class JSPLikeProcessorTest {
-
     private final String source;
     private final String ER;
+
+    static
+    {
+        Logger.getLogger("org.mb").setLevel(Level.ERROR);
+    }
 
     public JSPLikeProcessorTest(String source, String ER) {
         this.source = source;
@@ -27,10 +34,9 @@ public class JSPLikeProcessorTest {
     public static Collection testData() {
         return Arrays.asList(new Object[][]{
                 {"test", "test"},
-                {"test\ntest", "test\ntest"},
-                {"test\r\ntest", "test\r\ntest"},
+                {"test\ntest\r\ntest", "test\ntest\r\ntest"},
                 {"' '' \" \"\" \\ \\\\", "' '' \" \"\" \\ \\\\"},
-                {"тест", "тест"},
+                {"С‚РµСЃС‚", "С‚РµСЃС‚"},
 
                 {"<%if(true)%>test", "test"},
                 {"te<%if(true)%>st", "test"},
@@ -51,7 +57,7 @@ public class JSPLikeProcessorTest {
     }
 
     @Test
-    public void print_runWithDataSet() throws IOException {
+    public void print_runWithDataSet() throws IOException, ScriptingException {
         try (
                 Reader reader = new StringReader(source);
                 Writer writer = new StringWriter();

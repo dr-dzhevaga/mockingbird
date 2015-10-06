@@ -1,6 +1,8 @@
 package org.mb.http.mapping;
 
 import com.google.common.collect.Maps;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mb.http.basic.Method;
@@ -17,6 +19,11 @@ import java.util.Map;
 public class MappingTest {
     private static int DEFAULT_STATUS_CODE = 404;
     private static String DEFAULT_CONTENT = "Not found";
+
+    static
+    {
+        Logger.getLogger("org.mb").setLevel(Level.ERROR);
+    }
 
     private Response getDefaultResponse() {
         return Response.newBuilder().
