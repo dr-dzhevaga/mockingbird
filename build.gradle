@@ -1,0 +1,47 @@
+import org.apache.tools.ant.filters.ReplaceTokens
+
+apply plugin: "java"
+
+version = "0.0.1"
+
+def libDir = "lib"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile "org.eclipse.jetty:jetty-server:9.2.11.v20150529"
+    compile "com.google.guava:guava:18.0"
+    compile "com.esotericsoftware.yamlbeans:yamlbeans:1.09"
+    compile "commons-cli:commons-cli:1.3.1"
+    compile "log4j:log4j:1.2.17"
+    compile "com.jayway.jsonpath:json-path:2.0.0"
+    compile "org.slf4j:slf4j-log4j12:1.7.12"
+    testCompile "junit:junit:4.12"
+}
+
+processResources {
+    filter(ReplaceTokens, tokens: ["jarName": jar.archiveName])
+}
+
+jar {
+    manifest {
+        attributes("Main-Class": "org.mb.Main",
+        "Class-Path": configurations.compile.collect { "$libDir/$it.name" }.join(" "))
+    }
+    exclude "settings.*", "start.*"
+}
+
+task packDistribution(dependsOn: assemble, type: Zip) {
+    into("${libDir}") {
+        from configurations.compile
+    }
+    into("/") {
+        from "${jar.destinationDir}"
+    }
+    into("/") {
+        from sourceSets.main.output.resourcesDir
+        exclude "log4j.*"
+    }
+}
