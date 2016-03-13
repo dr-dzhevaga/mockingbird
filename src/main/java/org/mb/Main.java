@@ -2,55 +2,67 @@ package org.mb;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.kohsuke.args4j.CmdLineException;
+import org.kohsuke.args4j.CmdLineParser;
+import org.kohsuke.args4j.Option;
 import org.mb.http.MainHandler;
-import org.mb.http.basic.Server;
 import org.mb.http.basic.JettyServer;
-import org.mb.cli.CLI;
-import org.mb.cli.CommonsCLI;
-import org.mb.cli.ParsingException;
+import org.mb.http.basic.Server;
 import org.mb.settings.Settings;
 import org.mb.settings.parsing.FileFormat;
-
-import static org.mb.cli.CommonsCLI.DEBUG;
-import static org.mb.cli.CommonsCLI.FILE;
-import static org.mb.cli.CommonsCLI.FORMAT;
-import static org.mb.cli.CommonsCLI.HELP;
-import static org.mb.cli.CommonsCLI.PORT;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
 public final class Main {
+    @Option(name = "-?", aliases = {"-h", "--help"}, usage = "print this message")
+    private boolean help;
+
+    @Option(name = "-p", aliases = "--port", usage = "specify server port", metaVar = "number", required = true)
+    private int port;
+
+    @Option(name = "-f", aliases = "--file", usage = "specify settings file", metaVar = "path", required = true)
+    private String file;
+
+    @Option(name = "-ff", aliases = "--file-format", usage = "specify settings file format", metaVar = "YAML|JSON", required = true)
+    private String format;
+
+    @Option(name = "-d", aliases = "--debug", usage = "enable debug mode")
+    private boolean debug;
+
     private Main() { }
 
-    public static void main(final String[] args) throws Exception {
-        CLI cli = CommonsCLI.newInstance();
-        try {
-            cli.parse(args);
-        } catch (ParsingException e) {
-            System.out.println(e.getMessage());
-            cli.printHelp();
+    public static void main(String... args) throws Exception {
+        new Main().doMain(args);
+    }
+
+    public void doMain(String... args) throws Exception {
+        if (!parseArgs(args)) {
             return;
         }
-
-        boolean printHelp = cli.hasOption(HELP);
-        int serverPort = Integer.parseInt(cli.getOptionValue(PORT));
-        String filePath = cli.getOptionValue(FILE);
-        FileFormat fileFormat = FileFormat.of(cli.getOptionValue(FORMAT));
-        boolean debug = cli.hasOption(DEBUG);
-
-        if (printHelp) {
-            cli.printHelp();
-            return;
-        }
-
         if (debug) {
             Logger.getLogger("org.mb").setLevel(Level.DEBUG);
         }
-
-        Settings settings = Settings.load(filePath, fileFormat);
-        Server server = JettyServer.newInstance(serverPort);
+        Settings settings = Settings.load(file, FileFormat.of(format));
+        Server server = JettyServer.newInstance(port);
         server.setHandler(new MainHandler(settings));
         server.start();
+    }
+
+    private boolean parseArgs(String... args) {
+        CmdLineParser cmdLineParser = new CmdLineParser(this);
+        try {
+            cmdLineParser.parseArgument(args);
+        } catch (CmdLineException e) {
+            if (!help) {
+                System.err.println(e.getMessage());
+            }
+            cmdLineParser.printUsage(System.out);
+            return false;
+        }
+        if (help) {
+            cmdLineParser.printUsage(System.out);
+        }
+        return true;
     }
 }
