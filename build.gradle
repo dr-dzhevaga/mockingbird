@@ -1,5 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
+apply plugin: "groovy"
 apply plugin: "java"
 
 version = "0.0.1"
@@ -19,6 +20,8 @@ dependencies {
     compile "com.jayway.jsonpath:json-path:2.0.0"
     compile "org.slf4j:slf4j-log4j12:1.7.12"
     testCompile "junit:junit:4.12"
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+    testCompile "org.codehaus.groovy:groovy-all:2.4.6"
 }
 
 processResources {
@@ -33,7 +36,7 @@ jar {
     exclude "settings.*", "start.*"
 }
 
-task packDistribution(dependsOn: assemble, type: Zip) {
+task packDistribution(dependsOn: build, type: Zip) {
     into("${libDir}") {
         from configurations.compile
     }
@@ -44,4 +47,5 @@ task packDistribution(dependsOn: assemble, type: Zip) {
         from sourceSets.main.output.resourcesDir
         exclude "log4j.*"
     }
+    setGroup "build"
 }
