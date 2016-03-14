@@ -2,6 +2,7 @@ package org.mb.settings.parsing;
 
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
+
 import java.io.Reader;
 
 /**
@@ -12,8 +13,8 @@ public final class YAMLParser implements Parser {
     public YAMLParser() { }
 
     @Override
-    public Object parse(final Reader inputFile) throws ParsingException {
-        final YamlReader parser = new YamlReader(inputFile);
+    public Object parse(Reader inputFile) throws ParsingException {
+        YamlReader parser = new YamlReader(inputFile);
         try {
             return parser.read();
         } catch (YamlException e) {

@@ -10,7 +10,7 @@ public final class EnumUtils {
 
     private EnumUtils() { }
 
-    public static  <T extends Enum<T>> T valueOf(final Class<T> enumClass, final String name) {
+    public static <T extends Enum<T>> T valueOf(Class<T> enumClass, String name) {
         for (T value : enumClass.getEnumConstants()) {
             if (value.name().compareToIgnoreCase(name) == 0) {
                 return value;

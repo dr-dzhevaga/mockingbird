@@ -6,7 +6,7 @@ package org.mb.parsing;
 public final class ParserFactory {
     private ParserFactory() { }
 
-    public static Parser newParser(final PathType pathType, final String inputText) {
+    public static Parser newParser(PathType pathType, String inputText) {
         switch (pathType) {
             case Xpath:
                 return new XpathParser(inputText);

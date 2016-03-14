@@ -11,7 +11,7 @@ public final class JSONParser implements Parser {
     public JSONParser() { }
 
     @Override
-    public Object parse(final Reader inputFile) throws ParsingException {
+    public Object parse(Reader inputFile) throws ParsingException {
         try {
             return JSONValue.parse(inputFile);
         } catch (Throwable e) {

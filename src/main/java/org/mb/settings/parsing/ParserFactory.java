@@ -6,7 +6,7 @@ package org.mb.settings.parsing;
 public final class ParserFactory {
     private ParserFactory() { }
 
-    public static Parser newParser(final FileFormat format) {
+    public static Parser newParser(FileFormat format) {
         switch (format) {
             case JSON:
                 return new JSONParser();

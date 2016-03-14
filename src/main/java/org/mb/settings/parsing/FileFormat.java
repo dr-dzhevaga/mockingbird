@@ -9,12 +9,12 @@ public enum FileFormat {
     JSON,
     YAML;
 
+    public static FileFormat of(String name) {
+        return EnumUtils.valueOf(FileFormat.class, name);
+    }
+
     @Override
     public String toString() {
         return this.name();
-    }
-
-    public static FileFormat of(final String name) {
-        return EnumUtils.valueOf(FileFormat.class, name);
     }
 }

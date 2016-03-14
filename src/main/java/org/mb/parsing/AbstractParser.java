@@ -10,12 +10,12 @@ public abstract class AbstractParser implements Parser {
     protected final String text;
     protected boolean textIsParsed = true;
 
-    public AbstractParser(final String text) {
+    public AbstractParser(String text) {
         this.text = text;
     }
 
     @Override
-    public final Map<String, String> parse(final Map<String, String> paths) throws ParsingException {
+    public Map<String, String> parse(Map<String, String> paths) throws ParsingException {
         Map<String, String> results = new HashMap<>(paths.size());
         if (textIsParsed) {
             for (Map.Entry<String, String> path : paths.entrySet()) {

@@ -8,47 +8,32 @@ import java.io.IOException;
  * Created by Dmitriy Dzhevaga on 21.09.2015.
  */
 public final class JSScriptPrinter implements ScriptPrinter {
-    private static final char[] HEX_DIGITS = "0123456789ABCDEF".toCharArray();
-    private static final String OPEN_PRINT = "print(";
-    private static final String CLOSE_PRINT = ");\n";
-    private static final String OPEN_LITERAL = "\"";
-    private static final String CLOSE_LITERAL = "\"";
-    private static final String OPEN_SCRIPT = "";
-    private static final String CLOSE_SCRIPT = "\n";
+    private final Appendable output;
 
-    private Appendable output;
-
-    @Override
-    public ScriptPrinter setOutput(final Appendable output) {
+    public JSScriptPrinter(Appendable output) {
         this.output = output;
-        return this;
-    }
-
-    @Override
-    public Appendable getOutput() {
-        return output;
     }
 
     @Override
     public ScriptPrinter openPrintFunction() throws IOException {
-        output.append(OPEN_PRINT);
+        output.append("print(");
         return this;
     }
 
     @Override
     public ScriptPrinter closePrintFunction() throws IOException {
-        output.append(CLOSE_PRINT);
+        output.append(");\n");
         return this;
     }
 
     @Override
     public ScriptPrinter openLiteral() throws IOException {
-        output.append(OPEN_LITERAL);
+        output.append("\"");
         return this;
     }
 
     @Override
-    public ScriptPrinter appendLiteral(final char ch) throws IOException {
+    public ScriptPrinter appendLiteral(char ch) throws IOException {
         String escaped = null;
         if (ch <= '\\') {
             switch (ch) {
@@ -77,24 +62,23 @@ public final class JSScriptPrinter implements ScriptPrinter {
 
     @Override
     public ScriptPrinter closeLiteral() throws IOException {
-        output.append(CLOSE_LITERAL);
+        output.append("\"");
         return this;
     }
     @Override
     public ScriptPrinter openScript() throws IOException {
-        output.append(OPEN_SCRIPT);
         return this;
     }
 
     @Override
-    public ScriptPrinter appendScript(final char ch) throws IOException {
+    public ScriptPrinter appendScript(char ch) throws IOException {
         output.append(ch);
         return this;
     }
 
     @Override
     public ScriptPrinter closeScript() throws IOException {
-        output.append(CLOSE_SCRIPT);
+        output.append("\n");
         return this;
     }
 }

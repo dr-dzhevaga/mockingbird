@@ -1,49 +1,47 @@
 package org.mb.jspl;
 
+import com.google.common.base.Charsets;
 import org.apache.log4j.Logger;
 import org.mb.scripting.Engine;
-import org.mb.scripting.EngineFactory;
-import org.mb.scripting.EngineType;
 import org.mb.scripting.ScriptingException;
+import org.mb.scripting.ScriptingFactory;
 
-import java.io.Reader;
-import java.io.Writer;
-import java.io.StringWriter;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.09.2015.
  */
 public final class JSPLikeProcessor {
-    private static final String LOG_OUTPUT = "Jsp-like template after processing:%n%s";
-    private static final Logger LOG = Logger.getLogger(JSPLikeProcessor.class);
+    private static final Logger log = Logger.getLogger(JSPLikeProcessor.class);
 
+    private final Reader input;
+    private final Writer output;
     private final Engine engine;
-    private final Reader jsp;
 
-    private JSPLikeProcessor(final Reader jsp) {
-        this.jsp = jsp;
-        this.engine = EngineFactory.newInstance(EngineType.JS);
+    public JSPLikeProcessor(Reader input, Writer output) {
+        this.input = input;
+        this.output = output;
+        this.engine = ScriptingFactory.newEngine();
     }
 
-    public static JSPLikeProcessor from(final Reader reader) {
-        return new JSPLikeProcessor(reader);
+    public JSPLikeProcessor(InputStream input, OutputStream output) {
+        this(new InputStreamReader(input, Charsets.UTF_8), new OutputStreamWriter(output, Charsets.UTF_8));
     }
 
-    public JSPLikeProcessor put(final String name, final Object value) {
-        engine.put(name, value);
+    public JSPLikeProcessor putInContext(String name, Object value) {
+        engine.putInContext(name, value);
         return this;
     }
 
-    public JSPLikeProcessor print(final Writer output) throws IOException, ScriptingException {
-        try (Reader script = new JSPLikePreprocessor(jsp, engine.getScriptPrinter())) {
-            if (!LOG.isDebugEnabled()) {
-                engine.setWriter(output).eval(script);
+    public JSPLikeProcessor print() throws IOException, ScriptingException {
+        try (Reader script = new JSPLikePreprocessor(input)) {
+            if (!log.isDebugEnabled()) {
+                engine.setOutput(output).eval(script);
             } else {
                 Writer writer = new StringWriter();
-                engine.setWriter(writer).eval(script);
+                engine.setOutput(writer).eval(script);
                 String result = writer.toString();
-                LOG.debug(String.format(LOG_OUTPUT, result));
+                log.debug(String.format("Jsp-like template after processing:%n%s", result));
                 output.write(result);
                 output.flush();
             }

@@ -16,9 +16,10 @@ class JSPLikeProcessorSpecification extends Specification {
         given:
         def reader = new StringReader(script)
         def writer = new StringWriter()
-        JSPLikeProcessor.from(reader).print(writer)
+        def jspLikeProcessor = new JSPLikeProcessor(reader, writer)
 
         expect:
+        jspLikeProcessor.print()
         writer.toString() == result
 
         where:

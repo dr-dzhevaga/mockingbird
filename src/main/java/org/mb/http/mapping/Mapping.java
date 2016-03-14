@@ -2,70 +2,65 @@ package org.mb.http.mapping;
 
 import com.google.common.collect.Lists;
 import org.apache.log4j.Logger;
-import org.mb.http.basic.Request;
-import org.mb.http.basic.Response;
+import org.mb.http.basic.HTTPRequest;
+import org.mb.http.basic.HTTPResponse;
 import org.mb.parsing.Parsing;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Created by Dmitriy Dzhevaga on 19.06.2015.
  */
 public final class Mapping {
-    private static final int    DEFAULT_RESPONSE_STATUS_CODE  = 404;
-    private static final String DEFAULT_RESPONSE_CONTENT      = "Not found";
-    private static final String LOG_MAPPING_IS_ADDED          = "Mapping is added%n"
-                                                              + "Request pattern:%n"
-                                                              + "%s%n"
-                                                              + "Response:%n"
-                                                              + "%s%n"
-                                                              + "Request parsing: %s";
-    private static final String LOG_RESPONSE_IS_FOUND         = "Response is found in mapping";
-    private static final String LOG_RESPONSE_IS_NOT_FOUND     = "Response is not found in mapping, default response will be used";
-    private static final Logger LOG = Logger.getLogger(Mapping.class);
-
-    private List<MappingEntry> mapping = Lists.newArrayList();
-    private final MappingEntry defaultMappingEntry;
+    private static final int DEFAULT_RESPONSE_STATUS_CODE = 404;
+    private static final String DEFAULT_RESPONSE_CONTENT = "Not found";
+    private static final Logger log = Logger.getLogger(Mapping.class);
+    private static final Entry defaultEntry = createDefaultEntry();
+    private List<Entry> mapping = Lists.newArrayList();
 
     public Mapping() {
-        Response defaultResponse = Response.newBuilder().
+    }
+
+    private static Entry createDefaultEntry() {
+        HTTPResponse response = HTTPResponse.builder().
                 setStatusCode(DEFAULT_RESPONSE_STATUS_CODE).
                 setContent(DEFAULT_RESPONSE_CONTENT).
                 build();
-        RequestPattern requestPattern = RequestPattern.newBuilder().build();
+        HTTPRequestPattern pattern = HTTPRequestPattern.builder().build();
         Parsing parsing = new Parsing();
-        defaultMappingEntry = new MappingEntry(requestPattern, defaultResponse, parsing);
+        return new Entry(pattern, response, parsing);
     }
 
-    public void addMapping(final RequestPattern requestPattern,
-                           final Response response,
-                           final Parsing parsing) {
-        mapping.add(new MappingEntry(requestPattern, response, parsing));
-        LOG.info(String.format(LOG_MAPPING_IS_ADDED, requestPattern, response, parsing));
+    public void addMapping(HTTPRequestPattern pattern, HTTPResponse response, Parsing parsing) {
+        mapping.add(new Entry(pattern, response, parsing));
+        log.info(String.format("Mapping is added%n" +
+                "Request pattern:%n" +
+                "%s%n" +
+                "Response:%n" +
+                "%s%n" +
+                "Request parsing: %s", pattern, response, parsing));
     }
 
-    public MappingEntry resolve(final Request request,
-                                final Map<String, String> content) {
-        for (MappingEntry mappingEntry : mapping) {
-            if (mappingEntry.getRequestPattern().matches(request, content)) {
-                LOG.info(LOG_RESPONSE_IS_FOUND);
-                return mappingEntry;
-            }
+    public Entry resolve(HTTPRequest request, Map<String, String> parsedContent) {
+        Optional<Entry> mappingEntry = mapping.stream().filter(mapping ->
+                mapping.getPattern().matches(request, parsedContent)).findFirst();
+        if (mappingEntry.isPresent()) {
+            log.info("Response is found in mapping");
+        } else {
+            log.info("Response is not found in mapping, default response will be used");
         }
-        LOG.info(LOG_RESPONSE_IS_NOT_FOUND);
-        return defaultMappingEntry;
+        return mappingEntry.orElse(defaultEntry);
     }
 
-    public static final class MappingEntry {
-        private final RequestPattern requestPattern;
-        private final Response response;
+    public static final class Entry {
+        private final HTTPRequestPattern pattern;
+        private final HTTPResponse response;
         private final Parsing parsing;
 
-        private MappingEntry(final RequestPattern requestPattern,
-                             final Response response,
-                             final Parsing parsing) {
-            this.requestPattern = requestPattern;
+        private Entry(HTTPRequestPattern pattern, HTTPResponse response, Parsing parsing) {
+            this.pattern = pattern;
             this.response = response;
             this.parsing = parsing;
         }
@@ -74,12 +69,12 @@ public final class Mapping {
             return parsing;
         }
 
-        public Response getResponse() {
+        public HTTPResponse getResponse() {
             return response;
         }
 
-        private RequestPattern getRequestPattern() {
-            return requestPattern;
+        private HTTPRequestPattern getPattern() {
+            return pattern;
         }
     }
 }

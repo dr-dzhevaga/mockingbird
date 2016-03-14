@@ -10,12 +10,12 @@ public enum PathType {
     RegExp,
     JSONPath;
 
+    public static PathType of(String name) {
+        return EnumUtils.valueOf(PathType.class, name);
+    }
+
     @Override
     public String toString() {
         return this.name();
-    }
-
-    public static PathType of(final String name) {
-        return EnumUtils.valueOf(PathType.class, name);
     }
 }

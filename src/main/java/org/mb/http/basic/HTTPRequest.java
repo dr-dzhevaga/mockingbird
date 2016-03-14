@@ -1,33 +1,28 @@
 package org.mb.http.basic;
 
-import com.google.common.collect.ListMultimap;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Maps;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public final class Request {
-    public static final String URI      = "uri";
-    public static final String METHOD   = "method";
-    public static final String HEADER   = "header";
-    public static final String QUERY    = "query";
-    public static final String CONTENT  = "content";
-
+public final class HTTPRequest {
     private final String uri;
-    private final Method method;
+    private final HTTPMethod method;
     private final ListMultimap<String, String> queryParameters;
     private final Map<String, String> headers;
     private final String content;
 
-    private Request(final String uri,
-                    final Method method,
-                    final ListMultimap<String, String> queryParameters,
-                    final Map<String, String> headers,
-                    final String content) {
+    private HTTPRequest(String uri,
+                        HTTPMethod method,
+                        ListMultimap<String, String> queryParameters,
+                        Map<String, String> headers,
+                        String content) {
         this.uri = uri;
         this.method = method;
         this.queryParameters = queryParameters;
@@ -35,7 +30,7 @@ public final class Request {
         this.content = content;
     }
 
-    public static Builder newBuilder(final String uri, final Method method) {
+    public static Builder builder(String uri, HTTPMethod method) {
         return new Builder(uri, method);
     }
 
@@ -43,7 +38,7 @@ public final class Request {
         return uri;
     }
 
-    public Method getMethod() {
+    public HTTPMethod getMethod() {
         return method;
     }
 
@@ -61,11 +56,11 @@ public final class Request {
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = Maps.newHashMap();
-        map.put(URI, uri);
-        map.put(METHOD, method.toString());
-        map.put(HEADER, headers);
-        map.put(QUERY, queryParameters.asMap());
-        map.put(CONTENT, content);
+        map.put("uri", uri);
+        map.put("method", method.toString());
+        map.put("header", headers);
+        map.put("query", queryParameters.asMap());
+        map.put("content", content);
         return map;
     }
 
@@ -88,43 +83,48 @@ public final class Request {
 
     public static final class Builder {
         private String uri;
-        private Method method;
-        private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();;
-        private Map<String, String> headers = Maps.newHashMap();;
+        private HTTPMethod method;
+        private ListMultimap<String, String> queryParameters = ArrayListMultimap.create();
+        private Map<String, String> headers = Maps.newHashMap();
         private String content = "";
 
-        private Builder(final String uri, final Method method) {
+        private Builder(String uri, HTTPMethod method) {
             this.uri = uri;
             this.method = method;
         }
 
-        public Builder addQueryParameter(final String name, final String value) {
+        public Builder addQueryParameter(String name, String value) {
             this.queryParameters.put(name, value);
             return this;
         }
 
-        public Builder addQueryParameters(final String name, final Collection<String> values) {
+        public Builder addQueryParameters(String name, Collection<String> values) {
             this.queryParameters.putAll(name, values);
             return this;
         }
 
-        public Builder addHeader(final String name, final String value) {
+        public Builder addQueryParameters(String name, String[] values) {
+            Stream.of(values).forEach(value -> this.queryParameters.put(name, value));
+            return this;
+        }
+
+        public Builder addHeader(String name, String value) {
             this.headers.put(name, value);
             return this;
         }
 
-        public Builder addHeaders(final Map<String, String> parameters) {
+        public Builder addHeaders(Map<String, String> parameters) {
             this.headers.putAll(parameters);
             return this;
         }
 
-        public Builder setContent(final String content) {
+        public Builder setContent(String content) {
             this.content = content;
             return this;
         }
 
-        public Request build() {
-            return new Request(uri, method, queryParameters, headers, content);
+        public HTTPRequest build() {
+            return new HTTPRequest(uri, method, queryParameters, headers, content);
         }
     }
 }

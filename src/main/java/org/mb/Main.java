@@ -6,8 +6,8 @@ import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.mb.http.MainHandler;
+import org.mb.http.basic.HTTPServer;
 import org.mb.http.basic.JettyServer;
-import org.mb.http.basic.Server;
 import org.mb.settings.Settings;
 import org.mb.settings.parsing.FileFormat;
 
@@ -44,7 +44,7 @@ public final class Main {
             Logger.getLogger("org.mb").setLevel(Level.DEBUG);
         }
         Settings settings = Settings.load(file, FileFormat.of(format));
-        Server server = JettyServer.newInstance(port);
+        HTTPServer server = new JettyServer(port);
         server.setHandler(new MainHandler(settings));
         server.start();
     }

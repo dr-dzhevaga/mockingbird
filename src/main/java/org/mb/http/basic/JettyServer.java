@@ -4,60 +4,52 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
 import org.apache.log4j.Logger;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
-import java.util.Map;
-import java.util.List;
-import java.util.Arrays;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
  */
-public final class JettyServer implements Server {
-    private static final String LOG_NO_RESPONSE_ERROR = "No response will be sent";
-    private static final Logger LOG = Logger.getLogger(JettyServer.class);
+public final class JettyServer implements HTTPServer {
+    private static final Logger log = Logger.getLogger(JettyServer.class);
+    private final Server server;
 
-    private final org.eclipse.jetty.server.Server jettyServer;
-
-    public static Server newInstance(final int port) {
-        return new JettyServer(port);
-    }
-
-    private JettyServer(final int port) {
-        jettyServer = new org.eclipse.jetty.server.Server(port);
+    public JettyServer(int port) {
+        server = new Server(port);
     }
 
     @Override
     public void start() throws Exception {
-        if (jettyServer.getHandler() == null) {
+        if (server.getHandler() == null) {
             throw new IllegalStateException("Handler is not set");
         }
-        jettyServer.start();
-        jettyServer.join();
+        server.start();
+        server.join();
     }
 
     @Override
     public void setHandler(final Handler handler) {
-        jettyServer.setHandler(new AbstractHandler() {
+        server.setHandler(new AbstractHandler() {
             @Override
-            public void handle(final String s,
-                               final org.eclipse.jetty.server.Request httpRequest,
-                               final HttpServletRequest httpServletRequest,
-                               final HttpServletResponse httpServletResponse) {
+            public void handle(String target,
+                               Request baseRequest,
+                               HttpServletRequest servletRequest,
+                               HttpServletResponse servletResponse) {
                 try {
-                    Request request = readRequest(httpServletRequest);
-                    Response response = handler.handle(request);
-                    writeResponse(response, httpServletResponse);
-                    httpRequest.setHandled(true);
+                    HTTPRequest request = readRequest(servletRequest);
+                    HTTPResponse response = handler.handle(request);
+                    writeResponse(response, servletResponse);
+                    baseRequest.setHandled(true);
                 } catch (Exception e) {
-                    if (httpServletResponse.isCommitted()) {
-                        LOG.error(LOG_NO_RESPONSE_ERROR);
+                    if (servletResponse.isCommitted()) {
+                        log.error("No response will be sent");
                     }
                     throw new RuntimeException(e);
                 }
@@ -65,40 +57,34 @@ public final class JettyServer implements Server {
         });
     }
 
-    private Request readRequest(final HttpServletRequest srcRequest) throws IOException {
-        Request.Builder builder = Request.newBuilder(srcRequest.getRequestURI(), Method.of(srcRequest.getMethod()));
-
-        Enumeration<String> headerNames = srcRequest.getHeaderNames();
+    private HTTPRequest readRequest(HttpServletRequest src) throws IOException {
+        // URI and method
+        HTTPRequest.Builder builder = HTTPRequest.builder(src.getRequestURI(), HTTPMethod.of(src.getMethod()));
+        // headers
+        Enumeration<String> headerNames = src.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String headerName = headerNames.nextElement();
-            String headerValue = srcRequest.getHeader(headerName);
+            String headerValue = src.getHeader(headerName);
             builder.addHeader(headerName, headerValue);
         }
-
-        for (Map.Entry<String, String[]> parameter : srcRequest.getParameterMap().entrySet()) {
-            String parameterName = parameter.getKey();
-            List<String> parameterValues = Arrays.asList(parameter.getValue());
-            builder.addQueryParameters(parameterName, parameterValues);
-        }
-
-        String encoding = srcRequest.getCharacterEncoding();
+        // query parameters
+        src.getParameterMap().forEach(builder::addQueryParameters);
+        // content
+        String encoding = src.getCharacterEncoding();
         if (Strings.isNullOrEmpty(encoding)) {
             encoding = Charsets.UTF_8.toString();
         }
-
-        String content = CharStreams.toString(new InputStreamReader(srcRequest.getInputStream(), encoding));
+        String content = CharStreams.toString(new InputStreamReader(src.getInputStream(), encoding));
         builder.setContent(content);
-
         return builder.build();
     }
 
-    private void writeResponse(final Response srcResponse, final HttpServletResponse dstResponse) throws Exception {
-        dstResponse.setStatus(srcResponse.getStatusCode());
-
-        for (Map.Entry<String, String> header : srcResponse.getHeaders().entrySet()) {
-            dstResponse.setHeader(header.getKey(), header.getValue());
-        }
-
-        srcResponse.getContent().writeTo(dstResponse.getOutputStream());
+    private void writeResponse(HTTPResponse src, HttpServletResponse dst) throws Exception {
+        // status
+        dst.setStatus(src.getStatusCode());
+        // headers
+        src.getHeaders().forEach(dst::setHeader);
+        // write content
+        src.writeContentTo(dst.getOutputStream());
     }
 }
