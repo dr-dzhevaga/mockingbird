@@ -371,4 +371,4 @@ Usage: java mockingbird.jar [-?] [-d] -p <port> -f <file> -ff <JSON|YAML> [-r <s
 
  -ff,--file-format <JSON|YAML>   specify settings file format
 
- -r,--reload                     specify settings file reload timeout
+ -r,--reload                     specify settings file reload period

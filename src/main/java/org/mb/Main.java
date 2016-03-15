@@ -31,7 +31,7 @@ public final class Main {
     @Option(name = "-d", aliases = "--debug", usage = "enable debug mode")
     private boolean debug;
 
-    @Option(name = "-r", aliases = "--reload", usage = "specify settings file reload timeout", metaVar = "sec")
+    @Option(name = "-r", aliases = "--reload", usage = "specify settings file reload period", metaVar = "sec")
     private int reload;
 
     private Main() {
