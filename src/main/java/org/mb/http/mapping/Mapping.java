@@ -9,6 +9,7 @@ import org.mb.parsing.Parsing;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by Dmitriy Dzhevaga on 19.06.2015.
@@ -35,23 +36,22 @@ public final class Mapping {
 
     public void addMapping(HTTPRequestPattern pattern, HTTPResponse response, Parsing parsing) {
         mapping.add(new Entry(pattern, response, parsing));
-        log.info(String.format("Mapping is added%n" +
-                "Request pattern:%n" +
-                "%s%n" +
-                "Response:%n" +
-                "%s%n" +
-                "Request parsing: %s", pattern, response, parsing));
     }
 
     public Entry resolve(HTTPRequest request, Map<String, String> parsedContent) {
         Optional<Entry> mappingEntry = mapping.stream().filter(mapping ->
                 mapping.getPattern().matches(request, parsedContent)).findFirst();
         if (mappingEntry.isPresent()) {
-            log.info("Response is found in mapping");
+            log.debug("Request is found in mapping");
         } else {
-            log.info("Response is not found in mapping, default response will be used");
+            log.debug("Request is not found in mapping, default response will be used");
         }
         return mappingEntry.orElse(defaultEntry);
+    }
+
+    @Override
+    public String toString() {
+        return mapping.stream().map(Entry::toString).collect(Collectors.joining("\n"));
     }
 
     public static final class Entry {
@@ -75,6 +75,14 @@ public final class Mapping {
 
         private HTTPRequestPattern getPattern() {
             return pattern;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Request pattern:%n%s%n" +
+                            "Response:%n%s%n" +
+                            "Request parsing: %s",
+                    pattern, response, parsing);
         }
     }
 }

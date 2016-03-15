@@ -24,7 +24,6 @@ public final class MockingbirdHandler implements Handler {
         this.file = file;
         this.format = format;
         this.settings = Settings.load(file, format);
-        log.info(String.format("Global parsing:%n%s", settings.getParsing()));
     }
 
     @Override

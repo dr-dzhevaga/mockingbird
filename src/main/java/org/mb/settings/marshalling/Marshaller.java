@@ -1,5 +1,6 @@
 package org.mb.settings.marshalling;
 
+import org.apache.log4j.Logger;
 import org.mb.http.basic.HTTPResponse;
 import org.mb.http.mapping.HTTPRequestPattern;
 import org.mb.http.mapping.Mapping;
@@ -24,6 +25,7 @@ public final class Marshaller extends BaseMarshaller {
     private static final String HEADER          = "header";
     private static final String STATUS          = "status";
     private static final String CONTENT         = "content";
+    private static final Logger log = Logger.getLogger(Marshaller.class);
 
     private Marshaller(Object o) {
         super(o);
@@ -35,26 +37,27 @@ public final class Marshaller extends BaseMarshaller {
 
     public Settings toSettings() throws MarshallingException {
         Map settingsMap = toType(Map.class, true);
-        Mapping mapping = from(settingsMap.get(MAPPING)).toHTTPMapping();
+        Mapping mapping = from(settingsMap.get(MAPPING)).toMapping();
+        log.debug(String.format("Mapping is loaded:%n%s", mapping));
         Parsing parsing = from(settingsMap.get(PARSING)).toParsing();
+        log.debug(String.format("Global parsing is loaded:%n%s", parsing));
         return new Settings(mapping, parsing);
     }
 
-    public Mapping toHTTPMapping() throws MarshallingException {
+    public Mapping toMapping() throws MarshallingException {
         Mapping mapping = new Mapping();
-
         List httpMappingList = toType(List.class, true);
         for (Object httpMappingObject : httpMappingList) {
             Map httpMappingMap = from(httpMappingObject).toType(Map.class, true);
-            HTTPRequestPattern pattern = from(httpMappingMap.get(REQUEST)).toHTTPRequestPattern();
-            HTTPResponse response = from(httpMappingMap.get(RESPONSE)).toHTTPResponse();
+            HTTPRequestPattern pattern = from(httpMappingMap.get(REQUEST)).toRequestPattern();
+            HTTPResponse response = from(httpMappingMap.get(RESPONSE)).toResponse();
             Parsing parsing = from(httpMappingMap.get(PARSING)).toParsing();
             mapping.addMapping(pattern, response, parsing);
         }
         return mapping;
     }
 
-    public HTTPRequestPattern toHTTPRequestPattern() throws MarshallingException {
+    public HTTPRequestPattern toRequestPattern() throws MarshallingException {
         Map httpRequestPatternMap = toType(Map.class, true);
 
         HTTPRequestPattern.Builder builder = HTTPRequestPattern.builder();
@@ -80,7 +83,7 @@ public final class Marshaller extends BaseMarshaller {
         return builder.build();
     }
 
-    public HTTPResponse toHTTPResponse() throws MarshallingException {
+    public HTTPResponse toResponse() throws MarshallingException {
         Map httpResponseMap = toType(Map.class, true);
 
         HTTPResponse.Builder builder = HTTPResponse.builder();
