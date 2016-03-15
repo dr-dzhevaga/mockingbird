@@ -24,9 +24,9 @@ public final class Settings {
         this.parsing = parsing;
     }
 
-    public static Settings load(String filePath, FileFormat fileFormat) throws IOException, ParsingException, MarshallingException {
-        Parser parser = ParserFactory.newParser(fileFormat);
-        InputStream is = new FileInputStream(filePath);
+    public static Settings load(File file, String format) throws ParsingException, MarshallingException, IOException {
+        Parser parser = ParserFactory.newParser(FileFormat.of(format));
+        InputStream is = new FileInputStream(file);
         try (Reader r = new InputStreamReader(is, Charsets.UTF_8)) {
             Object o = parser.parse(r);
             return Marshaller.from(o).toSettings();

@@ -5,11 +5,12 @@ import org.apache.log4j.Logger;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import org.mb.http.MainHandler;
+import org.mb.http.MockingbirdHandler;
 import org.mb.http.basic.HTTPServer;
 import org.mb.http.basic.JettyServer;
-import org.mb.settings.Settings;
-import org.mb.settings.parsing.FileFormat;
+import org.mb.monitor.FileMonitor;
+
+import java.io.File;
 
 /**
  * Created by Dmitriy Dzhevaga on 17.06.2015.
@@ -22,7 +23,7 @@ public final class Main {
     private int port;
 
     @Option(name = "-f", aliases = "--file", usage = "specify settings file", metaVar = "path", required = true)
-    private String file;
+    private File file;
 
     @Option(name = "-ff", aliases = "--file-format", usage = "specify settings file format", metaVar = "YAML|JSON", required = true)
     private String format;
@@ -30,7 +31,11 @@ public final class Main {
     @Option(name = "-d", aliases = "--debug", usage = "enable debug mode")
     private boolean debug;
 
-    private Main() { }
+    @Option(name = "-r", aliases = "--reload", usage = "specify settings file reload timeout", metaVar = "sec")
+    private int reload;
+
+    private Main() {
+    }
 
     public static void main(String... args) throws Exception {
         new Main().doMain(args);
@@ -43,9 +48,12 @@ public final class Main {
         if (debug) {
             Logger.getLogger("org.mb").setLevel(Level.DEBUG);
         }
-        Settings settings = Settings.load(file, FileFormat.of(format));
+        MockingbirdHandler handler = new MockingbirdHandler(file, format);
+        if (reload > 0) {
+            new FileMonitor(file, handler::reloadSettings).schedule(reload);
+        }
         HTTPServer server = new JettyServer(port);
-        server.setHandler(new MainHandler(settings));
+        server.setHandler(handler);
         server.start();
     }
 
