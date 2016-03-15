@@ -3,7 +3,7 @@ import org.apache.tools.ant.filters.ReplaceTokens
 apply plugin: "groovy"
 apply plugin: "java"
 
-version = "0.0.1"
+version = "0.0.2"
 
 def libDir = "lib"
 
