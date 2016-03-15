@@ -15,7 +15,7 @@ Mockingbird is a tool for stubbing/mocking of web services (REST/SOAP/etc) over 
 4. Navigate to [http://localhost:8080/hello-world](http://localhost:8080/hello-world) in a browser to get the stubbed response.
 
 # Settings #
-Settings is organized as a tree and can be loaded from a YAML or a JSON file. You can also specify file reload timeout in seconds (see [Command-line options](#command-line-options)).
+Settings is organized as a tree and loaded from YAML or JSON file during program start. You can also specify settings file reload period (see [Command-line options](#command-line-options)).
 The settings root has a ```mapping``` child to define a request-response mapping and a ```parsing``` child to specify global parsing (see [Parsing](#parsing)):
 ```yaml
 mapping: []
@@ -362,8 +362,13 @@ You can iterate through maps:
 Usage: java mockingbird.jar [-?] [-d] -p <port> -f <file> -ff <JSON|YAML> [-r <sec>]
 
  -?,-h,--help                    print this message
+
  -d,--debug                      enable debug mode
+
  -p,--port <port>                specify server port
+
  -f,--file <file>                specify settings file
+
  -ff,--file-format <JSON|YAML>   specify settings file format
+
  -r,--reload                     specify settings file reload timeout
